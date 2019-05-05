@@ -1,0 +1,193 @@
+@fb: flex-table;
+@borderColor: #e9eaec;
+.@{fb}{
+    background-color: #fff;
+    border-bottom: 1px solid #dddee1;
+    position: relative;
+    &-wrap{
+        position: relative;
+        border: 1px solid #dddee1;
+        display: flex;
+        align-content: stretch;
+    }
+
+    &-layout{
+        max-width: 100%;
+        overflow: auto;
+        padding-bottom: 1px;
+        flex: 1;
+        flex-shrink: 0;
+    }
+    &-scroll-y{
+        width: 10px;
+        flex-shrink: 0;
+        border-left: 1px solid #dddee1;
+        &-head{
+            width: 100%;
+            height: 38px;
+            padding: 10px 0;
+            overflow: hidden;
+            border-bottom: 1px solid #dddee1;
+        }
+        &-body{
+            width: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            div{
+                overflow: hidden;
+            }
+        }
+        &-foot{
+            width: 100%;
+            padding: 10px 0;
+            overflow: hidden;
+            border-top: 1px solid #dddee1;
+        }
+    }
+    &-head{
+        border-bottom: 1px solid @borderColor;
+        font-weight: 700;
+        user-select: none;
+    }
+    &-body{
+        .@{fb}-row{
+            &:nth-child(odd){
+                .@{fb}-col{
+                    background: #f9f9f9;
+                }
+            }
+            &:last-child{
+                border-bottom: 1px solid @borderColor
+            }
+        }
+    }
+    &-fixed-header{
+        overflow-y: auto;
+        overflow-x: hidden;
+        &::-webkit-scrollbar{
+            display: none;
+        }
+    }
+    &-foot{
+        border-top: 1px solid @borderColor;
+        text-align: right;
+
+        p{
+            margin: 0;
+        }
+        .foot-label{
+            color: #999;
+        }
+    }
+    &-row{
+        display: flex;
+        align-items: stretch;
+        border-bottom: 1px solid @borderColor;
+        &:last-child{
+            border: none;
+        }
+    }
+    &-col{
+        position: relative;
+        flex:1;
+        width: 100%;
+        padding: 10px;
+        font-size: 12px;
+        color:#495060;
+        border-right: 1px solid #e9eaec;
+        word-break: break-word;
+        &:last-child{
+            border: none;
+        }
+
+        &-resize{
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            cursor: col-resize;
+            &:hover{
+                background-color: #3eb4b4;
+            }
+        }
+
+        &-hidden{
+            visibility: hidden;
+        }
+        &-ellipsis{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ivu-checkbox-wrapper{
+            margin-right: 0;
+            margin-bottom: 0;
+        }
+    }
+    &-tip{
+        text-align: center;
+    }
+
+    &-sort{
+        display: inline-block;
+        width: 14px;
+        height: 12px;
+        margin-top: -1px;
+        vertical-align: middle;
+        overflow: hidden;
+        cursor: pointer;
+        position: relative;
+
+        i{
+            display: block;
+            height: 6px;
+            line-height: 6px;
+            overflow: hidden;
+            position: absolute;
+            color: #c5c8ce;
+            transition: color .2s ease-in-out;
+            font-size: 16px;
+
+            &:first-child{
+                top: 0;
+            }
+
+            &:last-child{
+                bottom: 0;
+            }
+
+            &.on{
+                color: inherit;
+            }
+
+            &:hover{
+                color: inherit;
+            }
+        }
+    }
+
+    &-fixed{
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        background-color: #fff;
+        box-shadow: 2px 0 6px -2px rgba(0,0,0,.2);
+
+        .@{fb}-body{
+            margin-right: -13px;
+        }
+    }
+    &-reference-line{
+        position: absolute;
+        top: 0;
+        height: 100%;
+        border-right: 1px solid transparent;
+        cursor: col-resize;
+        &.cur{
+            border-color: #3eb4b4;
+        }
+    }
+}
