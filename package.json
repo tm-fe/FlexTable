@@ -1,5 +1,5 @@
 {
-  "name": "flextable",
+  "name": "tm-flextable",
   "version": "0.0.1",
   "description": "use div to build flexible table on Vue",
   "main": "index.js",
