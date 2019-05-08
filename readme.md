@@ -4,6 +4,7 @@ Use div to build flexible、efficiently updated table components with Vue.js
 
 ## Screenshots
 
+![flextable](https://user-images.githubusercontent.com/6723674/57348072-4db8ef80-7187-11e9-98eb-2b613073f266.gif)
 
 ## Feature
 
