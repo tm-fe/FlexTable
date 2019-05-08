@@ -124,5 +124,48 @@ export default {
 }
 ```
 
-## Demo
+## API
+
+### Table props
+
+| 属性 | 说明 | 类型 | 默认值 |
+| ------------ | ------- | ------- | ----------- |
+| data | 显示的结构化数据 | Array | [] |
+| columns | 表格列的配置描述，具体项见后文 | Array | [] |
+| sum | 显示的结构化数据汇总 | Object | {} |
+| loading | 是否加载中 | Boolean | false |
+| resizable | 是否可拖动调整列宽 | Boolean | false |
+| height | 表格高度，单位 px，设置后，如果表格内容大于此值，会固定表头 | Number | - |
+
+### Table events
+
+| 事件名 | 说明 | 返回值 |
+| ------------ | ------- | ----------- |
+| on-sort-change | 排序时有效，当点击排序时触发 | column：当前列数据； key：排序依据的指标； order：排序的顺序，值为 asc 或 desc |
+| on-selection-change | 点击全选时触发 | selection：已选项数据； row: 当前选中行数据 |
+| on-all-cancel | 全选取消时触发 | selection：已选项数据 |
+| on-selection-cancel | 单选取消时触发 | selection：已选项数据 |
+
+### column
+列描述数据对象，是 columns 中的一项
+
+| 属性 | 说明 | 类型 | 默认值 |
+| ------------ | ------- | ------- | ----------- |
+| type | 列类型，可选值为 index、selection | String | - |
+| width | 列宽，不设置将自动分配，最小 60px | Number | 60 |
+| align | 对齐方式，可选值为 left 左对齐、right 右对齐和 center 居中对齐 | String | Left |
+| fixed | 列是否固定在左侧或者右侧，可选值为 left 左侧 | String | - |
+| render | 自定义渲染列，使用 Vue 的 Render 函数。传入两个参数，第一个是 h，第二个为对象，包含 row、column 和 index，分别指当前行数据，当前列数据，当前行索引，详见示例。 | Function | - |
+| renderHeader | 自定义列头显示内容，使用 Vue 的 Render 函数。传入两个参数，第一个是 h，第二个为对象，包含 column 和 index，分别为当前列数据和当前列索引。 | Function | - |
+| sortable | 对应列是否可以排序，如果设置为 custom，则代表用户希望远程排序，需要监听 Table 的 on-sort-change 事件 | Boolean | false |
+| sortType | 设置初始化排序。值为 asc, desc 和 normal | String | normal |
+
+## Example
 to be continued..
+
+## Test Case
+
+## Coverage
+
+## License
+`tm-flextable` is released under the MIT license.
