@@ -1,5 +1,7 @@
 # FlexTable
 
+Use div to build flexible、efficiently updated table components with Vue.js
+
 ## Screenshots
 
 

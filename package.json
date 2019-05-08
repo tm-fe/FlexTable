@@ -1,17 +1,24 @@
 {
   "name": "tm-flextable",
   "version": "0.0.1",
-  "description": "use div to build flexible table on Vue",
+  "description": "Use div to build flexible、efficiently updated table components with Vue.js",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": [
+    "src",
+    "index.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tm-fe/FlexTable.git"
   },
   "keywords": [
-    "flextable"
+    "flextable",
+    "div table",
+    "vue table",
+    "table"
   ],
   "author": "tm",
   "license": "MIT",
