@@ -7,28 +7,18 @@ Use div to build flexible、efficiently updated table components with Vue.js
 
 ## Feature
 
-1. 基本配置-columns、loading、data、sum columns:
-     - [x] title
-     - [x] key
-     - [x] width
-     - [x] render
-     - [x] sortable
-     - [x] fixed left
-     - [ ] fixed right
-
-2. 基本功能
-    - [x] 正常展示
-    - [x] 滚动（body）
-    - [x] 左右滚动（wrapper）
-    - [x] 汇总数据
-    - [x] 自定义列宽
-    - [x] 单元格宽度计算
-    - [x] 拖动调整列宽（resizable）
-    - [x] 行loading(row.loading)
-    - [x] selectable
-    - [ ] 拖动改变列顺序
-    - [ ] 子表格
-    - [ ] 合并单元格
+- [x] 正常展示
+- [x] 滚动（body）
+- [x] 左右滚动（wrapper）
+- [x] 汇总数据
+- [x] 自定义列宽
+- [x] 单元格宽度计算
+- [x] 拖动调整列宽（resizable）
+- [x] selectable
+- [ ] 合并单元格
+- [ ] 子表格
+- [ ] 拖动改变列顺序
+- [ ] 行loading(row.loading)
 
 ## Install
 
@@ -153,6 +143,7 @@ export default {
 
 | 属性 | 说明 | 类型 | 默认值 |
 | ------------ | ------- | ------- | ----------- |
+| title | 列名 | String | - |
 | type | 列类型，可选值为 index、selection | String | - |
 | width | 列宽，不设置将自动分配，最小 60px | Number | 60 |
 | align | 对齐方式，可选值为 left 左对齐、right 右对齐和 center 居中对齐 | String | Left |
