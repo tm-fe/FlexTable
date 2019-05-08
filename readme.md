@@ -8,16 +8,15 @@ Use div to build flexible、efficiently updated table components with Vue.js
 
 ## Feature
 
-- [x] 正常展示
-- [x] 滚动（body）
-- [x] 左右滚动（wrapper）
-- [x] 汇总数据
+- [x] 支持最大高度，超过 fixed header
+- [x] 固定列
+- [x] footer 展示汇总数据
 - [x] 自定义列宽
-- [x] 单元格宽度计算
+- [x] 排序
 - [x] 拖动调整列宽（resizable）
 - [x] selectable
 - [ ] 合并单元格
-- [ ] 子表格
+- [ ] 子表格嵌套
 - [ ] 拖动改变列顺序
 - [ ] 行loading(row.loading)
 
@@ -31,7 +30,7 @@ yarn add tm-flextable
 
 ## Usage
 
-```javascript
+```html
 <template>
     <flex-table
         resizable
