@@ -1,0 +1,13 @@
+*.log
+*.log.*
+.idea/
+.DS_Store
+Thumbs.db
+.project
+.*proj
+.svn/
+.build
+node_modules
+.cache
+dist
+yarn.lock
