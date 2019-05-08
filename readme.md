@@ -1,6 +1,15 @@
 # FlexTable
+An efficiently updated div table Vue component. Compatible with Vue 2.x
 
-Use div to build flexible、efficiently updated table components with Vue.js
+[![Version](https://img.shields.io/npm/v/tm-flextable.svg)](https://www.npmjs.com/package/tm-flextable)
+[![Downloads](https://img.shields.io/npm/dm/tm-flextable.svg)](https://www.npmjs.com/package/tm-flextable)
+
+- [Screenshots](#screenshots)
+- [Feature](#feature)
+- [Install](#install)
+- [Usage](#usage)
+- [API](#api)
+- [Example](#example)
 
 ## Screenshots
 
@@ -114,6 +123,7 @@ export default {
         },
     }
 }
+</script>
 ```
 
 ## API
