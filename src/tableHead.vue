@@ -17,8 +17,8 @@
                         :render="item.renderHeader"></Expand>
                     <span v-else>{{item.title}}</span>
                     <span class="flex-table-sort" v-if="item.sortable">
-                        <i @click="handleSort(index, 'asc')" :class="{'on': getColumns(index)._sort === 'asc'}" class="ivu-icon ivu-icon-md-arrow-dropup"></i>
-                        <i @click="handleSort(index, 'desc')" :class="{'on': getColumns(index)._sort === 'desc'}" class="ivu-icon ivu-icon-md-arrow-dropdown"></i>
+                        <i @click="handleSort(index, 'asc')" :class="{'on': getColumns(index)._sort === 'asc'}" class="flex-table-arrow-dropup"></i>
+                        <i @click="handleSort(index, 'desc')" :class="{'on': getColumns(index)._sort === 'desc'}" class="flex-table-arrow-dropdown"></i>
                     </span>
                     <div v-if="resizable" @mousedown="onColResize($event, index)" class="flex-table-col-resize j-col-resize"></div>
                 </template>
