@@ -164,6 +164,8 @@ export default {
 | sortType | 设置初始化排序。值为 asc, desc 和 normal | String | normal |
 
 ## Example
+[local example](./examples)
+online example: 
 to be continued..
 
 ## Test Case
