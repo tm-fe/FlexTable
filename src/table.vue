@@ -368,7 +368,6 @@ export default {
                         nCalLength++;
                     }
                 });
-
                 // 给没有定义宽度的 cell 平均分配或指定最小宽度
                 if (nCalLength > 0) {
                     let nLessWidth = nTableWidth - defineTotalWidth;
@@ -394,7 +393,6 @@ export default {
                 this.style = {
                     'min-width': Math.max(nTableWidth, nTotalWidth)+'px'
                 };
-
                 this.calWidth = oWidth;
             });
         }
