@@ -8,7 +8,7 @@
                 :class="{'flex-table-col-hidden': onlyFixed && (item.fixed !== 'left')}"
                 :style="setCellStyle(item)"
             >
-                <template v-if="item.type === 'selection'"><Checkbox :value="isSelectAll" :disabled="!data.length" @on-change="selectAll"></Checkbox></template>
+                <template v-if="item.type === 'selection'"><Checkbox :checked="isSelectAll" :disabled="!data.length" @input="selectAll"></Checkbox></template>
                 <template v-else>
                     <Expand
                         v-if="item.renderHeader"
@@ -27,12 +27,13 @@
     </div>
 </template>
 <script>
+import { Checkbox } from 'vue-checkbox-radio';
 import Mixin from './mixin.js';
 import Expand from './expand.js';
 
 export default {
     name: 'TableHead',
-    components: { Expand },
+    components: { Expand, Checkbox },
     mixins: [Mixin],
     props: {
         data: {
@@ -80,7 +81,7 @@ export default {
     methods: {
         selectAll() {
             const status = !this.isSelectAll;
-            this.$parent.selectAll(status);
+            this.$emit('on-select-all', status);
         },
         onColResize(e, index) {
             this.$emit("on-col-resize", e, index);

@@ -9,6 +9,7 @@
             :row="row"
             :rowIndex="rowIndex"
             :onlyFixed="onlyFixed"
+            @on-toggle-select="toggleSelect"
         ></table-td>
     </div>
 </template>
@@ -34,6 +35,11 @@ export default {
         },
         onlyFixed: {
             type: Boolean
+        }
+    },
+    methods: {
+        toggleSelect(index) {
+            this.$emit('on-toggle-select', index);
         }
     }
 }
