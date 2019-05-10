@@ -231,7 +231,6 @@ export default {
             return list;
         },
         toggleSelect(index) {
-            console.log('toggleSelect')
             const row = this.dataList[index];
             if (!row._isDisabled) { // disabled 状态禁止更改 check 状态
                 row._isChecked = !row._isChecked;
@@ -270,7 +269,7 @@ export default {
         onColResizeMove(e) {
             const colResize = this.colResize
             if (colResize.onColResizing) {
-                const currentX = e.clientX - this.$el.getBoundingClientRect().left;
+                const currentX = e.clientX - colResize.nTableLeft;
                 const dX = currentX - colResize.originX;
                 if (dX >= colResize.minX) { // 限制参考线最小值
                     colResize.currentX = currentX;
@@ -280,9 +279,14 @@ export default {
         onColResizeEnd(e) {
             const colResize = this.colResize;
             if (colResize.onColResizing) {
+                const row = this.tableColumns[colResize.resizeIndex];
                 const dX = colResize.currentX - colResize.originX;
-                const finalX = Math.max(this.tableColumns[colResize.resizeIndex].width + dX, MIN_WIDTH);
-                this.tableColumns[colResize.resizeIndex].width = finalX;
+                const finalX = Math.max((row.width || this.calWidth[row.key]) + dX, MIN_WIDTH);
+                if (row.width) {
+                    row.width = finalX;
+                } else {
+                    this.$set(row, 'width', finalX);
+                }
                 // reset
                 colResize.onColResizing = false;
                 colResize.currentX = 0;
@@ -293,10 +297,13 @@ export default {
             if (e.target.classList.contains('j-col-resize')) {
                 e.stopPropagation();
                 const colResize = this.colResize;
+                const row = this.tableColumns[index];
+                const colWidth = row.width || this.calWidth[row.key];
                 colResize.onColResizing = true;
                 colResize.resizeIndex = index;
-                colResize.originX = colResize.currentX = e.clientX - this.$el.getBoundingClientRect().left;
-                colResize.minX = MIN_WIDTH - this.tableColumns[index].width;
+                colResize.nTableLeft = this.$el.getBoundingClientRect().left;
+                colResize.originX = colResize.currentX = e.clientX - colResize.nTableLeft;
+                colResize.minX = MIN_WIDTH - colWidth;
             }
         },
         handleFixedBodyScroll(e) {
