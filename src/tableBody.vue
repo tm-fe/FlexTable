@@ -14,6 +14,7 @@
                 :columns="columns"
                 :cal-width="calWidth"
                 :onlyFixed="onlyFixed"
+                @on-toggle-select="toggleSelect"
             ></table-tr>
         </div>
         <div v-else class="flex-table-tr" >
@@ -66,6 +67,11 @@ export default {
         return {
 
         };
+    },
+    methods: {
+        toggleSelect(index) {
+            this.$emit('on-toggle-select', index);
+        }
     }
 }
 </script>

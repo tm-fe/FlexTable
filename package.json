@@ -1,6 +1,6 @@
 {
   "name": "tm-flextable",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Use div to build flexible、efficiently updated table components with Vue.js",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,9 @@
     "url": "https://github.com/tm-fe/FlexTable/issues"
   },
   "homepage": "https://github.com/tm-fe/FlexTable#readme",
-  "dependencies": {},
+  "dependencies": {
+    "vue-checkbox-radio": "^0.6.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.4.4",
     "babel-loader": "^8.0.5",

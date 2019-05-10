@@ -8,6 +8,7 @@
                 :columns="tableColumns"
                 :data="dataList"
                 :resizable="resizable"
+                @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
             ></table-head>
@@ -22,6 +23,7 @@
                 :scroll="handleBodyScroll"
                 :no-data="noData"
                 :hover="bodyScrollOver"
+                @on-toggle-select="toggleSelect"
             ></table-body>
             <!-- /flex-table-body -->
 
@@ -43,6 +45,7 @@
                 :onlyFixed="true"
                 :data="dataList"
                 :resizable="resizable"
+                @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
             ></table-head>
@@ -56,6 +59,7 @@
                 :data="dataList"
                 :maxHeight="maxHeight"
                 :hover="fixedScrollOver"
+                @on-toggle-select="toggleSelect"
             ></table-body>
 
             <table-foot
@@ -101,7 +105,7 @@ export default {
         tableHead,
         tableBody,
         tableFoot,
-        tableScrollBar
+        tableScrollBar,
     },
     props: {
         data: {
@@ -225,6 +229,7 @@ export default {
             return list;
         },
         toggleSelect(index) {
+            console.log('toggleSelect')
             const row = this.dataList[index];
             if (!row._isDisabled) { // disabled 状态禁止更改 check 状态
                 row._isChecked = !row._isChecked;

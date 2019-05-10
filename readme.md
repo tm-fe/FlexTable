@@ -1,15 +1,20 @@
 # FlexTable
-An efficiently updated div table Vue component. Compatible with Vue 2.x
-
 [![Version](https://img.shields.io/npm/v/tm-flextable.svg)](https://www.npmjs.com/package/tm-flextable)
 [![Downloads](https://img.shields.io/npm/dm/tm-flextable.svg)](https://www.npmjs.com/package/tm-flextable)
+
+An efficiently updated div table Vue component. Compatible with Vue 2.x
 
 - [Screenshots](#screenshots)
 - [Feature](#feature)
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
-- [Example](#example)
+- [Demo](#demo)
+
+## Demo
+To view a demo online: [https://tm-fe.github.io/FlexTable/examples/dist/](https://tm-fe.github.io/FlexTable/examples/dist/)
+
+To view demo examples locally clone the repo and run `yarn install && yarn dev` or view [local example](./examples) 
 
 ## Screenshots
 
@@ -35,6 +40,17 @@ An efficiently updated div table Vue component. Compatible with Vue 2.x
 npm install --save tm-flextable
 // or
 yarn add tm-flextable
+```
+```js
+import FlexTable from 'tm-flextable';
+
+export default {
+  // ...
+  components: {
+    FlexTable
+  }
+  // ...
+}
 ```
 
 ## Usage
@@ -162,10 +178,6 @@ export default {
 | renderHeader | 自定义列头显示内容，使用 Vue 的 Render 函数。传入两个参数，第一个是 h，第二个为对象，包含 column 和 index，分别为当前列数据和当前列索引。 | Function | - |
 | sortable | 对应列是否可以排序，如果设置为 custom，则代表用户希望远程排序，需要监听 Table 的 on-sort-change 事件 | Boolean | false |
 | sortType | 设置初始化排序。值为 asc, desc 和 normal | String | normal |
-
-## Example
-local example: [local example](./examples)
-online example: [online example](https://tm-fe.github.io/FlexTable/examples/dist/)
 
 ## Test Case
 

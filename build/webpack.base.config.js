@@ -41,6 +41,21 @@ module.exports = {
                                 },
                             },
                         ],
+                        scss: [
+                            'vue-style-loader',
+                            {
+                                loader: 'css-loader',
+                                options: {
+                                    sourceMap: true,
+                                },
+                            },
+                            {
+                                loader: 'scss-loader',
+                                options: {
+                                    sourceMap: true,
+                                },
+                            },
+                        ],
                     },
                     postLoaders: {
                         html: 'babel-loader?sourceMap'

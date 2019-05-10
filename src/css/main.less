@@ -143,28 +143,18 @@
 
         i{
             display: block;
-            height: 6px;
-            line-height: 6px;
+            height: 0;
+            line-height: 0;
             overflow: hidden;
             position: absolute;
-            color: #c5c8ce;
             transition: color .2s ease-in-out;
-            font-size: 16px;
 
             &:first-child{
-                top: 0;
+                top: -5px;
             }
 
             &:last-child{
-                bottom: 0;
-            }
-
-            &.on{
-                color: inherit;
-            }
-
-            &:hover{
-                color: inherit;
+                bottom: -5px;
             }
         }
     }
@@ -189,6 +179,37 @@
         cursor: col-resize;
         &.cur{
             border-color: #3eb4b4;
+        }
+    }
+    &-arrow-dropup,
+    &-arrow-dropdown{
+        border: 5px solid transparent;
+    }
+    &-arrow-dropup{
+        border-bottom-color: #c5c8ce;
+        
+        &.on{
+            border-bottom-color: #333;
+        }
+        &:hover{
+            border-bottom-color: #333;
+        }
+    }
+    &-arrow-dropdown{
+        border-top-color: #c5c8ce;
+
+        &.on{
+            border-top-color: #333;
+        }
+        &:hover{
+            border-top-color: #333;
+        }
+    }
+}
+.checkbox-component{
+    &>input{
+        &:disabled + label{
+            opacity: 0.1 !important;
         }
     }
 }
