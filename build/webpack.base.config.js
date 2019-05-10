@@ -87,7 +87,7 @@ module.exports = {
                         },
                     },
                     {
-                        loader: '\'autoprefixer-loader\'',
+                        loader: 'autoprefixer-loader',
                     },
                 ]
             },

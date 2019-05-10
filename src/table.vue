@@ -72,9 +72,9 @@
         </div>
 
         <div class="flex-table-reference-line" :class="{'cur': colResize.currentX !== 0}" :style="{'left': `${colResize.currentX}px`}"></div>
-        <Spin fix size="large" v-if="loading">
-            <slot name="loading"></slot>
-        </Spin>
+        <slot name="loading" v-if="loading">
+            <Spinner fix size="large"></Spinner>
+        </slot>
     </div>
     <tableScrollBar
         :body-h="bodyH"
@@ -97,6 +97,7 @@ import tableHead from './tableHead.vue';
 import tableBody from './tableBody.vue';
 import tableFoot from './tableFoot.vue';
 import tableScrollBar from './tableScrollBar.vue';
+import Spinner from './Spinner.vue';
 
 import { MIN_WIDTH } from './data';
 
@@ -106,6 +107,7 @@ export default {
         tableBody,
         tableFoot,
         tableScrollBar,
+        Spinner,
     },
     props: {
         data: {
