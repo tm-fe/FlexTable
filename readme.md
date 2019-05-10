@@ -41,6 +41,17 @@ npm install --save tm-flextable
 // or
 yarn add tm-flextable
 ```
+```js
+import FlexTable from 'tm-flextable';
+
+export default {
+  // ...
+  components: {
+    FlexTable
+  }
+  // ...
+}
+```
 
 ## Usage
 
