@@ -1,14 +1,16 @@
 <template>
 <div>
-    <h3>基础用法</h3>
-    <p>表格的简单用法 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/index.vue">source code</a></p>
+    <h3>多选</h3>
+    <p>选择行 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/selectable.vue">source code</a></p>
     
     <flex-table
-        resizable
         :loading="loading" 
         :columns="columns" 
         :data="list"
         :sum="sum"
+        @on-selection-change="onSelectionChange"
+        @on-selection-cancel="onSelectionCancel"
+        @on-all-cancel="onAllCancel"
     ></flex-table>
 </div>
 </template>
@@ -34,6 +36,12 @@ export default {
     data(){
         return {
             columns: [
+                {
+                    type: 'selection',
+                    width: 20,
+                    align: 'center',
+                    fixed: 'left'
+                },
                 {
                     title: 'Name',
                     key: 'name',
@@ -65,6 +73,16 @@ export default {
         }
     },
     mounted() {},
-    methods: {}
+    methods: {
+        onSelectionChange(selection, row) {
+            console.log('onSelectionChange', selection, row);
+        },
+        onSelectionCancel(row) {
+            console.log('onSelectionCancel', row);
+        },
+        onAllCancel(cancelSelection) {
+            console.log('onAllCancel', cancelSelection);
+        },
+    }
 }
 </script>

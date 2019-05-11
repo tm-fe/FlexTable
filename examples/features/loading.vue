@@ -1,22 +1,20 @@
 <template>
-   <div>
-        <h3>固定表头</h3>
-        <p>固定表头 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/fixedHeader.vue">source code</a></p>
+    <div>
+        <h3>加载中</h3>
+        <p><a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/loading.vue">source code</a></p>
         
         <flex-table
             :loading="loading" 
             :columns="columns" 
             :data="list"
-            :sum="sum"
-            :height="height"
         ></flex-table>
-   </div>
+    </div>
 </template>
 <script>
 import flexTable from '../../index.js';
 
 const aTestList = [];
-for(let i=0;i<20;i++){
+for(let i=0;i<10;i++){
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -52,21 +50,9 @@ export default {
                     key: 'date',
                 },
             ],
-            loading: false,
+            loading: true,
             list: aTestList,
-            sum:{
-                name: 'Jim Green',
-                age: 24,
-                address: 'London',
-                date: '2016-10-01'
-            },
-            height: 250, // for table max-height
         }
-    },
-    methods: {
-        onSortChange(obj) {
-            console.log(obj);
-        },
     }
 }
 </script>

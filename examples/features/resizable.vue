@@ -1,16 +1,18 @@
 <template>
-   <div>
-        <h3>固定表头</h3>
-        <p>固定表头 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/fixedHeader.vue">source code</a></p>
+    <div>
+        <h3>调整宽度</h3>
+        <p>拖动调整宽度 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/resizable.vue">source code</a></p>
         
         <flex-table
+            resizable
             :loading="loading" 
             :columns="columns" 
             :data="list"
             :sum="sum"
             :height="height"
+            @on-sort-change="onSortChange"
         ></flex-table>
-   </div>
+    </div>
 </template>
 <script>
 import flexTable from '../../index.js';
@@ -37,10 +39,16 @@ export default {
                     title: 'Name',
                     key: 'name',
                     width: 100,
+                    fixed: 'left',
+                    sortable: true,
                 },
                 {
                     title: 'Age',
                     key: 'age',
+                    sortable: true,
+                    render(h, params){
+                        return h('span', 'age: '+ params.row.age)
+                    }
                 },
                 {
                     title: 'Address',
@@ -50,6 +58,7 @@ export default {
                 {
                     title: 'Date',
                     key: 'date',
+                    sortable: true,
                 },
             ],
             loading: false,
