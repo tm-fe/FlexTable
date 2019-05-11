@@ -150,7 +150,7 @@ export default {
             headerH: 38,
             bodyH: 0,
             footH: 54,
-            maxHeight: this.height,
+            maxHeight: 0,
             bodyScrolling: false,
             fixedBodyScrolling: false,
             scrollYScrolling: false,
@@ -178,6 +178,7 @@ export default {
     },
     mounted(){
         this.resize();
+        this.calHeight();
         window.addEventListener('resize',this.resize);
         window.addEventListener('resize',this.calHeight);
         if (this.resizable) {
@@ -195,7 +196,7 @@ export default {
             deep: true,
         },
         height: function(val){
-            this.maxHeight = val;
+            this.calHeight();
         },
         columns: function(arr) {
             this.tableColumns = arr;
@@ -347,18 +348,15 @@ export default {
         },
         calHeight() {
             if (!this.height) { return; }
-            // 在下次重绘后获取 offsetHeight
-            requestAnimationFrame(() => {
-                const $refs = this.$refs;
-                const $tableFoot = $refs.tableFoot;
-                const headerH = $refs.tableHeader.$el.offsetHeight;
-                const bodyH = $refs.tableBody.$el.querySelector('.flex-table-tr').offsetHeight;
-                const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
-                this.headerH = headerH;
-                this.footH = footH;
-                this.bodyH = bodyH;
-                this.maxHeight = this.height - headerH - footH;
-            });
+            const $refs = this.$refs;
+            const $tableFoot = $refs.tableFoot;
+            const headerH = $refs.tableHeader.$el.offsetHeight;
+            const bodyH = $refs.tableBody.$el.querySelector('.flex-table-tr').offsetHeight;
+            const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
+            this.headerH = headerH;
+            this.footH = footH;
+            this.bodyH = bodyH;
+            this.maxHeight = this.height - headerH - footH;
         },
         resize(){
             requestAnimationFrame(() => {
@@ -376,7 +374,7 @@ export default {
                     let nWidth = item.width;
                     if(nWidth){
                         nWidth = Math.max(nWidth,MIN_WIDTH);
-                        oWidth[sKey] = nWidth-1;//1 -border width
+                        oWidth[sKey] = nWidth;
                         defineTotalWidth += nWidth;
                     }else{
                         nCalLength++;
@@ -391,7 +389,7 @@ export default {
                         let sKey = item.key || item.title;
                         let nWidth = item.width;
                         if(!nWidth){
-                            oWidth[sKey] = nCalWidth -1 ;//1 -border width
+                            oWidth[sKey] = nCalWidth ;
                         }
                     });
                 } else if (nTableWidth > defineTotalWidth) {

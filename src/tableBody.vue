@@ -4,7 +4,7 @@
         @scroll="scroll"
         @mouseover="hover"
         :class="{'flex-table-fixed-header': maxHeight}"
-        :style="{'max-height': `${maxHeight}px`}">
+        :style="style">
         <div class="flex-table-tr" v-if="data.length">
             <table-tr
                 v-for="(row, index) in data"
@@ -61,6 +61,11 @@ export default {
         noData: {
             type: String,
             default: 'No Data'
+        }
+    },
+    computed: {
+        style() {
+            return {'max-height': this.maxHeight ? `${this.maxHeight}px` : `auto`};
         }
     },
     data(){
