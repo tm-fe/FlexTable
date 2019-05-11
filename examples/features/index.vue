@@ -1,19 +1,20 @@
 <template>
 <div>
+    <h3>基础用法</h3>
+    <p>表格的简单用法 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/index.vue">source code</a></p>
+    
     <flex-table
         resizable
         :loading="loading" 
         :columns="columns" 
         :data="list"
         :sum="sum"
-        :height="height"
     ></flex-table>
-
-    <pre class="code" v-html='rawHtml'></pre>
 </div>
 </template>
 <script>
 import flexTable from '../../index.js';
+
 
 const aTestList = [];
 for(let i=0;i<20;i++){
@@ -22,8 +23,6 @@ for(let i=0;i<20;i++){
         age: 18,
         address: 'New York No. 1 Lake Park',
         date: '2016-10-03',
-        _checked: Math.random() > 0.7, // only for selection=true
-        _disabled: Math.random() > 0.7, // only for selection=true
     };
     aTestList.push(oTestData);
 }
@@ -63,16 +62,10 @@ export default {
                 address: 'London',
                 date: '2016-10-01',
             },
-            height: 250, // for table max-height
-            rawHtml: `import flexTable from 'tm-flextable';`,
+            // height: 250, // for table max-height
         }
     },
+    mounted() {},
     methods: {}
 }
 </script>
-<style lang="less">
-    .code{
-        border: 1px solid #d8d8d8;
-        padding: 15px;
-    }
-</style>

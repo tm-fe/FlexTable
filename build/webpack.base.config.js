@@ -6,7 +6,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 function resolve(dir) {
     return path.join(__dirname, '..', dir);
 }
-
+const sourceMap = false; // css sourceMap
 module.exports = {
     module: {
         // https://doc.webpack-china.org/guides/migrating/#module-loaders-module-rules
@@ -22,7 +22,7 @@ module.exports = {
                             {
                                 loader: 'css-loader',
                                 options: {
-                                    sourceMap: true,
+                                    sourceMap,
                                 },
                             },
                         ],
@@ -31,13 +31,13 @@ module.exports = {
                             {
                                 loader: 'css-loader',
                                 options: {
-                                    sourceMap: true,
+                                    sourceMap,
                                 },
                             },
                             {
                                 loader: 'less-loader',
                                 options: {
-                                    sourceMap: true,
+                                    sourceMap,
                                 },
                             },
                         ],
@@ -46,13 +46,13 @@ module.exports = {
                             {
                                 loader: 'css-loader',
                                 options: {
-                                    sourceMap: true,
+                                    sourceMap,
                                 },
                             },
                             {
                                 loader: 'scss-loader',
                                 options: {
-                                    sourceMap: true,
+                                    sourceMap,
                                 },
                             },
                         ],
@@ -77,17 +77,14 @@ module.exports = {
                     {
                         loader: 'style-loader',
                         options: {
-                            sourceMap: true,
+                            sourceMap,
                         },
                     },
                     {
                         loader: 'css-loader',
                         options: {
-                            sourceMap: true,
+                            sourceMap,
                         },
-                    },
-                    {
-                        loader: 'autoprefixer-loader',
                     },
                 ]
             },
@@ -97,19 +94,19 @@ module.exports = {
                     {
                         loader: 'style-loader',
                         options: {
-                            sourceMap: true,
+                            sourceMap,
                         },
                     },
                     {
                         loader: 'css-loader',
                         options: {
-                            sourceMap: true,
+                            sourceMap,
                         },
                     },
                     {
                         loader: 'less-loader',
                         options: {
-                            sourceMap: true,
+                            sourceMap,
                         },
                     },
                 ]
@@ -120,19 +117,19 @@ module.exports = {
                     {
                         loader: 'style-loader',
                         options: {
-                            sourceMap: true,
+                            sourceMap,
                         },
                     },
                     {
                         loader: 'css-loader',
                         options: {
-                            sourceMap: true,
+                            sourceMap,
                         },
                     },
                     {
                         loader: 'sass-loader',
                         options: {
-                            sourceMap: true,
+                            sourceMap,
                         },
                     },
                 ]
