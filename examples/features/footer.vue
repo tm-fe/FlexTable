@@ -1,22 +1,16 @@
 <template>
-   <div>
-        <h3>固定表头</h3>
-        <p>固定表头 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/fixedHeader.vue">source code</a></p>
-        
-        <flex-table
-            :loading="loading" 
-            :columns="columns" 
-            :data="list"
-            :sum="sum"
-            :height="height"
-        ></flex-table>
-   </div>
+    <flex-table
+        :loading="loading" 
+        :columns="columns" 
+        :data="list"
+        :sum="sum"
+    ></flex-table>
 </template>
 <script>
 import flexTable from '../../index.js';
 
 const aTestList = [];
-for(let i=0;i<20;i++){
+for(let i=0;i<10;i++){
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -60,13 +54,7 @@ export default {
                 address: 'London',
                 date: '2016-10-01'
             },
-            height: 250, // for table max-height
         }
-    },
-    methods: {
-        onSortChange(obj) {
-            console.log(obj);
-        },
     }
 }
 </script>

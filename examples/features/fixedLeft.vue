@@ -1,16 +1,16 @@
 <template>
-   <div>
-        <h3>固定表头</h3>
-        <p>固定表头 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/fixedHeader.vue">source code</a></p>
+    <div>
+        <h3>固定列</h3>
+        <p>左固定列 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/fixedLeft.vue">source code</a></p>
         
         <flex-table
             :loading="loading" 
             :columns="columns" 
             :data="list"
             :sum="sum"
-            :height="height"
+            @on-sort-change="onSortChange"
         ></flex-table>
-   </div>
+    </div>
 </template>
 <script>
 import flexTable from '../../index.js';
@@ -20,6 +20,7 @@ for(let i=0;i<20;i++){
     const oTestData = {
         name: 'John Brown',
         age: 18,
+        hegith: '178',
         address: 'New York No. 1 Lake Park',
         date: '2016-10-03',
     };
@@ -37,19 +38,34 @@ export default {
                     title: 'Name',
                     key: 'name',
                     width: 100,
+                    fixed: 'left',
+                    sortable: true,
                 },
                 {
                     title: 'Age',
                     key: 'age',
+                    fixed: 'left',
+                    width: 150,
+                    sortable: true,
+                    render(h, params){
+                        return h('span', 'age: '+ params.row.age)
+                    }
+                },
+                {
+                    title: 'Height',
+                    key: 'hegith',
+                    width: 300,
                 },
                 {
                     title: 'Address',
                     key: 'address',
-                    width: 300,
+                    width: 500,
                 },
                 {
                     title: 'Date',
                     key: 'date',
+                    width: 200,
+                    sortable: true,
                 },
             ],
             loading: false,
@@ -57,10 +73,10 @@ export default {
             sum:{
                 name: 'Jim Green',
                 age: 24,
+                hegith: '-',
                 address: 'London',
                 date: '2016-10-01'
             },
-            height: 250, // for table max-height
         }
     },
     methods: {

@@ -1,7 +1,7 @@
 <template>
-   <div>
-        <h3>固定表头</h3>
-        <p>固定表头 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/fixedHeader.vue">source code</a></p>
+    <div>
+        <h3>render function</h3>
+        <p>render & renderHeader: <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/render.vue">source code</a></p>
         
         <flex-table
             :loading="loading" 
@@ -10,7 +10,7 @@
             :sum="sum"
             :height="height"
         ></flex-table>
-   </div>
+    </div>
 </template>
 <script>
 import flexTable from '../../index.js';
@@ -36,11 +36,16 @@ export default {
                 {
                     title: 'Name',
                     key: 'name',
-                    width: 100,
+                    renderHeader(h, params) {
+                        return h('span', 'Custom Title : '+ params.column.title)
+                    }
                 },
                 {
                     title: 'Age',
                     key: 'age',
+                    render(h, params){
+                        return h('span', 'age: '+ params.row.age)
+                    }
                 },
                 {
                     title: 'Address',
@@ -62,11 +67,6 @@ export default {
             },
             height: 250, // for table max-height
         }
-    },
-    methods: {
-        onSortChange(obj) {
-            console.log(obj);
-        },
     }
 }
 </script>
