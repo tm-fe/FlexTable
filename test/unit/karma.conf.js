@@ -2,9 +2,9 @@ const webpackConfig = require('../../build/webpack.test.config');
 
 module.exports = function(config) {
   const configuration = {
-    browsers: ['Chrome'],
+    browsers: ['ChromeHeadless'],
     frameworks: ['mocha', 'sinon-chai'],
-    reporters: ['spec','coverage'],
+    reporters: ['spec'],
     files: ['index.js'],
     preprocessors: {
         'index.js': ['webpack', 'sourcemap']
