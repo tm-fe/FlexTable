@@ -101,5 +101,33 @@ describe('Flex-Table', () => {
             });
             expect(aBodyData).to.eql(aTestData);
         });
+
+        // 检测 倒叙
+        it('check asc', async() => {
+            triggerEvent(aHeadAgeSort[0],'click');
+            let aDescList = JSON.parse(JSON.stringify(aTestList));
+            aDescList = aDescList.sort( (item1, item2) => {
+                return item1.age - item2.age;
+            });
+
+            const aTestData = [];
+            aDescList.forEach((item) => {
+                for (const k in item) {
+                    aTestData.push(item[k].toString()); 
+                }
+            });
+            
+            await waitImmediate();
+
+            const aBodyRow = vm.$el.querySelectorAll('.flex-table-body .flex-table-row');
+            const aBodyData = [];
+            aBodyRow.forEach( (node) => {
+                const aCol = node.querySelectorAll('.flex-table-col');
+                aCol.forEach( (elem) => {
+                    aBodyData.push(elem.textContent);
+                });
+            });
+            expect(aBodyData).to.eql(aTestData);
+        });
     });
 });
