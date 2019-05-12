@@ -1,22 +1,19 @@
-import { createVue } from '../util';
+import { createVue, triggerEvent, waitImmediate } from '../util';
 
 const aTestList = [];
-const aTestData = [];
-for(let i=0;i<10;i++){
+for(let i=0;i<5;i++){
     const oTestData = {
         name: 'John Brown',
-        age: 18,
+        age: 18 + i,
         address: 'New York No. 1 Lake Park',
         date: '2016-10-03',
     };
     aTestList.push(oTestData);
-    for (const k in oTestData) {
-        aTestData.push(oTestData[k].toString()); 
-    }
 }
+
 describe('Flex-Table', () => { 
     // 基础测试
-    describe('base', () => {
+    describe('sortable', () => {
         const vm = createVue({
             template: `
                 <flex-table
@@ -25,6 +22,7 @@ describe('Flex-Table', () => {
                     :columns="columns" 
                     :data="list"
                     :sum="sum"
+                    @on-sort-change="onSortChange"
                 ></flex-table>
             `,
             data(){
@@ -36,7 +34,8 @@ describe('Flex-Table', () => {
                         },
                         {
                             title: 'Age',
-                            key: 'age'
+                            key: 'age',
+                            sortable: true,
                         },
                         {
                             title: 'Address',
@@ -56,23 +55,42 @@ describe('Flex-Table', () => {
                         date: '2016-10-01',
                     },
                 }
+            },
+            methods: {
+                onSortChange(obj) {
+                    const sKey = obj.key;
+                    const sOrder = obj.order;
+                    const aList = this.list.sort( (item1,item2) => {
+                        if (sOrder === 'desc') {
+                            return item2[sKey] - item1[sKey];
+                        } else {
+                            return item1[sKey] - item2[sKey];
+                        }
+                    });
+                    this.list = aList;
+                },
             }
         });
-        
 
-        // 检测头部
-        it('check head', (done) => {
-            const aHead = vm.$el.querySelectorAll('.flex-table-head .flex-table-col>span');
-            const aHeadTitle = [];
-            aHead.forEach(function(node){
-                aHeadTitle.push(node.textContent);
+        const aHeadAgeSort = vm.$el.querySelectorAll('.flex-table-head .flex-table-col:nth-child(2) .flex-table-sort i');
+
+        // 检测 倒叙
+        it('check desc', async() => {
+            triggerEvent(aHeadAgeSort[1],'click');
+            let aDescList = JSON.parse(JSON.stringify(aTestList));
+            aDescList = aDescList.sort( (item1, item2) => {
+                return item2.age - item1.age;
             });
-            expect(aHeadTitle).to.eql(['Name', 'Age', 'Address', 'Date']);
-            done();
-        });
 
-        // 检测 输入的内容
-        it('check body', (done) => {
+            const aTestData = [];
+            aDescList.forEach((item) => {
+                for (const k in item) {
+                    aTestData.push(item[k].toString()); 
+                }
+            });
+            
+            await waitImmediate();
+
             const aBodyRow = vm.$el.querySelectorAll('.flex-table-body .flex-table-row');
             const aBodyData = [];
             aBodyRow.forEach( (node) => {
@@ -82,22 +100,6 @@ describe('Flex-Table', () => {
                 });
             });
             expect(aBodyData).to.eql(aTestData);
-            done();
-        });
-
-        // 检测 汇总信息
-        it('check sum', (done) => {
-            const aFootRow = vm.$el.querySelectorAll('.flex-table-foot .flex-table-row .flex-table-col');
-            const aFootLabel = [];
-            const aFootValue = [];
-            aFootRow.forEach( (node) => {
-                const aDoms = node.querySelectorAll('p');
-                aFootValue.push(aDoms[0].textContent);
-                aFootLabel.push(aDoms[1].textContent);
-            });
-            expect(aFootValue).to.eql(['Jim Green','24','London','2016-10-01']);
-            expect(aFootLabel).to.eql(['Name','Age','Address','Date']);
-            done();
         });
     });
 });
