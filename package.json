@@ -11,6 +11,7 @@
   },
   "files": [
     "src",
+    "types",
     "index.js"
   ],
   "repository": {
