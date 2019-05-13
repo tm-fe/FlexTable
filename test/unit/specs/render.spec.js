@@ -2,7 +2,7 @@ import { createVue } from '../util';
 
 const aTestList = [];
 const aTestData = [];
-for(let i=0;i<10;i++){
+for(let i=0;i<5;i++){
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -11,12 +11,19 @@ for(let i=0;i<10;i++){
     };
     aTestList.push(oTestData);
     for (const k in oTestData) {
-        aTestData.push(oTestData[k].toString()); 
+        let sValue = oTestData[k].toString();
+        if (k === 'age') {
+            aTestData.push('age: ' + sValue); 
+        } else {
+            aTestData.push(sValue); 
+        }
+        
     }
 }
+
 describe('Flex-Table', () => { 
     // 基础测试
-    describe('base', () => {
+    describe('render', () => {
         const vm = createVue({
             template: `
                 <flex-table
@@ -33,10 +40,16 @@ describe('Flex-Table', () => {
                         {
                             title: 'Name',
                             key: 'name',
+                            renderHeader(h, params) {
+                                return h('span', 'Custom Title : '+ params.column.title)
+                            }
                         },
                         {
                             title: 'Age',
-                            key: 'age'
+                            key: 'age',
+                            render(h, params){
+                                return h('span', 'age: '+ params.row.age)
+                            }
                         },
                         {
                             title: 'Address',
@@ -58,7 +71,6 @@ describe('Flex-Table', () => {
                 }
             }
         });
-        
 
         // 检测头部
         it('check head', (done) => {
@@ -67,7 +79,7 @@ describe('Flex-Table', () => {
             aHead.forEach(function(node){
                 aHeadTitle.push(node.textContent);
             });
-            expect(aHeadTitle).to.eql(['Name', 'Age', 'Address', 'Date']);
+            expect(aHeadTitle).to.eql(['Custom Title : Name', 'Age', 'Address', 'Date']);
             done();
         });
 
@@ -91,11 +103,11 @@ describe('Flex-Table', () => {
             const aFootLabel = [];
             const aFootValue = [];
             aFootRow.forEach( (node) => {
-                const aDoms = node.querySelectorAll('p');
+                const aDoms = node.children;
                 aFootValue.push(aDoms[0].textContent);
                 aFootLabel.push(aDoms[1].textContent);
             });
-            expect(aFootValue).to.eql(['Jim Green','24','London','2016-10-01']);
+            expect(aFootValue).to.eql(['Jim Green','age: 24','London','2016-10-01']);
             expect(aFootLabel).to.eql(['Name','Age','Address','Date']);
             done();
         });
