@@ -5,7 +5,7 @@
         :style="setCellStyle(column)"
         ref="cell">
         <template v-if="renderType === 'selection'">
-            <Checkbox :value="row._isChecked" @on-change="toggleSelect" :disabled="row._isDisabled"></Checkbox>
+            <Checkbox :checked="row._isChecked" @input="toggleSelect" :disabled="row._isDisabled"></Checkbox>
         </template>
         <Expand
             v-else-if="renderType === 'render'"
@@ -24,12 +24,13 @@
     </div>
 </template>
 <script>
+import { Checkbox } from 'vue-checkbox-radio';
 import Expand from './expand.js';
 import Mixin from './mixin.js';
 
 export default {
     name: 'TableTd',
-    components: { Expand },
+    components: { Expand, Checkbox },
     mixins: [Mixin],
     props:{
         column: {
@@ -69,7 +70,7 @@ export default {
     },
     methods: {
         toggleSelect() {
-            this.$parent.$parent.$parent.toggleSelect(this.rowIndex);
+            this.$emit('on-toggle-select', this.rowIndex);
         }
     }
 }

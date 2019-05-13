@@ -8,7 +8,7 @@
                 :class="{'flex-table-col-hidden': onlyFixed && (item.fixed !== 'left')}"
                 :style="setCellStyle(item)"
             >
-                <template v-if="item.type === 'selection'"><Checkbox :value="isSelectAll" :disabled="!data.length" @on-change="selectAll"></Checkbox></template>
+                <template v-if="item.type === 'selection'"><Checkbox :checked="isSelectAll" :disabled="!data.length" @input="selectAll"></Checkbox></template>
                 <template v-else>
                     <Expand
                         v-if="item.renderHeader"
@@ -17,8 +17,8 @@
                         :render="item.renderHeader"></Expand>
                     <span v-else>{{item.title}}</span>
                     <span class="flex-table-sort" v-if="item.sortable">
-                        <i @click="handleSort(index, 'asc')" :class="{'on': getColumns(index)._sort === 'asc'}" class="ivu-icon ivu-icon-md-arrow-dropup"></i>
-                        <i @click="handleSort(index, 'desc')" :class="{'on': getColumns(index)._sort === 'desc'}" class="ivu-icon ivu-icon-md-arrow-dropdown"></i>
+                        <i @click="handleSort(index, 'asc')" :class="{'on': getColumns(index)._sort === 'asc'}" class="flex-table-arrow-dropup"></i>
+                        <i @click="handleSort(index, 'desc')" :class="{'on': getColumns(index)._sort === 'desc'}" class="flex-table-arrow-dropdown"></i>
                     </span>
                     <div v-if="resizable" @mousedown="onColResize($event, index)" class="flex-table-col-resize j-col-resize"></div>
                 </template>
@@ -27,12 +27,13 @@
     </div>
 </template>
 <script>
+import { Checkbox } from 'vue-checkbox-radio';
 import Mixin from './mixin.js';
 import Expand from './expand.js';
 
 export default {
     name: 'TableHead',
-    components: { Expand },
+    components: { Expand, Checkbox },
     mixins: [Mixin],
     props: {
         data: {
@@ -80,7 +81,7 @@ export default {
     methods: {
         selectAll() {
             const status = !this.isSelectAll;
-            this.$parent.selectAll(status);
+            this.$emit('on-select-all', status);
         },
         onColResize(e, index) {
             this.$emit("on-col-resize", e, index);

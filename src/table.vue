@@ -8,6 +8,7 @@
                 :columns="tableColumns"
                 :data="dataList"
                 :resizable="resizable"
+                @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
             ></table-head>
@@ -22,6 +23,7 @@
                 :scroll="handleBodyScroll"
                 :no-data="noData"
                 :hover="bodyScrollOver"
+                @on-toggle-select="toggleSelect"
             ></table-body>
             <!-- /flex-table-body -->
 
@@ -43,6 +45,7 @@
                 :onlyFixed="true"
                 :data="dataList"
                 :resizable="resizable"
+                @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
             ></table-head>
@@ -56,6 +59,7 @@
                 :data="dataList"
                 :maxHeight="maxHeight"
                 :hover="fixedScrollOver"
+                @on-toggle-select="toggleSelect"
             ></table-body>
 
             <table-foot
@@ -68,9 +72,9 @@
         </div>
 
         <div class="flex-table-reference-line" :class="{'cur': colResize.currentX !== 0}" :style="{'left': `${colResize.currentX}px`}"></div>
-        <Spin fix size="large" v-if="loading">
-            <slot name="loading"></slot>
-        </Spin>
+        <slot name="loading" v-if="loading">
+            <Spinner fix size="large"></Spinner>
+        </slot>
     </div>
     <tableScrollBar
         :body-h="bodyH"
@@ -93,6 +97,7 @@ import tableHead from './tableHead.vue';
 import tableBody from './tableBody.vue';
 import tableFoot from './tableFoot.vue';
 import tableScrollBar from './tableScrollBar.vue';
+import Spinner from './Spinner.vue';
 
 import { MIN_WIDTH } from './data';
 
@@ -101,7 +106,8 @@ export default {
         tableHead,
         tableBody,
         tableFoot,
-        tableScrollBar
+        tableScrollBar,
+        Spinner,
     },
     props: {
         data: {
@@ -144,7 +150,7 @@ export default {
             headerH: 38,
             bodyH: 0,
             footH: 54,
-            maxHeight: this.height,
+            maxHeight: 0,
             bodyScrolling: false,
             fixedBodyScrolling: false,
             scrollYScrolling: false,
@@ -172,6 +178,7 @@ export default {
     },
     mounted(){
         this.resize();
+        this.calHeight();
         window.addEventListener('resize',this.resize);
         window.addEventListener('resize',this.calHeight);
         if (this.resizable) {
@@ -189,7 +196,7 @@ export default {
             deep: true,
         },
         height: function(val){
-            this.maxHeight = val;
+            this.calHeight();
         },
         columns: function(arr) {
             this.tableColumns = arr;
@@ -263,7 +270,7 @@ export default {
         onColResizeMove(e) {
             const colResize = this.colResize
             if (colResize.onColResizing) {
-                const currentX = e.clientX - this.$el.getBoundingClientRect().left;
+                const currentX = e.clientX - colResize.nTableLeft;
                 const dX = currentX - colResize.originX;
                 if (dX >= colResize.minX) { // 限制参考线最小值
                     colResize.currentX = currentX;
@@ -273,9 +280,14 @@ export default {
         onColResizeEnd(e) {
             const colResize = this.colResize;
             if (colResize.onColResizing) {
+                const row = this.tableColumns[colResize.resizeIndex];
                 const dX = colResize.currentX - colResize.originX;
-                const finalX = Math.max(this.tableColumns[colResize.resizeIndex].width + dX, MIN_WIDTH);
-                this.tableColumns[colResize.resizeIndex].width = finalX;
+                const finalX = Math.max((row.width || this.calWidth[row.key]) + dX, MIN_WIDTH);
+                if (row.width) {
+                    row.width = finalX;
+                } else {
+                    this.$set(row, 'width', finalX);
+                }
                 // reset
                 colResize.onColResizing = false;
                 colResize.currentX = 0;
@@ -286,10 +298,13 @@ export default {
             if (e.target.classList.contains('j-col-resize')) {
                 e.stopPropagation();
                 const colResize = this.colResize;
+                const row = this.tableColumns[index];
+                const colWidth = row.width || this.calWidth[row.key];
                 colResize.onColResizing = true;
                 colResize.resizeIndex = index;
-                colResize.originX = colResize.currentX = e.clientX - this.$el.getBoundingClientRect().left;
-                colResize.minX = MIN_WIDTH - this.tableColumns[index].width;
+                colResize.nTableLeft = this.$el.getBoundingClientRect().left;
+                colResize.originX = colResize.currentX = e.clientX - colResize.nTableLeft;
+                colResize.minX = MIN_WIDTH - colWidth;
             }
         },
         handleFixedBodyScroll(e) {
@@ -333,18 +348,15 @@ export default {
         },
         calHeight() {
             if (!this.height) { return; }
-            // 在下次重绘后获取 offsetHeight
-            requestAnimationFrame(() => {
-                const $refs = this.$refs;
-                const $tableFoot = $refs.tableFoot;
-                const headerH = $refs.tableHeader.$el.offsetHeight;
-                const bodyH = $refs.tableBody.$el.querySelector('.flex-table-tr').offsetHeight;
-                const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
-                this.headerH = headerH;
-                this.footH = footH;
-                this.bodyH = bodyH;
-                this.maxHeight = this.height - headerH - footH;
-            });
+            const $refs = this.$refs;
+            const $tableFoot = $refs.tableFoot;
+            const headerH = $refs.tableHeader.$el.offsetHeight;
+            const bodyH = $refs.tableBody.$el.querySelector('.flex-table-tr').offsetHeight;
+            const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
+            this.headerH = headerH;
+            this.footH = footH;
+            this.bodyH = bodyH;
+            this.maxHeight = this.height - headerH - footH;
         },
         resize(){
             requestAnimationFrame(() => {
@@ -362,13 +374,12 @@ export default {
                     let nWidth = item.width;
                     if(nWidth){
                         nWidth = Math.max(nWidth,MIN_WIDTH);
-                        oWidth[sKey] = nWidth-1;//1 -border width
+                        oWidth[sKey] = nWidth;
                         defineTotalWidth += nWidth;
                     }else{
                         nCalLength++;
                     }
                 });
-
                 // 给没有定义宽度的 cell 平均分配或指定最小宽度
                 if (nCalLength > 0) {
                     let nLessWidth = nTableWidth - defineTotalWidth;
@@ -378,7 +389,7 @@ export default {
                         let sKey = item.key || item.title;
                         let nWidth = item.width;
                         if(!nWidth){
-                            oWidth[sKey] = nCalWidth -1 ;//1 -border width
+                            oWidth[sKey] = nCalWidth ;
                         }
                     });
                 } else if (nTableWidth > defineTotalWidth) {
@@ -394,7 +405,6 @@ export default {
                 this.style = {
                     'min-width': Math.max(nTableWidth, nTotalWidth)+'px'
                 };
-
                 this.calWidth = oWidth;
             });
         }
