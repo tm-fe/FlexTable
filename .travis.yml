@@ -2,10 +2,6 @@ language: node_js
 
 sudo: false
 
-notifications:
-  email:
-  - lb.robin1991@gmail.com
-
 node_js:
 - 11
 
