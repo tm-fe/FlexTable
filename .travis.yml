@@ -2,10 +2,6 @@ language: node_js
 
 sudo: false
 
-notifications:
-  email:
-  - lb.robin1991@gmail.com
-
 node_js:
 - 11
 
@@ -26,6 +22,7 @@ script:
     fi
 env:
   matrix:
+  - TEST_TYPE=lint
   - TEST_TYPE=test
 
 branches:
@@ -34,4 +31,6 @@ branches:
     - dev
 
 notifications:
-   webhooks: https://oapi.dingtalk.com/robot/send?access_token=af06d34dc153006f5dc4175296064662f00901c2d24fada39fdeac4bffd33822
+  webhooks: https://oapi.dingtalk.com/robot/send?access_token=af06d34dc153006f5dc4175296064662f00901c2d24fada39fdeac4bffd33822
+  email:
+    - lb.robin1991@gmail.com

@@ -1,6 +1,14 @@
 # FlexTable
-[![Version](https://img.shields.io/npm/v/tm-flextable.svg)](https://www.npmjs.com/package/tm-flextable)
-[![Downloads](https://img.shields.io/npm/dm/tm-flextable.svg)](https://www.npmjs.com/package/tm-flextable)
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![npm download][download-image]][download-url]
+
+[npm-image]: http://img.shields.io/npm/v/tm-flextable.svg?style=flat-square
+[npm-url]: http://npmjs.org/package/tm-flextable
+[travis-image]: https://img.shields.io/travis/tm-fe/FlexTable.svg?style=flat-square
+[travis-url]: https://travis-ci.org/tm-fe/FlexTable
+[download-image]: https://img.shields.io/npm/dm/tm-flextable.svg?style=flat-square
+[download-url]: https://npmjs.org/package/tm-flextable
 
 An efficiently updated div table Vue component. Compatible with Vue 2.x
 
