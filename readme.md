@@ -179,7 +179,12 @@ export default {
 | sortable | 对应列是否可以排序，如果设置为 custom，则代表用户希望远程排序，需要监听 Table 的 on-sort-change 事件 | Boolean | false |
 | sortType | 设置初始化排序。值为 asc, desc 和 normal | String | normal |
 
-## Test Case
+## Test
+```bash
+    yarn test
+    or
+    npm test
+```
 
 ## Coverage
 
