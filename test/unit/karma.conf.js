@@ -19,6 +19,8 @@ module.exports = function(config) {
             reporters: [
                 { type: 'lcov', subdir: '.' },
                 { type: 'text-summary' },
+                { type: 'cobertura', subdir: '.' },
+                { type: 'json', subdir: '.' },
             ],
         },
         client: {

@@ -13,6 +13,8 @@ before_install:
       exit
     fi
     npm install
+    npm install -g codecov
+    
 script:
 - |
     if [ "$TEST_TYPE" = test ]; then
@@ -24,6 +26,9 @@ env:
   matrix:
   - TEST_TYPE=lint
   - TEST_TYPE=coverage
+
+after_success:
+  - codecov
 
 branches:
   only:

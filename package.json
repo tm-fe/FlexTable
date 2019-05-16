@@ -9,6 +9,7 @@
     "dist": "cross-env NODE_ENV=production webpack --config build/webpack.dist.config.js",
     "test": "npx karma start test/unit/karma.conf.js --single-run",
     "coverage": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
+    "report-coverage": "codecov",
     "lint": "./node_modules/.bin/eslint ./src"
   },
   "files": [
