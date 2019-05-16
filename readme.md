@@ -12,12 +12,17 @@
 
 An efficiently updated div table Vue component. Compatible with Vue 2.x
 
+- [Why div table?](#why-div-table)
 - [Screenshots](#screenshots)
 - [Feature](#feature)
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
 - [Demo](#demo)
+
+## Why div table?
+
+Due to table has rendering performance problems: [表格宽度布局算法](https://www.w3.org/TR/CSS2/tables.html#width-layout)
 
 ## Demo
 To view a demo online: [https://tm-fe.github.io/FlexTable/examples/dist/](https://tm-fe.github.io/FlexTable/examples/dist/)
