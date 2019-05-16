@@ -6,8 +6,13 @@ const { VueLoaderPlugin } = require('vue-loader');
 function resolve(dir) {
     return path.join(__dirname, '..', dir);
 }
-const sourceMap = false; // css sourceMap
+let sourceMap = false; // css sourceMap
+let jsSourceMap = true;
+if (process.env.NODE_ENV === 'production') {
+    jsSourceMap = false;
+}
 module.exports = {
+    entry: '../index.js',
     module: {
         // https://doc.webpack-china.org/guides/migrating/#module-loaders-module-rules
         rules: [
@@ -60,14 +65,14 @@ module.exports = {
                     postLoaders: {
                         html: 'babel-loader?sourceMap'
                     },
-                    sourceMap: true,
+                    sourceMap: jsSourceMap,
                 }
             },
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
                 options: {
-                    sourceMap: true,
+                    sourceMap: jsSourceMap,
                 },
                 exclude: /node_modules/,
             },
