@@ -2,7 +2,7 @@
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
 [![npm download][download-image]][download-url]
-[![codecov][codecov-image]](codecov-url)
+[![codecov](codecov-image)](codecov-url)
 
 [npm-image]: http://img.shields.io/npm/v/tm-flextable.svg?style=flat-square
 [npm-url]: http://npmjs.org/package/tm-flextable

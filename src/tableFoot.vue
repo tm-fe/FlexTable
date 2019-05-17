@@ -6,10 +6,10 @@
                 class="flex-table-col" 
                 v-for="(item, index) in columns"
                 :key="index"
-                :class="{'flex-table-col-hidden': isHidden(item)}"
+                :class="{'flex-table-col-hidden': onlyFixed && (item.fixed !== 'left')}"
                 :style="setCellStyle(item)"
             >
-                <template v-if="sum[item.key] && !isHidden(item)">
+                <template v-if="sum[item.key]">
                     <Expand
                         v-if="item.render"
                         :row="sum"
@@ -41,11 +41,6 @@ export default {
         onlyFixed: {
             type: Boolean,
             default: false
-        }
-    },
-    methods: {
-        isHidden(item) {
-            return this.onlyFixed && (item.fixed !== 'left');
         }
     }
 }
