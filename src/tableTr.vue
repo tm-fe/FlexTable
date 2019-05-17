@@ -10,6 +10,7 @@
             :rowIndex="rowIndex"
             :onlyFixed="onlyFixed"
             @on-toggle-select="toggleSelect"
+            @on-toggle-expand="toggleExpand"
         ></table-td>
     </div>
 </template>
@@ -40,6 +41,9 @@ export default {
     methods: {
         toggleSelect(index) {
             this.$emit('on-toggle-select', index);
+        },
+        toggleExpand() {
+            this.$emit('on-toggle-expand', this.rowIndex);
         }
     }
 }

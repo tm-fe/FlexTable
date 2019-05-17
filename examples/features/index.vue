@@ -14,6 +14,7 @@
 </template>
 <script>
 import flexTable from '../../index.js';
+import expandRow from './expandRow.vue';
 
 
 const aTestList = [];
@@ -34,6 +35,17 @@ export default {
     data(){
         return {
             columns: [
+                {
+                    type: 'expand',
+                    width: 50,
+                    render: (h, params) => {
+                        return h(expandRow, {
+                            props: {
+                                row: params.row
+                            }
+                        })
+                    }
+                },
                 {
                     title: 'Name',
                     key: 'name',

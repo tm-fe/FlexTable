@@ -89,7 +89,6 @@
     "webpack-merge": "^4.2.1"
   },
   "pre-commit": [
-    "lint",
-    "coverage"
+    "lint"
   ]
 }
