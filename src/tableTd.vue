@@ -3,6 +3,7 @@
         :class="{
             'flex-table-col': true,
             'flex-table-col-icon': renderType === 'expand',
+            'flex-table-expand-disabled': renderType === 'expand' && row._disableExpand,
             'flex-table-col-hidden': onlyFixed && (column.fixed !== 'left')
             }"
         :style="setCellStyle(column)"
