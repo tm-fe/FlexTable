@@ -1,26 +1,28 @@
 <template>
     <div
         class="flex-table-col"
-        :class="{'flex-table-col-hidden': onlyFixed && (column.fixed !== 'left')}"
+        :class="{'flex-table-col-hidden': isHidden}"
         :style="setCellStyle(column)"
         ref="cell">
-        <template v-if="renderType === 'selection'">
-            <Checkbox :checked="row._isChecked" @input="toggleSelect" :disabled="row._isDisabled"></Checkbox>
+        <template v-if="!isHidden">
+            <template v-if="renderType === 'selection'">
+                <Checkbox :checked="row._isChecked" @input="toggleSelect" :disabled="row._isDisabled"></Checkbox>
+            </template>
+            <Expand
+                v-else-if="renderType === 'render'"
+                :row="row"
+                :column="column"
+                :index="rowIndex"
+                :render="column.render"></Expand>
+
+            <template
+                v-else-if="renderType === 'normal'"
+            >{{row[column.key]}}</template>
+
+            <template
+                v-else-if="renderType === 'html'"
+            ><span v-html="row[column.key]"></span></template>
         </template>
-        <Expand
-            v-else-if="renderType === 'render'"
-            :row="row"
-            :column="column"
-            :index="rowIndex"
-            :render="column.render"></Expand>
-
-        <template
-            v-else-if="renderType === 'normal'"
-        >{{row[column.key]}}</template>
-
-        <template
-            v-else-if="renderType === 'html'"
-        ><span v-html="row[column.key]"></span></template>
     </div>
 </template>
 <script>
@@ -56,6 +58,11 @@ export default {
     data(){
         return {
             renderType: 'normal',
+        }
+    },
+    computed: {
+        isHidden() {
+            return this.onlyFixed && (this.column.fixed !== 'left');
         }
     },
     created(){
