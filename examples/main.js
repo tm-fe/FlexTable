@@ -2,8 +2,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import App from './app.vue';
+import FlexTable from '../index.js';
 
 Vue.use(VueRouter);
+Vue.use(FlexTable);
 
 // 开启debug模式
 Vue.config.debug = true;
