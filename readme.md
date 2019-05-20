@@ -1,15 +1,31 @@
 # FlexTable
-[![Version](https://img.shields.io/npm/v/tm-flextable.svg)](https://www.npmjs.com/package/tm-flextable)
-[![Downloads](https://img.shields.io/npm/dm/tm-flextable.svg)](https://www.npmjs.com/package/tm-flextable)
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![npm download][download-image]][download-url]
+[![codecov][codecov-image]](codecov-url)
+
+[npm-image]: http://img.shields.io/npm/v/tm-flextable.svg?style=flat-square
+[npm-url]: http://npmjs.org/package/tm-flextable
+[travis-image]: https://img.shields.io/travis/tm-fe/FlexTable.svg?style=flat-square
+[travis-url]: https://travis-ci.org/tm-fe/FlexTable
+[download-image]: https://img.shields.io/npm/dm/tm-flextable.svg?style=flat-square
+[download-url]: https://npmjs.org/package/tm-flextable
+[codecov-image]: https://codecov.io/gh/tm-fe/FlexTable/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/tm-fe/FlexTable
 
 An efficiently updated div table Vue component. Compatible with Vue 2.x
 
+- [Why div table?](#why-div-table)
 - [Screenshots](#screenshots)
 - [Feature](#feature)
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
 - [Demo](#demo)
+
+## Why div table?
+
+Due to table has rendering performance problems: [表格宽度布局算法](https://www.w3.org/TR/CSS2/tables.html#width-layout)
 
 ## Demo
 To view a demo online: [https://tm-fe.github.io/FlexTable/examples/dist/](https://tm-fe.github.io/FlexTable/examples/dist/)
@@ -29,8 +45,8 @@ To view demo examples locally clone the repo and run `yarn install && yarn dev` 
 - [x] 排序
 - [x] 拖动调整列宽（resizable）
 - [x] selectable
+- [x] 子表格嵌套
 - [ ] 合并单元格
-- [ ] 子表格嵌套
 - [ ] 拖动改变列顺序
 - [ ] 行loading(row.loading)
 
@@ -179,7 +195,12 @@ export default {
 | sortable | 对应列是否可以排序，如果设置为 custom，则代表用户希望远程排序，需要监听 Table 的 on-sort-change 事件 | Boolean | false |
 | sortType | 设置初始化排序。值为 asc, desc 和 normal | String | normal |
 
-## Test Case
+## Test
+```bash
+    yarn test
+    or
+    npm test
+```
 
 ## Coverage
 

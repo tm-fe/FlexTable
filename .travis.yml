@@ -1,0 +1,40 @@
+language: node_js
+
+sudo: false
+
+node_js:
+- 11
+
+before_install:
+- |
+    if ! git diff --name-only $TRAVIS_COMMIT_RANGE | grep -qvE '(\.md$)|(^(docs|examples))/'
+    then
+      echo "Only docs were updated, stopping build process."
+      exit
+    fi
+    npm install
+    npm install -g codecov
+
+script:
+- |
+    if [ "$TEST_TYPE" = test ]; then
+      npm test
+    else
+      npm run $TEST_TYPE
+    fi
+env:
+  matrix:
+  - TEST_TYPE=lint
+  - TEST_TYPE=coverage
+
+after_success:
+  - codecov
+
+branches:
+  only:
+    - master
+
+notifications:
+  webhooks: https://oapi.dingtalk.com/robot/send?access_token=af06d34dc153006f5dc4175296064662f00901c2d24fada39fdeac4bffd33822
+  email:
+    - lb.robin1991@gmail.com

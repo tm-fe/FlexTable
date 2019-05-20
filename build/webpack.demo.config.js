@@ -8,7 +8,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 
 module.exports = merge(webpackBaseConfig, {
-    devtool: 'eval-source-map',
+    // devtool: 'eval-source-map',
     entry: {
         main: './examples/main',
         vendors: ['vue', 'vue-router']
@@ -41,5 +41,6 @@ module.exports = merge(webpackBaseConfig, {
             parallel: true,
             sourceMap: false,
         })
-    ]
+    ],
+    mode: 'production',
 });

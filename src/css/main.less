@@ -54,12 +54,13 @@
     &-body{
         .@{fb}-row{
             &:nth-child(odd){
-                .@{fb}-col{
-                    background: #f9f9f9;
-                }
+                background: #f9f9f9;
             }
             &:last-child{
                 border-bottom: 1px solid @borderColor
+            }
+            &:hover{
+                background-color: #ebf7ff;
             }
         }
     }
@@ -117,6 +118,10 @@
 
         &-hidden{
             visibility: hidden;
+        }
+        &-icon{
+            text-align: center;
+            cursor: pointer;
         }
         &-ellipsis{
             white-space: nowrap;
@@ -206,6 +211,26 @@
         &:hover{
             border-top-color: #333;
         }
+    }
+    &-arrow-right,
+    &-arrow-down{
+        display: inline-block;
+        vertical-align: middle;
+        width: 4px;
+        height: 4px;
+        margin: auto;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-right-color: #333;
+        border-bottom-color: #333;
+        transform: rotate(-45deg);
+    }
+    &-arrow-down{
+        transform: rotate(45deg);
+    }
+    &-expand-disabled{
+        opacity: 0.3;
+        cursor: not-allowed;
     }
 }
 .checkbox-component{

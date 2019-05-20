@@ -1,15 +1,19 @@
 <template>
 <div>
-    <h3>基础用法</h3>
-    <p>表格的简单用法 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/index.vue">source code</a></p>
+    <h3>scoped-slot</h3>
+    <p>scoped-slot <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/scopedSlot.vue">source code</a></p>
     
     <flex-table
         resizable
         :loading="loading" 
         :columns="columns" 
         :data="list"
-        :sum="sum"
-    ></flex-table>
+        :sum="sum">
+        <template slot-scope="{ row, index }" slot="operation">
+            <button style="margin-right: 5px" @click="show(index)">View</button>
+            <button @click="remove(index)">Delete</button>
+        </template>
+    </flex-table>
 </div>
 </template>
 <script>
@@ -52,6 +56,11 @@ export default {
                     title: 'Date',
                     key: 'date',
                 },
+                {
+                    title: 'operation',
+                    key: 'operation',
+                    type: 'slot',
+                },
             ],
             loading: false,
             list: aTestList,
@@ -64,6 +73,13 @@ export default {
         }
     },
     mounted() {},
-    methods: {}
+    methods: {
+        show(index) {
+            alert('show ' + index);
+        },
+        remove(index) {
+            alert('remove ' + index);
+        }
+    }
 }
 </script>
