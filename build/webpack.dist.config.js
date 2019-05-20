@@ -2,36 +2,41 @@ const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const webpackBaseConfig = require('./webpack.base.config.js');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 process.env.NODE_ENV = 'production';
 
 module.exports = merge(webpackBaseConfig, {
-    devtool: 'source-map',
-
+    // devtool: 'source-map',
     entry: {
-        main: './src/index.js'
+        main: './index.js',
     },
     output: {
         path: path.resolve(__dirname, '../dist'),
         publicPath: '/dist/',
-        filename: 'tm-flextable.js',
-        library: 'tm-flextable',
+        filename: 'index.js',
+        library: 'FlexTable',
         libraryTarget: 'umd',
-        umdNamedDefine: true
+        umdNamedDefine: true,
     },
     externals: {
         vue: {
             root: 'Vue',
             commonjs: 'vue',
             commonjs2: 'vue',
-            amd: 'vue'
+            amd: 'vue',
         }
     },
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {
-                NODE_ENV: '"production"'
-            }
-        })
-    ]
+                NODE_ENV: '"production"',
+            },
+        }),
+        new UglifyJsPlugin({
+            parallel: true,
+            sourceMap: false,
+        }),
+    ],
+    mode: 'production',
 });

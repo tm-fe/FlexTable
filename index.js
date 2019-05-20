@@ -1,3 +1,8 @@
-import FlexTable from "./src/table.vue";
+import FlexTable from './src/table.vue';
 
-export default FlexTable;
+const install = function (Vue) {
+    Vue.component('flex-table', FlexTable);
+};
+
+export default { install, FlexTable };
+export { install, FlexTable };
