@@ -53,6 +53,10 @@ const router = new VueRouter({
             path: '/expand',
             component: (resolve) => require(['./features/expand.vue'], resolve)
         },
+        {
+            path: '/scopedSlot',
+            component: (resolve) => require(['./features/scopedSlot.vue'], resolve)
+        },
     ]
 });
 

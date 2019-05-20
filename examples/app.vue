@@ -13,6 +13,7 @@
                 <li>多选：<router-link to="/selectable">selectable</router-link></li>
                 <li>调整宽度：<router-link to="/resizable">resizable</router-link></li>
                 <li>展开：<router-link to="/expand">expand</router-link></li>
+                <li>scopedSlot：<router-link to="/scopedSlot">scoped-slot</router-link></li>
             </ul>
         </nav>
         <router-view></router-view>

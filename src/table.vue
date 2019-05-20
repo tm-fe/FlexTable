@@ -101,6 +101,7 @@ import Spinner from './Spinner.vue';
 
 import { MIN_WIDTH } from './data';
 
+let tableIdSeed = 1;
 export default {
     components: {
         tableHead,
@@ -143,6 +144,7 @@ export default {
     },
     data(){
         return {
+            tableId: tableIdSeed++,
             dataList: this.initData(),
             style:{},
             calWidth: {},

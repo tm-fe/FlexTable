@@ -24,6 +24,12 @@
             :column="column"
             :index="rowIndex"
             :render="column.render"></Expand>
+        <TableSlot
+            v-else-if="renderType === 'slot'"
+            :row="row"
+            :column="column"
+            :index="rowIndex"
+            :owner="owner"></TableSlot>
 
         <template
             v-else-if="renderType === 'normal'"
@@ -38,10 +44,11 @@
 import { Checkbox } from 'vue-checkbox-radio';
 import Expand from './expand.js';
 import Mixin from './mixin.js';
+import TableSlot from './slot.js';
 
 export default {
     name: 'TableTd',
-    components: { Expand, Checkbox },
+    components: { Expand, Checkbox, TableSlot },
     mixins: [Mixin],
     props:{
         column: {
@@ -70,16 +77,27 @@ export default {
             expandOpen: false,
         }
     },
+    computed: {
+        owner() {
+            let parent = this.$parent;
+            while (parent && !parent.tableId) {
+                parent = parent.$parent;
+            }
+            return parent;
+        },
+    },
     created(){
         // renderType
         if (this.column.type === 'selection') {
             this.renderType = 'selection';
         } else if(this.column.type === 'expand'){
             this.renderType = 'expand';
+        } else if (this.column.type === 'slot') {
+            this.renderType = 'slot';
+        } else if(this.column.type === 'html'){
+            this.renderType = 'html';
         } else if(this.column.render){
             this.renderType = 'render';
-        }else if(this.column.type === 'html'){
-            this.renderType = 'html';
         }
     },
     methods: {
