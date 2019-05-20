@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>iview example</title>
+    <script type="text/javascript" src="http://vuejs.org/js/vue.min.js"></script>
+    <script type="text/javascript" src="../dist/index.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <flex-table resizable :loading="loading" :columns="columns" :data="list" :sum="sum">
+            <template slot-scope="{ row, index }" slot="operation">
+                <button style="margin-right: 5px" @click="show(index)">View</button>
+                <button @click="remove(index)">Delete</button>
+            </template>
+        </flex-table>
+    </div>
+    <script>
+        const aTestList = [];
+        for (let i = 0; i < 10; i++) {
+            const oTestData = {
+                name: 'John Brown',
+                age: 18,
+                address: 'New York No. 1 Lake Park',
+                date: '2016-10-03',
+            };
+            aTestList.push(oTestData);
+        }
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    columns: [
+                        {
+                            title: 'Name',
+                            key: 'name',
+                        },
+                        {
+                            title: 'Age',
+                            key: 'age',
+                            render(h, params) {
+                                return h('span', 'age: ' + params.row.age)
+                            }
+                        },
+                        {
+                            title: 'Address',
+                            key: 'address',
+                        },
+                        {
+                            title: 'Date',
+                            key: 'date',
+                        },
+                        {
+                            title: 'operation',
+                            key: 'operation',
+                            type: 'slot',
+                        },
+                    ],
+                    loading: false,
+                    list: aTestList,
+                    sum: {
+                        name: 'Jim Green',
+                        age: 24,
+                        address: 'London',
+                        date: '2016-10-01',
+                    },
+                }
+            },
+            mounted() { },
+            methods: {
+                show(index) {
+                    alert('show ' + index);
+                },
+                remove(index) {
+                    alert('remove ' + index);
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
