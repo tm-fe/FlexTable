@@ -2,7 +2,8 @@
   "name": "tm-flextable",
   "version": "0.0.5",
   "description": "Use div to build flexible、efficiently updated table components with Vue.js",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "typings": "types/index.d.ts",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --content-base test/ --open --inline --hot --compress --history-api-fallback --port 8081 --config build/webpack.dev.config.js",
     "demo": "cross-env NODE_ENV=production webpack --config build/webpack.demo.config.js",
@@ -13,6 +14,7 @@
     "lint": "./node_modules/.bin/eslint ./src"
   },
   "files": [
+    "dist",
     "src",
     "types",
     "index.js"
