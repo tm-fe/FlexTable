@@ -2,6 +2,7 @@ export default {
     name: 'TableExpand',
     functional: true,
     props: {
+        class: String,
         row: Object,
         render: Function,
         index: Number,

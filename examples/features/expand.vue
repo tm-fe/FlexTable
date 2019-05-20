@@ -1,7 +1,7 @@
 <template>
 <div>
-    <h3>基础用法</h3>
-    <p>表格的简单用法 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/index.vue">source code</a></p>
+    <h3>展开功能</h3>
+    <p>表格行展开 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/expand.vue">source code</a></p>
     
     <flex-table
         resizable
@@ -14,6 +14,8 @@
 </template>
 <script>
 import flexTable from '../../index.js';
+import expandRow from './expandRow.vue';
+
 
 const aTestList = [];
 for(let i=0;i<10;i++){
@@ -33,6 +35,17 @@ export default {
     data(){
         return {
             columns: [
+                {
+                    type: 'expand',
+                    width: 50,
+                    render: (h, params) => {
+                        return h(expandRow, {
+                            props: {
+                                row: params.row
+                            }
+                        })
+                    }
+                },
                 {
                     title: 'Name',
                     key: 'name',

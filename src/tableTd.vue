@@ -1,11 +1,22 @@
 <template>
     <div
-        class="flex-table-col"
-        :class="{'flex-table-col-hidden': onlyFixed && (column.fixed !== 'left')}"
+        :class="{
+            'flex-table-col': true,
+            'flex-table-col-icon': renderType === 'expand',
+            'flex-table-expand-disabled': renderType === 'expand' && row._disableExpand,
+            'flex-table-col-hidden': onlyFixed && (column.fixed !== 'left')
+            }"
         :style="setCellStyle(column)"
+        @click="onToggleExpand"
         ref="cell">
         <template v-if="renderType === 'selection'">
             <Checkbox :checked="row._isChecked" @input="toggleSelect" :disabled="row._isDisabled"></Checkbox>
+        </template>
+        <template v-if="renderType === 'expand'">
+            <i :class="{
+                'flex-table-arrow-right': !expandOpen,
+                'flex-table-arrow-down': expandOpen,
+                }"></i>
         </template>
         <Expand
             v-else-if="renderType === 'render'"
@@ -56,12 +67,15 @@ export default {
     data(){
         return {
             renderType: 'normal',
+            expandOpen: false,
         }
     },
     created(){
         // renderType
         if (this.column.type === 'selection') {
             this.renderType = 'selection';
+        } else if(this.column.type === 'expand'){
+            this.renderType = 'expand';
         } else if(this.column.render){
             this.renderType = 'render';
         }else if(this.column.type === 'html'){
@@ -71,6 +85,11 @@ export default {
     methods: {
         toggleSelect() {
             this.$emit('on-toggle-select', this.rowIndex);
+        },
+        onToggleExpand() {
+            if (this.renderType !== 'expand') { return; }
+            this.expandOpen = !this.expandOpen;
+            this.$emit('on-toggle-expand');
         }
     }
 }

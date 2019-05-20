@@ -49,6 +49,10 @@ const router = new VueRouter({
             path: '/selectable',
             component: (resolve) => require(['./features/selectable.vue'], resolve)
         },
+        {
+            path: '/expand',
+            component: (resolve) => require(['./features/expand.vue'], resolve)
+        },
     ]
 });
 
