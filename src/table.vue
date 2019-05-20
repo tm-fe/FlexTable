@@ -227,6 +227,8 @@ export default {
                 const newItem = JSON.parse(JSON.stringify(item));
                 newItem._isChecked = !!newItem._checked;
                 newItem._isDisabled = !!newItem._disabled;
+                newItem._expanded = !!newItem._expanded;
+                newItem._disableExpand = !!newItem._disableExpand;
                 return newItem;
             });
             return list;
