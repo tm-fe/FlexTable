@@ -1,5 +1,6 @@
 @fb: flex-table;
 @borderColor: #e9eaec;
+@hoverColor: #0b8df8;
 .@{fb}{
     background-color: #fff;
     border-bottom: 1px solid #dddee1;
@@ -19,7 +20,7 @@
         flex-shrink: 0;
     }
     &-scroll-y{
-        width: 10px;
+        // width: 10px;
         flex-shrink: 0;
         border-left: 1px solid #dddee1;
         &-head{
@@ -111,7 +112,7 @@
             width: 4px;
             cursor: col-resize;
             &:hover{
-                background-color: #3eb4b4;
+                background-color: @hoverColor;
             }
         }
 
@@ -180,7 +181,7 @@
         border-right: 1px solid transparent;
         cursor: col-resize;
         &.cur{
-            border-color: #3eb4b4;
+            border-color: @hoverColor;
         }
     }
     &-arrow-dropup,
