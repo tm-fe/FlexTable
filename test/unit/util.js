@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import flexTable from '../../index';
 
-Vue.component('flex-table', flexTable);
+Vue.use(flexTable);
 
 let id = 0;
 
