@@ -1,5 +1,6 @@
 @fb: flex-table;
 @borderColor: #e9eaec;
+@hoverColor: #0b8df8;
 .@{fb}{
     background-color: #fff;
     border-bottom: 1px solid #dddee1;
@@ -7,19 +8,72 @@
     &-wrap{
         position: relative;
         border: 1px solid #dddee1;
+        // border-bottom: none;
         display: flex;
         align-content: stretch;
+    }
+    &-big{
+        .@{fb}{
+            &-scroll-y{
+                &-head, &-foot{
+                    padding: 15px 0;
+                }
+                &-head{
+                    height: 48px;
+                }
+            }
+            &-col{
+                padding: 15px 10px;
+                font-size: 14px;
+            }
+        }
+    }
+    &-small{
+        .@{fb}{
+            &-scroll-y{
+                &-head, &-foot{
+                    padding: 5px 0;
+                }
+                &-head{
+                    height: 28px;
+                }
+            }
+            &-col{
+                padding: 5px 10px;
+            }
+        }
+    }
+    &-dark{
+        color:#fff;
+        .@{fb}{
+            background-color: #333;
+            &-body{
+                .@{fb}-row{
+                    &:nth-child(odd){
+                        background: #3d3d3d;
+                    }
+                    &:hover{
+                        background-color: #444;
+                    }
+                }
+            }
+            &-col{
+                color: #fff;
+                .checkbox-component>input+label>.input-box{
+                    border-color: #fff;
+                }
+            }
+        }
     }
 
     &-layout{
         max-width: 100%;
         overflow: auto;
-        padding-bottom: 1px;
         flex: 1;
         flex-shrink: 0;
     }
     &-scroll-y{
-        width: 10px;
+        width: 15px;
         flex-shrink: 0;
         border-left: 1px solid #dddee1;
         &-head{
@@ -112,7 +166,7 @@
             width: 4px;
             cursor: col-resize;
             &:hover{
-                background-color: #3eb4b4;
+                background-color: @hoverColor;
             }
         }
 
@@ -133,6 +187,9 @@
             margin-right: 0;
             margin-bottom: 0;
         }
+        .checkbox-component>input+label>.input-box{
+            border-color: #ccc;
+        }
     }
     &-tip{
         text-align: center;
@@ -143,11 +200,11 @@
         width: 14px;
         height: 12px;
         margin-top: -1px;
+        margin-left: 5px;
         vertical-align: middle;
         overflow: hidden;
         cursor: pointer;
         position: relative;
-
         i{
             display: block;
             height: 0;
@@ -185,7 +242,7 @@
         border-right: 1px solid transparent;
         cursor: col-resize;
         &.cur{
-            border-color: #3eb4b4;
+            border-color: @hoverColor;
         }
     }
     &-arrow-dropup,

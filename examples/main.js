@@ -1,6 +1,7 @@
 // import 'babel-polyfill';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import routes from './routes';
 import App from './app.vue';
 import FlexTable from '../index.js';
 
@@ -14,55 +15,10 @@ Vue.config.debug = true;
 const router = new VueRouter({
     esModule: false,
     mode: 'hash',
-    routes: [
-        {
-            path: '/',
-            component: (resolve) => require(['./features/index.vue'], resolve)
-        },
-        {
-            path: '/fixedHeader',
-            component: (resolve) => require(['./features/fixedHeader.vue'], resolve)
-        },
-        {
-            path: '/footer',
-            component: (resolve) => require(['./features/footer.vue'], resolve)
-        },
-        {
-            path: '/loading',
-            component: (resolve) => require(['./features/loading.vue'], resolve)
-        },
-        {
-            path: '/sortable',
-            component: (resolve) => require(['./features/sortable.vue'], resolve)
-        },
-        {
-            path: '/render',
-            component: (resolve) => require(['./features/render.vue'], resolve)
-        },
-        {
-            path: '/fixedLeft',
-            component: (resolve) => require(['./features/fixedLeft.vue'], resolve)
-        },
-        {
-            path: '/resizable',
-            component: (resolve) => require(['./features/resizable.vue'], resolve)
-        },
-        {
-            path: '/selectable',
-            component: (resolve) => require(['./features/selectable.vue'], resolve)
-        },
-        {
-            path: '/expand',
-            component: (resolve) => require(['./features/expand.vue'], resolve)
-        },
-        {
-            path: '/scopedSlot',
-            component: (resolve) => require(['./features/scopedSlot.vue'], resolve)
-        },
-    ]
+    routes,
 });
 
 const app = new Vue({
-    router: router,
-    render: h => h(App)
+    router,
+    render: h => h(App),
 }).$mount('#app');

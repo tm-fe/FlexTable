@@ -1,38 +1,120 @@
 <template>
     <div class="container">
-        <h1>FlexTable</h1>
-        <nav class="nav">
-            <ul>
-                <li>普通用法：<router-link to="/">index</router-link></li>
-                <li>设置表格最大高度：<router-link to="/fixedHeader">fixed header</router-link></li>
-                <li>固定列：<router-link to="/fixedLeft">fixedLeft</router-link></li>
-                <li>排序：<router-link to="/sortable">sortable</router-link></li>
-                <li>Footer:<router-link to="/footer">footer</router-link></li>
-                <li>加载中：<router-link to="/loading">loading</router-link></li>
-                <li>render 函数：<router-link to="/render">render</router-link></li>
-                <li>多选：<router-link to="/selectable">selectable</router-link></li>
-                <li>调整宽度：<router-link to="/resizable">resizable</router-link></li>
-                <li>展开：<router-link to="/expand">expand</router-link></li>
-                <li>scopedSlot：<router-link to="/scopedSlot">scoped-slot</router-link></li>
-            </ul>
-        </nav>
-        <router-view></router-view>
+        <header>
+            <h1>FlexTable</h1>
+        </header>
+        <div class="main">
+            <nav class="nav">
+                <ul>
+                    <li v-for="item in routes" :key="item.name">
+                        <router-link
+                            :to="item.path"
+                            :class="$route.name === item.name?'active':''"
+                        >{{
+                            (item.meta && item.meta.title) || item.name
+                        }}</router-link>
+                    </li>
+                </ul>
+            </nav>
+            <div class="cont">
+                <router-view></router-view>
+            </div>
+        </div>
     </div>
 </template>
 <script>
-    module.exports = {
-        data: function() {
-            return {
-            }
-        },
+import routes from "./routes";
+export default {
+    data: function() {
+        return {
+            routes
+        };
     }
+};
 </script>
-<style lang="less" scoped>
-.container{
-    padding: 10px 40px 0;
+<style lang="less">
+body,
+h1,
+ul,
+li {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
 }
-.nav{ 
-    margin: 20px auto;
-    border: 1px solid #d8d8d8;
+.container {
+    height: 100vh;
+    display: flex;
+    flex-flow: column;
+    header {
+        padding: 10px;
+        flex-shrink: 0;
+        color: #fff;
+        text-align: center;
+        border-bottom: 2px solid #0e8cf3;
+        background: linear-gradient(to bottom, #1696ff, #16c9ff);
+        h1 {
+            font-weight: 600;
+            font-size: 28px;
+            line-height: 1;
+        }
+    }
+}
+.main {
+    flex: 1;
+    position: relative;
+}
+.btn-box{
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+    button{
+        padding: 5px 10px;
+    }
+}
+.nav {
+    padding: 15px 5px;
+    width: 170px;
+    border-right: 1px solid #d8d8d8;
+    flex-shrink: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: #fcfcfc;
+    ul li{
+        list-style: none;
+    }
+    a{
+        color:#444;
+        text-decoration: none;
+        display: block;
+        line-height: 24px;
+        margin-bottom: 5px;
+        padding: 0 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        &:hover{
+            color:#0e8cf3;
+        }
+        &.active{
+            background: #0e8cf3;
+            color:#fff;
+            &:hover{
+                color:#fff;
+            }
+        }
+    }
+}
+.cont {
+    position: absolute;
+    padding: 20px;
+    top: 0;
+    left: 181px;
+    right: 0;
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 </style>

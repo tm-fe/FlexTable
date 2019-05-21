@@ -5,7 +5,7 @@
         @mouseover="hover"
         :class="{'flex-table-fixed-header': maxHeight}"
         :style="style">
-        <div v-if="data.length">
+        <div class="flex-table-tr" v-if="data.length">
             <template v-for="(row, index) in data">
                 <table-tr
                     :key="index"

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex-table-wrap">
+    <div :class="wrapClasses">
     <div class="flex-table-layout">
         <div class="flex-table" :style="style">
             <table-head
@@ -101,6 +101,8 @@ import Spinner from './Spinner.vue';
 
 import { MIN_WIDTH } from './data';
 
+const prefixCls = 'flex-table';
+
 let tableIdSeed = 1;
 export default {
     components: {
@@ -140,6 +142,14 @@ export default {
         noData: {
             type: String,
             default: 'No Data'
+        },
+        size: {
+            type: String,
+            default: 'default'
+        },
+        theme: {
+            type: String,
+            default: 'light'
         }
     },
     data(){
@@ -166,6 +176,18 @@ export default {
         }
     },
     computed: {
+        wrapClasses () {
+            let arr = [`${prefixCls}-wrap`];
+            if (this.size === 'big') {
+                arr.push(`${prefixCls}-big`)
+            } else if (this.size === 'small') {
+                arr.push(`${prefixCls}-small`)
+            }
+            if (this.theme === 'dark') {
+                arr.push(`${prefixCls}-dark`)
+            }
+            return arr;
+        },
         hasFixed: function() {
             return this.tableColumns.some(item => item.fixed === 'left');
         },

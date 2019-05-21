@@ -135,6 +135,7 @@ export default {
 | loading | 是否加载中 | Boolean | false |
 | resizable | 是否可拖动调整列宽 | Boolean | false |
 | height | 表格高度，单位 px，设置后，如果表格内容大于此值，会固定表头 | Number | - |
+| no-data | 数据为空时显示的提示内容 | String | No Data |
 
 ### Table events
 
@@ -151,6 +152,7 @@ export default {
 | 属性 | 说明 | 类型 | 默认值 |
 | ------------ | ------- | ------- | ----------- |
 | title | 列名 | String | - |
+| key | 列名 | String | - |
 | type | 列类型，可选值为 index、selection | String | - |
 | width | 列宽，不设置将自动分配，最小 60px | Number | 60 |
 | align | 对齐方式，可选值为 left 左对齐、right 右对齐和 center 居中对齐 | String | Left |
@@ -159,6 +161,12 @@ export default {
 | renderHeader | 自定义列头显示内容，使用 Vue 的 Render 函数。传入两个参数，第一个是 h，第二个为对象，包含 column 和 index，分别为当前列数据和当前列索引。 | Function | - |
 | sortable | 对应列是否可以排序，如果设置为 custom，则代表用户希望远程排序，需要监听 Table 的 on-sort-change 事件 | Boolean | false |
 | sortType | 设置初始化排序。值为 asc, desc 和 normal | String | normal |
+
+### Table slot
+
+| 名称 | 说明 |
+| ------------ | ------- |
+| loading | 加载中 |
 
 ## Test
 ```bash
