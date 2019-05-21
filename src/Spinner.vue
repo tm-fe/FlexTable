@@ -12,7 +12,7 @@ export default {
     data() {
         return {
             spinnerStyle: {
-                backgroundColor: '#3eb4b4',
+                backgroundColor: '#0b8df8',
                 height: '15px',
                 width: '15px',
                 margin: '2px',
