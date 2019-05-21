@@ -2,7 +2,7 @@
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
 [![npm download][download-image]][download-url]
-[![codecov](codecov-image)](codecov-url)
+[![codecov][codecov-image]](codecov-url)
 
 [npm-image]: http://img.shields.io/npm/v/tm-flextable.svg?style=flat-square
 [npm-url]: http://npmjs.org/package/tm-flextable
@@ -45,8 +45,8 @@ To view demo examples locally clone the repo and run `yarn install && yarn dev` 
 - [x] 排序
 - [x] 拖动调整列宽（resizable）
 - [x] selectable
+- [x] 子表格嵌套
 - [ ] 合并单元格
-- [ ] 子表格嵌套
 - [ ] 拖动改变列顺序
 - [ ] 行loading(row.loading)
 

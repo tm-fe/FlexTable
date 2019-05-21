@@ -101,6 +101,7 @@ import Spinner from './Spinner.vue';
 
 import { MIN_WIDTH } from './data';
 
+let tableIdSeed = 1;
 export default {
     components: {
         tableHead,
@@ -143,6 +144,7 @@ export default {
     },
     data(){
         return {
+            tableId: tableIdSeed++,
             dataList: this.initData(),
             style:{},
             calWidth: {},
@@ -227,6 +229,8 @@ export default {
                 const newItem = JSON.parse(JSON.stringify(item));
                 newItem._isChecked = !!newItem._checked;
                 newItem._isDisabled = !!newItem._disabled;
+                newItem._expanded = !!newItem._expanded;
+                newItem._disableExpand = !!newItem._disableExpand;
                 return newItem;
             });
             return list;

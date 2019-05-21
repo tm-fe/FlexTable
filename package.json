@@ -1,6 +1,6 @@
 {
   "name": "tm-flextable",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Use div to build flexible、efficiently updated table components with Vue.js",
   "main": "index.js",
   "scripts": {
@@ -89,7 +89,6 @@
     "webpack-merge": "^4.2.1"
   },
   "pre-commit": [
-    "lint",
-    "coverage"
+    "lint"
   ]
 }

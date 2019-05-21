@@ -90,7 +90,7 @@ describe('Flex-Table', () => {
             aBodyRow.forEach( (node) => {
                 const aCol = node.querySelectorAll('.flex-table-col');
                 aCol.forEach( (elem) => {
-                    aBodyData.push(elem.textContent);
+                    aBodyData.push(elem.textContent.trim());
                 });
             });
             expect(aBodyData).to.eql(aTestData);

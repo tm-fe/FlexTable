@@ -1,22 +1,21 @@
 export default {
-    name: 'TableExpand',
+    name: 'TableSlot',
     functional: true,
     props: {
         class: String,
         row: Object,
-        render: Function,
         index: Number,
         column: {
             type: Object,
             default: null,
         },
+        owner: Object,
     },
     render: (h, ctx) => {
-        const params = {
+        return h('div', ctx.props.owner.$scopedSlots[ctx.props.column.key]({
             row: ctx.props.row,
+            column: ctx.props.column,
             index: ctx.props.index,
-        };
-        if (ctx.props.column) params.column = ctx.props.column;
-        return ctx.props.render(h, params);
+        }));
     },
 };
