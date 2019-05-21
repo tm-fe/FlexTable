@@ -15,7 +15,7 @@
     </div>
 </template>
 <script>
-import flexTable from '../../index.js';
+// import flexTable from '../../index.js';
 
 const aTestList = [];
 for(let i=0;i<20;i++){
@@ -29,9 +29,9 @@ for(let i=0;i<20;i++){
 }
 
 export default {
-    components:{
-        flexTable
-    },
+    // components:{
+    //     flexTable
+    // },
     data(){
         return {
             columns: [

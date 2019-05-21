@@ -13,7 +13,7 @@
 </div>
 </template>
 <script>
-import flexTable from '../../index.js';
+// import flexTable from '../../index.js';
 import expandRow from './expandRow.vue';
 
 
@@ -29,9 +29,9 @@ for(let i=0;i<10;i++){
 }
 
 export default {
-    components:{
-        flexTable
-    },
+    // components:{
+    //     flexTable
+    // },
     data(){
         return {
             columns: [

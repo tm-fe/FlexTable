@@ -71,91 +71,56 @@ export default {
 
 ## Usage
 
+### CDN 引入
 ```html
-<template>
+<script src="https://unpkg.com/tm-flextable@latest/dist/index.js" type="text/javascript"></script>
+```
+然后直接在页面使用
+```html
+<div id="app">
     <flex-table
         resizable
         :loading="loading" 
         :columns="columns" 
         :data="list"
-        :sum="sum"
-        :height="height"
-        @on-sort-change="onSortChange"
-    ></flex-table>
-</template>
+        :sum="sum">
+    </flex-table>
+</div>
 <script>
-import flexTable from 'tm-flextable';
+    new Vue({
+        el: '#app',
+        data: {
+            // ...
+        },
+        methods: {
+            // ...
+        }
+    })
+  </script>
+```
 
-const aTestList = [];
-for(let i=0;i<20;i++){
-    const oTestData = {
-        name: 'John Brown',
-        age: 18,
-        address: 'New York No. 1 Lake Park',
-        date: '2016-10-03',
-        _checked: Math.random() > 0.7, // only for selection=true
-        _disabled: Math.random() > 0.7, // only for selection=true
-    };
-    aTestList.push(oTestData);
-}
+### npm 安装(推荐)
+```js
+// main.js
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import App from 'components/app.vue';
+import Routers from './router.js';
+import FlexTable from 'tm-flextable';
 
+Vue.use(VueRouter);
+Vue.use(FlexTable); // 全局注册组件
+
+//or 
+// app.vue
+// 局部注册
+import { FlexTable } from 'tm-flextable';
 export default {
     components:{
         flexTable
     },
-    data(){
-        return {
-            columns: [
-                {
-                    type: 'selection',
-                    width: 20,
-                    align: 'center',
-                    fixed: 'left'
-                },
-                {
-                    title: 'Name',
-                    key: 'name',
-                    width: 100,
-                    fixed: 'left',
-                    sortable: true,
-                },
-                {
-                    title: 'Age',
-                    key: 'age',
-                    sortable: true,
-                    render(h, params){
-                        return h('span', 'age: '+ params.row.age)
-                    }
-                },
-                {
-                    title: 'Address',
-                    key: 'address',
-                    width: 300,
-                },
-                {
-                    title: 'Date',
-                    key: 'date',
-                    sortable: true,
-                },
-            ],
-            loading: false,
-            list: aTestList,
-            sum:{
-                name: 'Jim Green',
-                age: 24,
-                address: 'London',
-                date: '2016-10-01'
-            },
-            height: 250, // for table max-height
-        }
-    },
-    methods: {
-        onSortChange(obj) {
-            console.log(obj);
-        },
-    }
-}
-</script>
+    // ...
+
 ```
 
 ## API
