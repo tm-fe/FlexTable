@@ -2,7 +2,7 @@ import { createVue } from '../util';
 
 const aTestList = [];
 const aTestData = [];
-for(let i=0;i<5;i++){
+for (let i = 0; i < 5; i++) {
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -21,7 +21,7 @@ for(let i=0;i<5;i++){
     }
 }
 
-describe('Flex-Table', () => { 
+describe('Flex-Table', () => {
     // 基础测试
     describe('render', () => {
         const vm = createVue({
@@ -34,22 +34,22 @@ describe('Flex-Table', () => {
                     :sum="sum"
                 ></flex-table>
             `,
-            data(){
+            data() {
                 return {
                     columns: [
                         {
                             title: 'Name',
                             key: 'name',
                             renderHeader(h, params) {
-                                return h('span', 'Custom Title : '+ params.column.title)
-                            }
+                                return h('span', `Custom Title : ${params.column.title}`);
+                            },
                         },
                         {
                             title: 'Age',
                             key: 'age',
-                            render(h, params){
-                                return h('span', 'age: '+ params.row.age)
-                            }
+                            render(h, params) {
+                                return h('span', `age: ${params.row.age}`);
+                            },
                         },
                         {
                             title: 'Address',
