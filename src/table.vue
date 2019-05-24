@@ -457,7 +457,8 @@ export default {
         resize(){
             requestAnimationFrame(() => {
                 // wrapper 宽度
-                const nTableWidth = this.$el.offsetWidth-2;
+                const scrollBarWidth = this.showScrollBar ? 16 : 0;
+                const nTableWidth = this.$el.offsetWidth - 2 - scrollBarWidth;
 
                 const oWidth = {};
                 let defineTotalWidth = 0; //定义的宽度总和
