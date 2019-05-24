@@ -221,6 +221,9 @@ export default {
             if (this.theme === 'dark') {
                 arr.push(`${prefixCls}-dark`)
             }
+            if (this.showScrollBar) {
+                arr.push('has-scroll-bar')
+            }
             return arr;
         },
         hasFixedLeft: function() {
@@ -244,6 +247,9 @@ export default {
                 }
                 return width;
             }, 0);
+        },
+        showScrollBar: function() {
+            return this.bodyH > this.maxHeight;
         }
     },
     mounted(){
