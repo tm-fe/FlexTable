@@ -6,7 +6,7 @@
                 class="flex-table-col" 
                 v-for="(item, index) in columns"
                 :key="index"
-                :class="{'flex-table-col-hidden': onlyFixed && (item.fixed !== 'left')}"
+                :class="{'flex-table-col-hidden': onlyFixed && (item.fixed !== onlyFixed)}"
                 :style="setCellStyle(item)"
             >
                 <template v-if="sum[item.key]">
@@ -39,8 +39,8 @@ export default {
             type: Object,
         },
         onlyFixed: {
-            type: Boolean,
-            default: false
+            type: String,
+            default: ''
         }
     }
 }

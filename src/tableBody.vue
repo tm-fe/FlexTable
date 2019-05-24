@@ -65,8 +65,8 @@ export default {
             }
         },
         onlyFixed: {
-            type: Boolean,
-            default: false
+            type: String,
+            default: ''
         },
         noData: {
             type: String,

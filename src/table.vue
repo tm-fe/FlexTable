@@ -38,11 +38,11 @@
 
         </div>
 
-        <div class="flex-table-fixed" v-if="hasFixed" :style="{'width': fixedLeftWidth + 'px'}">
+        <div class="flex-table-fixed-left" v-if="hasFixedLeft" :style="{'width': fixedLeftWidth + 'px'}">
             <table-head
                 :cal-width="calWidth"
                 :columns="tableColumns"
-                :onlyFixed="true"
+                onlyFixed="left"
                 :data="dataList"
                 :resizable="resizable"
                 @on-select-all="selectAll"
@@ -52,7 +52,7 @@
 
             <table-body
                 ref="fixedLeftBody"
-                :onlyFixed="true"
+                onlyFixed="left"
                 :scroll="handleFixedBodyScroll"
                 :cal-width="calWidth"
                 :columns="tableColumns"
@@ -64,11 +64,46 @@
 
             <table-foot
                 v-if="sum"
-                :onlyFixed="true"
+                onlyFixed="left"
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 :sum="sum"
             ></table-foot>
+        </div>
+
+        <div class="flex-table-fixed-right-wrap" v-if="hasFixedRight" :style="{'width': fixedRightWidth + 'px'}">
+            <div class="flex-table-fixed-right">
+                <table-head
+                    :cal-width="calWidth"
+                    :columns="tableColumns"
+                    onlyFixed="right"
+                    :data="dataList"
+                    :resizable="resizable"
+                    @on-select-all="selectAll"
+                    @on-sort-change="onSortChange"
+                    @on-col-resize="onColResizeStart"
+                ></table-head>
+
+                <table-body
+                    ref="fixedRightBody"
+                    onlyFixed="right"
+                    :scroll="handleFixedBodyScroll"
+                    :cal-width="calWidth"
+                    :columns="tableColumns"
+                    :data="dataList"
+                    :maxHeight="maxHeight"
+                    :hover="fixedScrollOver"
+                    @on-toggle-select="toggleSelect"
+                ></table-body>
+
+                <table-foot
+                    v-if="sum"
+                    onlyFixed="right"
+                    :cal-width="calWidth"
+                    :columns="tableColumns"
+                    :sum="sum"
+                ></table-foot>
+            </div>
         </div>
 
         <div class="flex-table-reference-line" :class="{'cur': colResize.currentX !== 0}" :style="{'left': `${colResize.currentX}px`}"></div>
@@ -188,12 +223,23 @@ export default {
             }
             return arr;
         },
-        hasFixed: function() {
+        hasFixedLeft: function() {
             return this.tableColumns.some(item => item.fixed === 'left');
+        },
+        hasFixedRight: function() {
+            return this.tableColumns.some(item => item.fixed === 'right');
         },
         fixedLeftWidth: function() {
             return this.tableColumns.reduce((width, item) => {
                 if (item.fixed === 'left') {
+                    width += this.calWidth[item.key];
+                }
+                return width;
+            }, 0);
+        },
+        fixedRightWidth: function() {
+            return this.tableColumns.reduce((width, item) => {
+                if (item.fixed === 'right') {
                     width += this.calWidth[item.key];
                 }
                 return width;
@@ -360,7 +406,8 @@ export default {
             if(this.scrollYScrolling || this.fixedBodyScrolling) return;
             this.bodyScrolling = true;
             const scrollTop = e.target.scrollTop;
-            if (this.hasFixed) this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;
+            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
+            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
             if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
         handleScrollYScroll(e) {
@@ -368,7 +415,8 @@ export default {
             this.scrollYScrolling = true;
             const scrollTop = e.target.scrollTop;
             this.$refs.tableBody.$el.scrollTop = scrollTop;
-            if (this.hasFixed) this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;
+            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
+            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
         },
         bodyScrollOver(){
             this.bodyScrolling = true;
