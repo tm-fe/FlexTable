@@ -158,7 +158,7 @@ export default {
             dataList: this.initData(),
             style:{},
             calWidth: {},
-            tableColumns: this.columns,
+            tableColumns: [],
             headerH: 38,
             bodyH: 0,
             footH: 54,
@@ -222,8 +222,24 @@ export default {
         height: function(val){
             this.calHeight();
         },
-        columns: function(arr) {
-            this.tableColumns = arr;
+        columns: {
+            handler: function(arr) {
+                // sort cols
+                const fixedLeftColumns = [];
+                const fixedRightColumns = [];
+                const ordinaryColumns = [];
+                arr.forEach(col => {
+                    if (col.fixed === 'left') {
+                        fixedLeftColumns.push(col);
+                    } else if (col.fixed === 'right') {
+                        fixedRightColumns.push(col);
+                    } else {
+                        ordinaryColumns.push(col);
+                    }
+                });
+                this.tableColumns = [].concat(fixedLeftColumns, ordinaryColumns, fixedRightColumns);
+            },
+            immediate: true,
         },
         tableColumns: {
             handler: function(arr) {
