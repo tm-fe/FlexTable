@@ -199,6 +199,7 @@ export default {
     data(){
         return {
             tableId: tableIdSeed++,
+            rowHeight: { header: 0, footer: 0 },
             dataList: this.initData(),
             style:{},
             calWidth: {},
@@ -217,7 +218,6 @@ export default {
                 resizeIndex: -1, // 调整的表头 index
                 minX: 0, // 可拖动调整最小值
             },
-            rowHeight: {},
         }
     },
     computed: {
@@ -518,7 +518,7 @@ export default {
             });
         },
         onRowHeightChange(row) {
-            this.rowHeight[row.rowIndex] = row.height;
+            this.$set(this.rowHeight, row.rowIndex, row.height);
         }
     }
 }

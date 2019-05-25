@@ -4,40 +4,41 @@
             'flex-table-col': true,
             'flex-table-col-icon': renderType === 'expand',
             'flex-table-expand-disabled': renderType === 'expand' && row._disableExpand,
-            'flex-table-col-hidden': onlyFixed && (column.fixed !== onlyFixed)
             }"
         :style="setCellStyle(column)"
         @click="onToggleExpand"
         ref="cell">
-        <template v-if="renderType === 'selection'">
-            <Checkbox :checked="row._isChecked" @input="toggleSelect" :disabled="row._isDisabled"></Checkbox>
-        </template>
-        <template v-if="renderType === 'expand'">
-            <i :class="{
-                'flex-table-arrow-right': !expandOpen,
-                'flex-table-arrow-down': expandOpen,
-                }"></i>
-        </template>
-        <Expand
-            v-else-if="renderType === 'render'"
-            :row="row"
-            :column="column"
-            :index="rowIndex"
-            :render="column.render"></Expand>
-        <TableSlot
-            v-else-if="renderType === 'slot'"
-            :row="row"
-            :column="column"
-            :index="rowIndex"
-            :owner="owner"></TableSlot>
+        <template v-if="!isHidden">
+            <template v-if="renderType === 'selection'">
+                <Checkbox :checked="row._isChecked" @input="toggleSelect" :disabled="row._isDisabled"></Checkbox>
+            </template>
+            <template v-if="renderType === 'expand'">
+                <i :class="{
+                    'flex-table-arrow-right': !expandOpen,
+                    'flex-table-arrow-down': expandOpen,
+                    }"></i>
+            </template>
+            <Expand
+                v-else-if="renderType === 'render'"
+                :row="row"
+                :column="column"
+                :index="rowIndex"
+                :render="column.render"></Expand>
+            <TableSlot
+                v-else-if="renderType === 'slot'"
+                :row="row"
+                :column="column"
+                :index="rowIndex"
+                :owner="owner"></TableSlot>
 
-        <template
-            v-else-if="renderType === 'normal'"
-        >{{row[column.key]}}</template>
+            <template
+                v-else-if="renderType === 'normal'"
+            >{{row[column.key]}}</template>
 
-        <template
-            v-else-if="renderType === 'html'"
-        ><span v-html="row[column.key]"></span></template>
+            <template
+                v-else-if="renderType === 'html'"
+            ><span v-html="row[column.key]"></span></template>
+        </template>
     </div>
 </template>
 <script>
@@ -85,6 +86,9 @@ export default {
             }
             return parent;
         },
+        isHidden() {
+            return this.onlyFixed && (this.column.fixed !== this.onlyFixed);
+        }
     },
     created(){
         // renderType

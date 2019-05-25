@@ -56,7 +56,14 @@ export default {
             } else {
                 return 'auto';
             }
-        }
+        },
+        owner() {
+            let parent = this.$parent;
+            while (parent && !parent.tableId) {
+                parent = parent.$parent;
+            }
+            return parent;
+        },
     },
     methods: {
         toggleSelect(index) {
@@ -67,10 +74,10 @@ export default {
         },
         onRowHeightChange() {
             if (!this.onlyFixed) {
-                this.$emit("on-row-height-change", {
+                this.owner.onRowHeightChange({
                     rowIndex: this.rowIndex,
                     height: this.$el.offsetHeight-1,
-                });
+                })
             }
         }
     }
