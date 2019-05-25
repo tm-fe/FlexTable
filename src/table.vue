@@ -94,12 +94,12 @@
                 <table-body
                     ref="fixedRightBody"
                     onlyFixed="right"
-                    :scroll="handleFixedBodyScroll"
+                    :scroll="handleFixedRightBodyScroll"
                     :cal-width="calWidth"
                     :columns="tableColumns"
                     :data="dataList"
                     :maxHeight="maxHeight"
-                    :hover="fixedScrollOver"
+                    :hover="fixedRightScrollOver"
                     :rowHeight="rowHeight"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
@@ -210,6 +210,7 @@ export default {
             maxHeight: 0,
             bodyScrolling: false,
             fixedBodyScrolling: false,
+            fixedRightBodyScrolling: false,
             scrollYScrolling: false,
             colResize: {
                 onColResizing: false,
@@ -414,14 +415,23 @@ export default {
             }
         },
         handleFixedBodyScroll(e) {
-            if(this.bodyScrolling || this.scrollYScrolling) return;
+            if(this.bodyScrolling || this.scrollYScrolling || this.fixedRightBodyScrolling) return;
             this.fixedBodyScrolling = true;
             const scrollTop = e.target.scrollTop;
             this.$refs.tableBody.$el.scrollTop = scrollTop;
+            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
+            if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
+        },
+        handleFixedRightBodyScroll(e) {
+            if(this.bodyScrolling || this.scrollYScrolling || this.fixedBodyScrolling) return;
+            this.fixedRightBodyScrolling = true;
+            const scrollTop = e.target.scrollTop;
+            this.$refs.tableBody.$el.scrollTop = scrollTop;
+            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
             if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
         handleBodyScroll(e) {
-            if(this.scrollYScrolling || this.fixedBodyScrolling) return;
+            if(this.scrollYScrolling || this.fixedBodyScrolling || this.fixedRightBodyScrolling) return;
             this.bodyScrolling = true;
             const scrollTop = e.target.scrollTop;
             if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
@@ -429,7 +439,7 @@ export default {
             if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
         handleScrollYScroll(e) {
-            if(this.bodyScrolling || this.fixedBodyScrolling) return;
+            if(this.bodyScrolling || this.fixedBodyScrolling || this.fixedRightBodyScrolling) return;
             this.scrollYScrolling = true;
             const scrollTop = e.target.scrollTop;
             this.$refs.tableBody.$el.scrollTop = scrollTop;
@@ -439,16 +449,25 @@ export default {
         bodyScrollOver(){
             this.bodyScrolling = true;
             this.fixedBodyScrolling = false;
+            this.fixedRightBodyScrolling = false;
             this.scrollYScrolling = false;
         },
         fixedScrollOver(){
             this.bodyScrolling = false;
             this.fixedBodyScrolling = true;
+            this.fixedRightBodyScrolling = false;
+            this.scrollYScrolling = false;
+        },
+        fixedRightScrollOver(){
+            this.bodyScrolling = false;
+            this.fixedBodyScrolling = false;
+            this.fixedRightBodyScrolling = true;
             this.scrollYScrolling = false;
         },
         scrollScrollOver(){
             this.bodyScrolling = false;
             this.fixedBodyScrolling = false;
+            this.fixedRightBodyScrolling = false;
             this.scrollYScrolling = true;
         },
         onSortChange(item) {
