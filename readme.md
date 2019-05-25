@@ -156,7 +156,7 @@ export default {
 | type | 列类型，可选值为 index、selection | String | - |
 | width | 列宽，不设置将自动分配，最小 60px | Number | 60 |
 | align | 对齐方式，可选值为 left 左对齐、right 右对齐和 center 居中对齐 | String | Left |
-| fixed | 列是否固定在左侧或者右侧，可选值为 left 左侧 | String | - |
+| fixed | 列是否固定在左侧或者右侧，可选值为 `left`、`right` | String | - |
 | render | 自定义渲染列，使用 Vue 的 Render 函数。传入两个参数，第一个是 h，第二个为对象，包含 row、column 和 index，分别指当前行数据，当前列数据，当前行索引，详见示例。 | Function | - |
 | renderHeader | 自定义列头显示内容，使用 Vue 的 Render 函数。传入两个参数，第一个是 h，第二个为对象，包含 column 和 index，分别为当前列数据和当前列索引。 | Function | - |
 | sortable | 对应列是否可以排序，如果设置为 custom，则代表用户希望远程排序，需要监听 Table 的 on-sort-change 事件 | Boolean | false |

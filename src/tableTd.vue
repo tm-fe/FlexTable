@@ -4,7 +4,7 @@
             'flex-table-col': true,
             'flex-table-col-icon': renderType === 'expand',
             'flex-table-expand-disabled': renderType === 'expand' && row._disableExpand,
-            'flex-table-col-hidden': onlyFixed && (column.fixed !== 'left')
+            'flex-table-col-hidden': onlyFixed && (column.fixed !== onlyFixed)
             }"
         :style="setCellStyle(column)"
         @click="onToggleExpand"
@@ -67,8 +67,8 @@ export default {
             type: Number
         },
         onlyFixed: {
-            type: Boolean,
-            default: false
+            type: String,
+            default: ''
         }
     },
     data(){
