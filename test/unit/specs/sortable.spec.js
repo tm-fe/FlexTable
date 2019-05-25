@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createVue, triggerEvent, waitImmediate } from '../util';
 
 const aTestList = [];
