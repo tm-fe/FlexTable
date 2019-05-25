@@ -5,7 +5,7 @@
                 class="flex-table-col"
                 v-for="(item, index) in headRow"
                 :key="item.key + '_' + index"
-                :class="{'flex-table-col-hidden': onlyFixed && (item.fixed !== 'left')}"
+                :class="{'flex-table-col-hidden': onlyFixed && (item.fixed !== onlyFixed)}"
                 :style="setCellStyle(item)"
             >
                 <template v-if="item.type === 'selection'"><Checkbox :checked="isSelectAll" :disabled="!data.length" @input="selectAll"></Checkbox></template>
@@ -43,8 +43,8 @@ export default {
             type: Array
         },
         onlyFixed: {
-            type: Boolean,
-            default: false,
+            type: String,
+            default: '',
         },
         resizable: Boolean
     },

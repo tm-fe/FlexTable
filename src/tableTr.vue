@@ -35,7 +35,7 @@ export default {
             type: Array
         },
         onlyFixed: {
-            type: Boolean
+            type: String
         }
     },
     methods: {
