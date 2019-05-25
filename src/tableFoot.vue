@@ -1,7 +1,7 @@
 
 <template>
     <div class="flex-table-foot">
-        <div class="flex-table-row">
+        <div class="flex-table-row" :style="{ height: height }">
             <div 
                 class="flex-table-col" 
                 v-for="(item, index) in columns"
@@ -41,6 +41,39 @@ export default {
         onlyFixed: {
             type: String,
             default: ''
+        },
+        rowHeight: {
+            type: Number,
+            default: 0,
+        }
+    },
+    computed: {
+        height() {
+            if (this.onlyFixed && this.rowHeight) {
+                return `${this.rowHeight}px`;
+            } else {
+                return 'auto';
+            }
+        }
+    },
+    mounted() {
+        this.$nextTick(() => {
+            this.onRowHeightChange();
+        });
+    },
+    updated() {
+        this.$nextTick(() => {
+            this.onRowHeightChange();
+        });
+    },
+    methods: {
+        onRowHeightChange() {
+            if (!this.onlyFixed) {
+                this.$emit("on-row-height-change", {
+                    rowIndex: 'footer',
+                    height: this.$el.offsetHeight-1,
+                });
+            }
         }
     }
 }

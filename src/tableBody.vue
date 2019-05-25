@@ -14,8 +14,10 @@
                     :columns="columns"
                     :cal-width="calWidth"
                     :onlyFixed="onlyFixed"
+                    :rowHeight="rowHeight[index]"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
+                    @on-row-height-change="onRowHeightChange"
                 ></table-tr>
                 <div class="flex-table-row" v-if="row._expanded" :key="'expand_'+index">
                     <Expand
@@ -71,6 +73,10 @@ export default {
         noData: {
             type: String,
             default: 'No Data'
+        },
+        rowHeight: {
+            type: Object,
+            default: () => ({}),
         }
     },
     computed: {
@@ -102,6 +108,9 @@ export default {
             if (!row._disableExpand) {
                 this.data[index]._expanded = !this.data[index]._expanded;
             }
+        },
+        onRowHeightChange(row) {
+            this.$emit("on-row-height-change", row);
         }
     }
 }

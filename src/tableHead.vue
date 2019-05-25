@@ -1,6 +1,6 @@
 <template>
     <div class="flex-table-head">
-        <div class="flex-table-row">
+        <div class="flex-table-row" :style="{ height: height }">
             <div
                 class="flex-table-col"
                 v-for="(item, index) in headRow"
@@ -46,7 +46,11 @@ export default {
             type: String,
             default: '',
         },
-        resizable: Boolean
+        resizable: Boolean,
+        rowHeight: {
+            type: Number,
+            default: 0,
+        }
     },
     data() {
         return {
@@ -69,6 +73,13 @@ export default {
             }
             return isSelectAll;
         },
+        height() {
+            if (this.onlyFixed && this.rowHeight) {
+                return `${this.rowHeight}px`;
+            } else {
+                return 'auto';
+            }
+        }
     },
     watch: {
         columns: function(val) {
@@ -77,6 +88,14 @@ export default {
                 return item;
             });
         }
+    },
+    mounted() {
+        this.onRowHeightChange();
+    },
+    updated() {
+        this.$nextTick(() => {
+            this.onRowHeightChange();
+        });
     },
     methods: {
         selectAll() {
@@ -104,6 +123,14 @@ export default {
         },
         getColumns(index) {
             return this.headRow[index];
+        },
+        onRowHeightChange() {
+            if (!this.onlyFixed) {
+                this.$emit("on-row-height-change", {
+                    rowIndex: 'header',
+                    height: this.$el.offsetHeight-1,
+                });
+            }
         }
     }
 }

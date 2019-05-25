@@ -11,6 +11,7 @@
                 @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
+                @on-row-height-change="onRowHeightChange"
             ></table-head>
             <!-- /flex-table-head -->
 
@@ -24,6 +25,7 @@
                 :no-data="noData"
                 :hover="bodyScrollOver"
                 @on-toggle-select="toggleSelect"
+                @on-row-height-change="onRowHeightChange"
             ></table-body>
             <!-- /flex-table-body -->
 
@@ -33,6 +35,7 @@
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 :sum="sum"
+                @on-row-height-change="onRowHeightChange"
             ></table-foot>
             <!-- /flex-table-foot -->
 
@@ -45,6 +48,7 @@
                 onlyFixed="left"
                 :data="dataList"
                 :resizable="resizable"
+                :rowHeight="rowHeight.header"
                 @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
@@ -59,6 +63,7 @@
                 :data="dataList"
                 :maxHeight="maxHeight"
                 :hover="fixedScrollOver"
+                :rowHeight="rowHeight"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
@@ -68,6 +73,7 @@
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 :sum="sum"
+                :rowHeight="rowHeight.footer"
             ></table-foot>
         </div>
 
@@ -79,6 +85,7 @@
                     onlyFixed="right"
                     :data="dataList"
                     :resizable="resizable"
+                    :rowHeight="rowHeight.header"
                     @on-select-all="selectAll"
                     @on-sort-change="onSortChange"
                     @on-col-resize="onColResizeStart"
@@ -93,6 +100,7 @@
                     :data="dataList"
                     :maxHeight="maxHeight"
                     :hover="fixedScrollOver"
+                    :rowHeight="rowHeight"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
 
@@ -102,6 +110,7 @@
                     :cal-width="calWidth"
                     :columns="tableColumns"
                     :sum="sum"
+                    :rowHeight="rowHeight.footer"
                 ></table-foot>
             </div>
         </div>
@@ -207,7 +216,8 @@ export default {
                 currentX: 0, // 拖动实时位置
                 resizeIndex: -1, // 调整的表头 index
                 minX: 0, // 可拖动调整最小值
-            }
+            },
+            rowHeight: {},
         }
     },
     computed: {
@@ -315,12 +325,14 @@ export default {
     methods:{
         initData() {
             let list = [];
-            list = this.data.map(item => {
+            this.rowHeight = { header: 0, footer: 0 };
+            list = this.data.map((item, index) => {
                 const newItem = JSON.parse(JSON.stringify(item));
                 newItem._isChecked = !!newItem._checked;
                 newItem._isDisabled = !!newItem._disabled;
                 newItem._expanded = !!newItem._expanded;
                 newItem._disableExpand = !!newItem._disableExpand;
+                this.rowHeight[index] = 0;
                 return newItem;
             });
             return list;
@@ -504,6 +516,9 @@ export default {
                 };
                 this.calWidth = oWidth;
             });
+        },
+        onRowHeightChange(row) {
+            this.rowHeight[row.rowIndex] = row.height;
         }
     }
 }
