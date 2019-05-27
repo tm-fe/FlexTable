@@ -79,13 +79,6 @@ export default {
         }
     },
     computed: {
-        owner() {
-            let parent = this.$parent;
-            while (parent && !parent.tableId) {
-                parent = parent.$parent;
-            }
-            return parent;
-        },
         isHidden() {
             return this.onlyFixed && (this.column.fixed !== this.onlyFixed);
         }

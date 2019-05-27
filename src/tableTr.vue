@@ -57,13 +57,6 @@ export default {
                 return 'auto';
             }
         },
-        owner() {
-            let parent = this.$parent;
-            while (parent && !parent.tableId) {
-                parent = parent.$parent;
-            }
-            return parent;
-        },
     },
     methods: {
         toggleSelect(index) {

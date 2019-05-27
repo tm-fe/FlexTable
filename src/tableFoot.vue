@@ -68,7 +68,7 @@ export default {
     methods: {
         onRowHeightChange() {
             if (!this.onlyFixed) {
-                this.$emit("on-row-height-change", {
+                this.owner.onRowHeightChange({
                     rowIndex: 'footer',
                     height: this.$el.offsetHeight-1,
                 });

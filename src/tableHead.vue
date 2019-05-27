@@ -127,7 +127,7 @@ export default {
         },
         onRowHeightChange() {
             if (!this.onlyFixed) {
-                this.$emit("on-row-height-change", {
+                this.owner.onRowHeightChange({
                     rowIndex: 'header',
                     height: this.$el.offsetHeight-1,
                 });

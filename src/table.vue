@@ -11,7 +11,6 @@
                 @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
-                @on-row-height-change="onRowHeightChange"
             ></table-head>
             <!-- /flex-table-head -->
 
@@ -25,7 +24,6 @@
                 :no-data="noData"
                 :hover="bodyScrollOver"
                 @on-toggle-select="toggleSelect"
-                @on-row-height-change="onRowHeightChange"
             ></table-body>
             <!-- /flex-table-body -->
 
@@ -35,7 +33,6 @@
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 :sum="sum"
-                @on-row-height-change="onRowHeightChange"
             ></table-foot>
             <!-- /flex-table-foot -->
 
