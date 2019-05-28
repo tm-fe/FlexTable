@@ -1,15 +1,14 @@
 
 <template>
     <div class="flex-table-foot">
-        <div class="flex-table-row">
+        <div class="flex-table-row" :style="{ height: height }">
             <div 
                 class="flex-table-col" 
                 v-for="(item, index) in columns"
                 :key="index"
-                :class="{'flex-table-col-hidden': onlyFixed && (item.fixed !== onlyFixed)}"
                 :style="setCellStyle(item)"
             >
-                <template v-if="sum[item.key]">
+                <template v-if="sum[item.key] && !isHidden(item)">
                     <Expand
                         v-if="item.render"
                         :row="sum"
@@ -41,6 +40,42 @@ export default {
         onlyFixed: {
             type: String,
             default: ''
+        },
+        rowHeight: {
+            type: Number,
+            default: 0,
+        }
+    },
+    computed: {
+        height() {
+            if (this.onlyFixed && this.rowHeight) {
+                return `${this.rowHeight}px`;
+            } else {
+                return 'auto';
+            }
+        }
+    },
+    mounted() {
+        this.$nextTick(() => {
+            this.onRowHeightChange();
+        });
+    },
+    updated() {
+        this.$nextTick(() => {
+            this.onRowHeightChange();
+        });
+    },
+    methods: {
+        onRowHeightChange() {
+            if (!this.onlyFixed) {
+                this.owner.onRowHeightChange({
+                    rowIndex: 'footer',
+                    height: this.$el.offsetHeight-1,
+                });
+            }
+        },
+        isHidden(item) {
+            return this.onlyFixed && (item.fixed !== this.onlyFixed);
         }
     }
 }

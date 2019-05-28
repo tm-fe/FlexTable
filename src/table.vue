@@ -45,6 +45,7 @@
                 onlyFixed="left"
                 :data="dataList"
                 :resizable="resizable"
+                :rowHeight="rowHeight.header"
                 @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
@@ -59,6 +60,7 @@
                 :data="dataList"
                 :maxHeight="maxHeight"
                 :hover="fixedScrollOver"
+                :rowHeight="rowHeight"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
@@ -68,6 +70,7 @@
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 :sum="sum"
+                :rowHeight="rowHeight.footer"
             ></table-foot>
         </div>
 
@@ -79,6 +82,7 @@
                     onlyFixed="right"
                     :data="dataList"
                     :resizable="resizable"
+                    :rowHeight="rowHeight.header"
                     @on-select-all="selectAll"
                     @on-sort-change="onSortChange"
                     @on-col-resize="onColResizeStart"
@@ -87,12 +91,13 @@
                 <table-body
                     ref="fixedRightBody"
                     onlyFixed="right"
-                    :scroll="handleFixedBodyScroll"
+                    :scroll="handleFixedRightBodyScroll"
                     :cal-width="calWidth"
                     :columns="tableColumns"
                     :data="dataList"
                     :maxHeight="maxHeight"
-                    :hover="fixedScrollOver"
+                    :hover="fixedRightScrollOver"
+                    :rowHeight="rowHeight"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
 
@@ -102,6 +107,7 @@
                     :cal-width="calWidth"
                     :columns="tableColumns"
                     :sum="sum"
+                    :rowHeight="rowHeight.footer"
                 ></table-foot>
             </div>
         </div>
@@ -190,6 +196,7 @@ export default {
     data(){
         return {
             tableId: tableIdSeed++,
+            rowHeight: { header: 0, footer: 0 },
             dataList: this.initData(),
             style:{},
             calWidth: {},
@@ -200,6 +207,7 @@ export default {
             maxHeight: 0,
             bodyScrolling: false,
             fixedBodyScrolling: false,
+            fixedRightBodyScrolling: false,
             scrollYScrolling: false,
             colResize: {
                 onColResizing: false,
@@ -207,7 +215,7 @@ export default {
                 currentX: 0, // 拖动实时位置
                 resizeIndex: -1, // 调整的表头 index
                 minX: 0, // 可拖动调整最小值
-            }
+            },
         }
     },
     computed: {
@@ -315,12 +323,14 @@ export default {
     methods:{
         initData() {
             let list = [];
-            list = this.data.map(item => {
+            this.rowHeight = { header: 0, footer: 0 };
+            list = this.data.map((item, index) => {
                 const newItem = JSON.parse(JSON.stringify(item));
                 newItem._isChecked = !!newItem._checked;
                 newItem._isDisabled = !!newItem._disabled;
                 newItem._expanded = !!newItem._expanded;
                 newItem._disableExpand = !!newItem._disableExpand;
+                this.rowHeight[index] = 0;
                 return newItem;
             });
             return list;
@@ -402,14 +412,23 @@ export default {
             }
         },
         handleFixedBodyScroll(e) {
-            if(this.bodyScrolling || this.scrollYScrolling) return;
+            if(this.bodyScrolling || this.scrollYScrolling || this.fixedRightBodyScrolling) return;
             this.fixedBodyScrolling = true;
             const scrollTop = e.target.scrollTop;
             this.$refs.tableBody.$el.scrollTop = scrollTop;
+            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
+            if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
+        },
+        handleFixedRightBodyScroll(e) {
+            if(this.bodyScrolling || this.scrollYScrolling || this.fixedBodyScrolling) return;
+            this.fixedRightBodyScrolling = true;
+            const scrollTop = e.target.scrollTop;
+            this.$refs.tableBody.$el.scrollTop = scrollTop;
+            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
             if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
         handleBodyScroll(e) {
-            if(this.scrollYScrolling || this.fixedBodyScrolling) return;
+            if(this.scrollYScrolling || this.fixedBodyScrolling || this.fixedRightBodyScrolling) return;
             this.bodyScrolling = true;
             const scrollTop = e.target.scrollTop;
             if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
@@ -417,7 +436,7 @@ export default {
             if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
         handleScrollYScroll(e) {
-            if(this.bodyScrolling || this.fixedBodyScrolling) return;
+            if(this.bodyScrolling || this.fixedBodyScrolling || this.fixedRightBodyScrolling) return;
             this.scrollYScrolling = true;
             const scrollTop = e.target.scrollTop;
             this.$refs.tableBody.$el.scrollTop = scrollTop;
@@ -427,16 +446,25 @@ export default {
         bodyScrollOver(){
             this.bodyScrolling = true;
             this.fixedBodyScrolling = false;
+            this.fixedRightBodyScrolling = false;
             this.scrollYScrolling = false;
         },
         fixedScrollOver(){
             this.bodyScrolling = false;
             this.fixedBodyScrolling = true;
+            this.fixedRightBodyScrolling = false;
+            this.scrollYScrolling = false;
+        },
+        fixedRightScrollOver(){
+            this.bodyScrolling = false;
+            this.fixedBodyScrolling = false;
+            this.fixedRightBodyScrolling = true;
             this.scrollYScrolling = false;
         },
         scrollScrollOver(){
             this.bodyScrolling = false;
             this.fixedBodyScrolling = false;
+            this.fixedRightBodyScrolling = false;
             this.scrollYScrolling = true;
         },
         onSortChange(item) {
@@ -504,6 +532,9 @@ export default {
                 };
                 this.calWidth = oWidth;
             });
+        },
+        onRowHeightChange(row) {
+            this.$set(this.rowHeight, row.rowIndex, row.height);
         }
     }
 }
