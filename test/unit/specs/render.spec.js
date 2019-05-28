@@ -1,8 +1,9 @@
+/* eslint-disable no-undef */
 import { createVue } from '../util';
 
 const aTestList = [];
 const aTestData = [];
-for (let i = 0; i < 5; i++) {
+for (let i = 0; i < 5; i += 1) {
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -10,15 +11,14 @@ for (let i = 0; i < 5; i++) {
         date: '2016-10-03',
     };
     aTestList.push(oTestData);
-    for (const k in oTestData) {
-        let sValue = oTestData[k].toString();
+    Object.keys(oTestData).forEach((k) => {
+        const sValue = oTestData[k].toString();
         if (k === 'age') {
-            aTestData.push('age: ' + sValue); 
+            aTestData.push(`age: ${sValue}`);
         } else {
-            aTestData.push(sValue); 
+            aTestData.push(sValue);
         }
-        
-    }
+    });
 }
 
 describe('Flex-Table', () => {
@@ -62,21 +62,21 @@ describe('Flex-Table', () => {
                     ],
                     loading: false,
                     list: aTestList,
-                    sum:{
+                    sum: {
                         name: 'Jim Green',
                         age: 24,
                         address: 'London',
                         date: '2016-10-01',
                     },
-                }
-            }
+                };
+            },
         });
 
         // 检测头部
         it('check head', (done) => {
             const aHead = vm.$el.querySelectorAll('.flex-table-head .flex-table-col>span');
             const aHeadTitle = [];
-            aHead.forEach(function(node){
+            aHead.forEach((node) => {
                 aHeadTitle.push(node.textContent);
             });
             expect(aHeadTitle).to.eql(['Custom Title : Name', 'Age', 'Address', 'Date']);
@@ -87,9 +87,9 @@ describe('Flex-Table', () => {
         it('check body', (done) => {
             const aBodyRow = vm.$el.querySelectorAll('.flex-table-body .flex-table-row');
             const aBodyData = [];
-            aBodyRow.forEach( (node) => {
+            aBodyRow.forEach((node) => {
                 const aCol = node.querySelectorAll('.flex-table-col');
-                aCol.forEach( (elem) => {
+                aCol.forEach((elem) => {
                     aBodyData.push(elem.textContent.trim());
                 });
             });
@@ -102,13 +102,13 @@ describe('Flex-Table', () => {
             const aFootRow = vm.$el.querySelectorAll('.flex-table-foot .flex-table-row .flex-table-col');
             const aFootLabel = [];
             const aFootValue = [];
-            aFootRow.forEach( (node) => {
+            aFootRow.forEach((node) => {
                 const aDoms = node.children;
                 aFootValue.push(aDoms[0].textContent);
                 aFootLabel.push(aDoms[1].textContent);
             });
-            expect(aFootValue).to.eql(['Jim Green','age: 24','London','2016-10-01']);
-            expect(aFootLabel).to.eql(['Name','Age','Address','Date']);
+            expect(aFootValue).to.eql(['Jim Green', 'age: 24', 'London', '2016-10-01']);
+            expect(aFootLabel).to.eql(['Name', 'Age', 'Address', 'Date']);
             done();
         });
     });

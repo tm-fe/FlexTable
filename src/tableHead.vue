@@ -1,26 +1,27 @@
 <template>
     <div class="flex-table-head">
-        <div class="flex-table-row">
+        <div class="flex-table-row" :style="{ height: height }">
             <div
                 class="flex-table-col"
                 v-for="(item, index) in headRow"
                 :key="item.key + '_' + index"
-                :class="{'flex-table-col-hidden': onlyFixed && (item.fixed !== onlyFixed)}"
                 :style="setCellStyle(item)"
             >
-                <template v-if="item.type === 'selection'"><Checkbox :checked="isSelectAll" :disabled="!data.length" @input="selectAll"></Checkbox></template>
-                <template v-else>
-                    <Expand
-                        v-if="item.renderHeader"
-                        :column="item"
-                        :index="index"
-                        :render="item.renderHeader"></Expand>
-                    <span v-else>{{item.title}}</span>
-                    <span class="flex-table-sort" v-if="item.sortable">
-                        <i @click="handleSort(index, 'asc')" :class="{'on': getColumns(index)._sort === 'asc'}" class="flex-table-arrow-dropup"></i>
-                        <i @click="handleSort(index, 'desc')" :class="{'on': getColumns(index)._sort === 'desc'}" class="flex-table-arrow-dropdown"></i>
-                    </span>
-                    <div v-if="resizable" @mousedown="onColResize($event, index)" class="flex-table-col-resize j-col-resize"></div>
+                <template v-if="!isHidden(item)">
+                    <template v-if="item.type === 'selection'"><Checkbox :checked="isSelectAll" :disabled="!data.length" @input="selectAll"></Checkbox></template>
+                    <template v-else>
+                        <Expand
+                            v-if="item.renderHeader"
+                            :column="item"
+                            :index="index"
+                            :render="item.renderHeader"></Expand>
+                        <span v-else>{{item.title}}</span>
+                        <span class="flex-table-sort" v-if="item.sortable">
+                            <i @click="handleSort(index, 'asc')" :class="{'on': getColumns(index)._sort === 'asc'}" class="flex-table-arrow-dropup"></i>
+                            <i @click="handleSort(index, 'desc')" :class="{'on': getColumns(index)._sort === 'desc'}" class="flex-table-arrow-dropdown"></i>
+                        </span>
+                        <div v-if="resizable" @mousedown="onColResize($event, index)" class="flex-table-col-resize j-col-resize"></div>
+                    </template>
                 </template>
             </div>
         </div>
@@ -46,7 +47,11 @@ export default {
             type: String,
             default: '',
         },
-        resizable: Boolean
+        resizable: Boolean,
+        rowHeight: {
+            type: Number,
+            default: 0,
+        }
     },
     data() {
         return {
@@ -69,6 +74,13 @@ export default {
             }
             return isSelectAll;
         },
+        height() {
+            if (this.onlyFixed && this.rowHeight) {
+                return `${this.rowHeight}px`;
+            } else {
+                return 'auto';
+            }
+        }
     },
     watch: {
         columns: function(val) {
@@ -77,6 +89,14 @@ export default {
                 return item;
             });
         }
+    },
+    mounted() {
+        this.onRowHeightChange();
+    },
+    updated() {
+        this.$nextTick(() => {
+            this.onRowHeightChange();
+        });
     },
     methods: {
         selectAll() {
@@ -104,6 +124,17 @@ export default {
         },
         getColumns(index) {
             return this.headRow[index];
+        },
+        onRowHeightChange() {
+            if (!this.onlyFixed) {
+                this.owner.onRowHeightChange({
+                    rowIndex: 'header',
+                    height: this.$el.offsetHeight-1,
+                });
+            }
+        },
+        isHidden(item) {
+            return this.onlyFixed && (item.fixed !== this.onlyFixed);
         }
     }
 }

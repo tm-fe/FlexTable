@@ -14,6 +14,7 @@
                     :columns="columns"
                     :cal-width="calWidth"
                     :onlyFixed="onlyFixed"
+                    :rowHeight="rowHeight[index]"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
@@ -71,6 +72,10 @@ export default {
         noData: {
             type: String,
             default: 'No Data'
+        },
+        rowHeight: {
+            type: Object,
+            default: () => ({}),
         }
     },
     computed: {
