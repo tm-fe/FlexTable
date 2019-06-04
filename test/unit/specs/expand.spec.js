@@ -2,10 +2,12 @@
 import {
     createVue,
     destroyVM,
+    triggerEvent,
+    waitImmediate,
 } from '../util';
 
 const aTestList = [];
-for (let i = 0; i < 5; i += 1) {
+for (let i = 0; i < 1; i += 1) {
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -18,9 +20,7 @@ for (let i = 0; i < 5; i += 1) {
 
 describe('Flex-Table', () => {
     // 基础测试
-    describe('resizable', () => {
-        const nInitWidth = 50;
-        const nAddWidth = 100;
+    describe('expand', () => {
         const vm = createVue({
             template: `
                 <flex-table
@@ -35,12 +35,15 @@ describe('Flex-Table', () => {
                 return {
                     columns: [
                         {
+                            type: 'expand',
+                            width: 50,
+                            render: (h, params) => {
+                                return h('p', {}, params.row.name);
+                            },
+                        },
+                        {
                             title: 'Name',
                             key: 'name',
-                            width: nInitWidth,
-                            renderHeader(h, params) {
-                                return h('span', `Custom Title : ${params.column.title}`);
-                            },
                         },
                         {
                             title: 'Age',
@@ -66,33 +69,26 @@ describe('Flex-Table', () => {
                         address: 'London',
                         date: '2016-10-01',
                     },
+                    height: 250,
                 };
             },
         });
-
-        const $resizeDiv = vm.$el.querySelectorAll('.flex-table-head .flex-table-col-resize')[0];
-        const vmTable = vm.$children[0];
-
-        vmTable.onColResizeStart.call(vmTable, {
-            clientX: 0,
-            target: $resizeDiv,
-            stopPropagation: () => {},
-        }, 0);
-
-        vmTable.onColResizeMove.call(vmTable, {
-            clientX: nAddWidth,
-            target: $resizeDiv,
-            stopPropagation: () => {},
-        });
-
-        vmTable.onColResizeEnd.call(vmTable);
-
+        const elemExpandBtn = vm.$el.querySelector('.flex-table-col-icon');
         // 检测
-        it('check', () => {
-            const row = vmTable.tableColumns[0];
-            expect(row.width).to.eql(nInitWidth + nAddWidth);
+        it('check expand', async () => {
+            triggerEvent(elemExpandBtn, 'click');
+            await waitImmediate();
+            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            expect(elemNext.innerHTML).to.eql('<p>John Brown</p>');
         });
 
-        destroyVM(vm);
+        it('check unexpanded', async () => {
+            triggerEvent(elemExpandBtn, 'click');
+            await waitImmediate();
+            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            expect(elemNext).to.eql(null);
+        });
+
+        // destroyVM(vm); // 这里不用销毁方法，因为点击后出发vue的修改，如果销毁了vm，则获取dom有误
     });
 });
