@@ -1,13 +1,12 @@
 /* eslint-disable no-undef */
 import {
     createVue,
-    // destroyVM,
     triggerEvent,
-    waitImmediate,
+    wait,
 } from '../util';
 
 const aTestList = [];
-for (let i = 0; i < 1; i += 1) {
+for (let i = 0; i < 2; i += 1) {
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -20,7 +19,7 @@ for (let i = 0; i < 1; i += 1) {
 
 describe('Flex-Table', () => {
     // 基础测试
-    describe('expand', () => {
+    describe('select', () => {
         const vm = createVue({
             template: `
                 <flex-table
@@ -35,11 +34,9 @@ describe('Flex-Table', () => {
                 return {
                     columns: [
                         {
-                            type: 'expand',
-                            width: 50,
-                            render: (h, params) => {
-                                return h('p', {}, params.row.name);
-                            },
+                            type: 'selection',
+                            width: 20,
+                            align: 'center',
                         },
                         {
                             title: 'Name',
@@ -69,26 +66,43 @@ describe('Flex-Table', () => {
                         address: 'London',
                         date: '2016-10-01',
                     },
-                    height: 250,
                 };
             },
         });
-        const elemExpandBtn = vm.$el.querySelector('.flex-table-col-icon');
-        // 检测
-        it('check expand', async () => {
-            triggerEvent(elemExpandBtn, 'click');
-            await waitImmediate();
-            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
-            expect(elemNext.innerHTML).to.eql('<p>John Brown</p>');
+        const elemAllCheckedBtn = vm.$el.querySelector('.flex-table-head input[type="checkbox"]');
+        // 检测 全选
+        it('check select all', async () => {
+            triggerEvent(elemAllCheckedBtn, 'click');
+            vm.$children[0].$children[0].$children[0].toggle(); // 这里需要手动程序触发
+            await wait(500);
+            let bCheck = true;
+            const aElemBodyCheck = vm.$el.querySelectorAll('.flex-table-body input[type="checkbox"]');
+
+            aElemBodyCheck.forEach((element) => {
+                if (!element.checked) {
+                    bCheck = false;
+                }
+            });
+
+            expect(bCheck).to.eql(true);
         });
 
-        it('check unexpanded', async () => {
-            triggerEvent(elemExpandBtn, 'click');
-            await waitImmediate();
-            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
-            expect(elemNext).to.eql(null);
-        });
+        // 检测取消全选
+        it('check unselect all', async () => {
+            triggerEvent(elemAllCheckedBtn, 'click');
+            await wait(500);
+            vm.$children[0].$children[0].$children[0].toggle(); // 这里需要手动程序触发
+            await wait(500);
+            let bCheck = true;
+            const aElemBodyCheck = vm.$el.querySelectorAll('.flex-table-body input[type="checkbox"]');
 
-        // destroyVM(vm); // 这里不用销毁方法，因为点击后出发vue的修改，如果销毁了vm，则获取dom有误
+            aElemBodyCheck.forEach((element) => {
+                if (element.checked) {
+                    bCheck = false;
+                }
+            });
+
+            expect(bCheck).to.eql(true);
+        });
     });
 });
