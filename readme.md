@@ -58,7 +58,7 @@ npm install --save tm-flextable
 yarn add tm-flextable
 ```
 ```js
-import FlexTable from 'tm-flextable';
+import { FlexTable } from 'tm-flextable';
 
 export default {
   // ...
@@ -153,7 +153,7 @@ export default {
 | ------------ | ------- | ------- | ----------- |
 | title | 列名 | String | - |
 | key | 列名 | String | - |
-| type | 列类型，可选值为 index、selection | String | - |
+| type | 列类型，可选值为 index、selection、expand | String | - |
 | width | 列宽，不设置将自动分配，最小 60px | Number | 60 |
 | align | 对齐方式，可选值为 left 左对齐、right 右对齐和 center 居中对齐 | String | Left |
 | fixed | 列是否固定在左侧或者右侧，可选值为 `left`、`right` | String | - |

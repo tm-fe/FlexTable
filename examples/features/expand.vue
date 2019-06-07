@@ -8,8 +8,26 @@
         :loading="loading" 
         :columns="columns" 
         :data="list"
-        :sum="sum"
-    ></flex-table>
+        :sum="sum"></flex-table>
+
+    <p>expand scoped slot 用法</p>
+    <flex-table
+        resizable
+        :loading="loading" 
+        :columns="columns2" 
+        :data="list"
+        :sum="sum">
+        <template slot-scope="{ row, index }" slot="expand">
+            <div style="padding: 15px 20px;">
+                <div>第 {{ index+1 }} 行</div>
+                <ul>
+                    <li>姓名： {{ row.name }}</li>
+                    <li>年龄： {{ row.age }}</li>
+                    <li>详细地址： {{ row.address }}</li>
+                </ul>
+            </div>
+        </template>
+    </flex-table>
 </div>
 </template>
 <script>
@@ -45,6 +63,31 @@ export default {
                             }
                         })
                     }
+                },
+                {
+                    title: 'Name',
+                    key: 'name',
+                },
+                {
+                    title: 'Age',
+                    key: 'age',
+                    render(h, params){
+                        return h('span', 'age: '+ params.row.age)
+                    }
+                },
+                {
+                    title: 'Address',
+                    key: 'address',
+                },
+                {
+                    title: 'Date',
+                    key: 'date',
+                },
+            ],
+            columns2: [
+                {
+                    type: 'expand',
+                    width: 50,
                 },
                 {
                     title: 'Name',
