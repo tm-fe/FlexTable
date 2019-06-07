@@ -84,6 +84,9 @@ export default {
         },
         expandRender() {
             let render = noop;
+            if (this.owner.$scopedSlots.expand) {
+                return render = (h, params) => h('div', this.owner.$scopedSlots.expand(params));
+            }
             this.columns.some(obj => {
                 if (obj.type === 'expand') {
                     render = obj.render;
