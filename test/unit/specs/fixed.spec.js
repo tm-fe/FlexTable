@@ -16,11 +16,29 @@ for (let i = 0; i < 2; i += 1) {
     };
     aTestList.push(oTestData);
 }
+function checkFixedLayout(vm, type) {
+    const aFixedTable = vm.$el.querySelectorAll(`.flex-table-fixed-${type}`);
+    expect(aFixedTable.length).to.eql(1);
+}
 
+function checkLayoutHead(vm, type, i) {
+    const aFixedTableHeadCol = vm.$el.querySelectorAll(`.flex-table-fixed-${type} .flex-table-head .flex-table-col`);
+    let bCheck = true;
+    aFixedTableHeadCol.forEach((element, index) => {
+        if (type === 'right') {
+            console.log(element);
+        }
+        // 如果不是第2列，并且存在内容，则表示渲染失败
+        if (index !== i && element.innerText) {
+            bCheck = false;
+        }
+    });
+    expect(bCheck).to.eql(true);
+}
 
 describe('Flex-Table', () => {
     // 基础测试
-    describe('fixed left', () => {
+    describe('fixed', () => {
         const vm = createVue({
             template: `
                 <flex-table
@@ -43,6 +61,8 @@ describe('Flex-Table', () => {
                         {
                             title: 'Age',
                             key: 'age',
+                            width: 100,
+                            fixed: 'right',
                             render(h, params) {
                                 return h('span', `age: ${params.row.age}`);
                             },
@@ -70,24 +90,23 @@ describe('Flex-Table', () => {
         });
 
         // 检测 是否生成了fixed层
-        it('check fixed layout', (done) => {
-            const aFixedTable = vm.$el.querySelectorAll('.flex-table-fixed-left');
-            expect(aFixedTable.length).to.eql(1);
+        it('check fixed-left layout', (done) => {
+            checkFixedLayout(vm, 'left');
+            done();
+        });
+
+        it('check fixed-right layout', (done) => {
+            checkFixedLayout(vm, 'right');
             done();
         });
 
         // 检测 fixed层的head是否符合
-        it('check fixed layout-head', (done) => {
-            const aFixedTableHeadCol = vm.$el.querySelectorAll('.flex-table-fixed-left .flex-table-head .flex-table-col');
-            let bCheck = true;
-            aFixedTableHeadCol.forEach((element, index) => {
-                console.log(element.innerText);
-                // 如果不是第一列，并且存在内容，则表示渲染失败
-                if (index > 0 && element.innerText) {
-                    bCheck = false;
-                }
-            });
-            expect(bCheck).to.eql(true);
+        it('check fixed-left layout-head', (done) => {
+            checkLayoutHead(vm, 'left', 0);
+            done();
+        });
+        it('check fixed-right layout-head', (done) => {
+            checkLayoutHead(vm, 'right', vm.$children[0].columns.length - 1);
             done();
         });
     });
