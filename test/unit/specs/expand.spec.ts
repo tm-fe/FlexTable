@@ -166,14 +166,20 @@ describe('Flex-Table', () => {
         it('check expand', async () => {
             triggerEvent(elemExpandBtn, 'click');
             await waitImmediate();
-            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            let elemNext;
+            if (elemExpandBtn && elemExpandBtn.parentElement) {
+                elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            }
             expect(elemNext.innerHTML).to.eql('<div><p>John Brown</p></div>');
         });
 
         it('check unexpanded', async () => {
             triggerEvent(elemExpandBtn, 'click');
             await waitImmediate();
-            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            let elemNext;
+            if (elemExpandBtn && elemExpandBtn.parentElement) {
+                elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            }
             expect(elemNext).to.eql(null);
         });
     });
