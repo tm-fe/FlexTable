@@ -2,7 +2,7 @@ import {
     createVue,
     // destroyVM,
     // triggerEvent,
-    // waitImmediate,
+    waitImmediate,
 } from '@/util';
 import { expect } from 'chai';
 import Vue from 'vue';
@@ -45,6 +45,7 @@ describe('Flex-Table', () => {
                 :columns="columns"
                 :data="list"
                 :sum="sum"
+                :height="height"
                 ></flex-table>
             `,
             data() {
@@ -82,7 +83,7 @@ describe('Flex-Table', () => {
                         address: 'London',
                         date: '2016-10-01',
                     },
-                    height: 250,
+                    height: 0,
                 };
             },
         });
@@ -106,6 +107,33 @@ describe('Flex-Table', () => {
         it('check fixed-right layout-head', (done) => {
             checkLayoutHead(vm, 'right', vm.$data.columns.length - 1);
             done();
+        });
+
+        // 检测 fiexed header
+        it('check fixed-head base', async () => {
+            vm.$data.height = 250;
+            await waitImmediate();
+            let bCheck = false;
+            const elemBody = vm.$el.querySelector('.flex-table-body');
+
+            if (elemBody && elemBody.classList) {
+                bCheck = elemBody.classList.contains('flex-table-fixed-header');
+            }
+
+            expect(bCheck).to.eql(true);
+        });
+        it('check fixed-head height', async () => {
+            const nHeight = 250;
+            vm.$data.height = nHeight;
+            await waitImmediate();
+            let nMaxHeight = 0;
+            const elemBody = vm.$el.querySelector('.flex-table-body') as HTMLElement;
+
+            if (elemBody && elemBody.style && elemBody.style.maxHeight) {
+                nMaxHeight = Number(elemBody.style.maxHeight.replace('px', ''));
+            }
+
+            expect(nMaxHeight).to.eql(nHeight);
         });
     });
 });
