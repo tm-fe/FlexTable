@@ -1,12 +1,13 @@
-/* eslint-disable no-undef */
 import {
     createVue,
     // destroyVM,
     // triggerEvent,
     // waitImmediate,
-} from '../util';
+} from '@/util';
+import { expect } from 'chai';
+import Vue from 'vue';
 
-const aTestList = [];
+const aTestList: FlexTableColumnOption[] = [];
 for (let i = 0; i < 2; i += 1) {
     const oTestData = {
         name: 'John Brown',
@@ -16,18 +17,15 @@ for (let i = 0; i < 2; i += 1) {
     };
     aTestList.push(oTestData);
 }
-function checkFixedLayout(vm, type) {
+function checkFixedLayout(vm: Vue, type: string) {
     const aFixedTable = vm.$el.querySelectorAll(`.flex-table-fixed-${type}`);
     expect(aFixedTable.length).to.eql(1);
 }
 
-function checkLayoutHead(vm, type, i) {
+function checkLayoutHead(vm: Vue, type: string, i: number) {
     const aFixedTableHeadCol = vm.$el.querySelectorAll(`.flex-table-fixed-${type} .flex-table-head .flex-table-col`);
     let bCheck = true;
-    aFixedTableHeadCol.forEach((element, index) => {
-        if (type === 'right') {
-            console.log(element);
-        }
+    aFixedTableHeadCol.forEach((element: any, index: number) => {
         // 如果不是第2列，并且存在内容，则表示渲染失败
         if (index !== i && element.innerText) {
             bCheck = false;
@@ -39,14 +37,14 @@ function checkLayoutHead(vm, type, i) {
 describe('Flex-Table', () => {
     // 基础测试
     describe('fixed', () => {
-        const vm = createVue({
+        const vm: Vue = createVue({
             template: `
                 <flex-table
-                    resizable
-                    :loading="loading" 
-                    :columns="columns" 
-                    :data="list"
-                    :sum="sum"
+                resizable
+                :loading="loading"
+                :columns="columns"
+                :data="list"
+                :sum="sum"
                 ></flex-table>
             `,
             data() {
@@ -63,7 +61,7 @@ describe('Flex-Table', () => {
                             key: 'age',
                             width: 100,
                             fixed: 'right',
-                            render(h, params) {
+                            render(h: Vue.CreateElement, params: FlexTableRow ) {
                                 return h('span', `age: ${params.row.age}`);
                             },
                         },
@@ -106,7 +104,7 @@ describe('Flex-Table', () => {
             done();
         });
         it('check fixed-right layout-head', (done) => {
-            checkLayoutHead(vm, 'right', vm.$children[0].columns.length - 1);
+            checkLayoutHead(vm, 'right', vm.$data.columns.length - 1);
             done();
         });
     });

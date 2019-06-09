@@ -1,13 +1,12 @@
-/* eslint-disable no-undef */
 import {
     createVue,
-    // destroyVM,
-    triggerEvent,
-    waitImmediate,
-} from '../util';
+    destroyVM,
+} from '@/util';
+import Vue from 'vue';
+import { expect } from 'chai';
 
-const aTestList = [];
-for (let i = 0; i < 1; i += 1) {
+const aTestList: FlexTableColumnOption[] = [];
+for (let i = 0; i < 5; i += 1) {
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -20,13 +19,15 @@ for (let i = 0; i < 1; i += 1) {
 
 describe('Flex-Table', () => {
     // 基础测试
-    describe('expand', () => {
-        const vm = createVue({
+    describe('resizable', () => {
+        const nInitWidth = 50;
+        const nAddWidth = 100;
+        const vm: Vue = createVue({
             template: `
                 <flex-table
                     resizable
-                    :loading="loading" 
-                    :columns="columns" 
+                    :loading="loading"
+                    :columns="columns"
                     :data="list"
                     :sum="sum"
                 ></flex-table>
@@ -35,20 +36,17 @@ describe('Flex-Table', () => {
                 return {
                     columns: [
                         {
-                            type: 'expand',
-                            width: 50,
-                            render: (h, params) => {
-                                return h('p', {}, params.row.name);
-                            },
-                        },
-                        {
                             title: 'Name',
                             key: 'name',
+                            width: nInitWidth,
+                            renderHeader(h: Vue.CreateElement, params: FlexTableRow) {
+                                return h('span', `Custom Title : ${params.column.title}`);
+                            },
                         },
                         {
                             title: 'Age',
                             key: 'age',
-                            render(h, params) {
+                            render(h: Vue.CreateElement, params: FlexTableRow) {
                                 return h('span', `age: ${params.row.age}`);
                             },
                         },
@@ -69,26 +67,33 @@ describe('Flex-Table', () => {
                         address: 'London',
                         date: '2016-10-01',
                     },
-                    height: 250,
                 };
             },
         });
-        const elemExpandBtn = vm.$el.querySelector('.flex-table-col-icon');
+
+        const $resizeDiv = vm.$el.querySelectorAll('.flex-table-head .flex-table-col-resize')[0];
+        const vmTable: any = vm.$children[0];
+
+        vmTable.onColResizeStart.call(vmTable, {
+            clientX: 0,
+            target: $resizeDiv,
+            stopPropagation: () => void 0,
+        }, 0);
+
+        vmTable.onColResizeMove.call(vmTable, {
+            clientX: nAddWidth,
+            target: $resizeDiv,
+            stopPropagation: () => void 0,
+        });
+
+        vmTable.onColResizeEnd.call(vmTable);
+
         // 检测
-        it('check expand', async () => {
-            triggerEvent(elemExpandBtn, 'click');
-            await waitImmediate();
-            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
-            expect(elemNext.innerHTML).to.eql('<p>John Brown</p>');
+        it('check', () => {
+            const row = vmTable.tableColumns[0];
+            expect(row.width).to.eql(nInitWidth + nAddWidth);
         });
 
-        it('check unexpanded', async () => {
-            triggerEvent(elemExpandBtn, 'click');
-            await waitImmediate();
-            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
-            expect(elemNext).to.eql(null);
-        });
-
-        // destroyVM(vm); // 这里不用销毁方法，因为点击后出发vue的修改，如果销毁了vm，则获取dom有误
+        destroyVM(vm);
     });
 });

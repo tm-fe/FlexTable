@@ -6,7 +6,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 function resolve(dir) {
     return path.join(__dirname, '..', dir);
 }
-let sourceMap = false; // css sourceMap
+const sourceMap = false; // css sourceMap
 let jsSourceMap = true;
 if (process.env.NODE_ENV === 'production') {
     jsSourceMap = false;
@@ -63,10 +63,10 @@ module.exports = {
                         ],
                     },
                     postLoaders: {
-                        html: 'babel-loader?sourceMap'
+                        html: 'babel-loader?sourceMap',
                     },
                     sourceMap: jsSourceMap,
-                }
+                },
             },
             {
                 test: /\.js$/,
@@ -91,7 +91,7 @@ module.exports = {
                             sourceMap,
                         },
                     },
-                ]
+                ],
             },
             {
                 test: /\.less$/,
@@ -114,7 +114,7 @@ module.exports = {
                             sourceMap,
                         },
                     },
-                ]
+                ],
             },
             {
                 test: /\.scss$/,
@@ -137,30 +137,34 @@ module.exports = {
                             sourceMap,
                         },
                     },
-                ]
+                ],
             },
             {
                 test: /\.(gif|jpg|png|woff|svg|eot|ttf)\??.*$/,
-                loader: 'url-loader?limit=8192'
+                loader: 'url-loader?limit=8192',
             },
             {
                 test: /\.(html|tpl)$/,
-                loader: 'html-loader'
-            }
-        ]
+                loader: 'html-loader',
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+            },
+        ],
     },
     resolve: {
         extensions: ['.js', '.vue'],
         alias: {
-            'vue': 'vue/dist/vue.esm.js',
-            '@': resolve('src')
-        }
+            vue: 'vue/dist/vue.esm.js',
+            '@': resolve('src'),
+        },
     },
     plugins: [
         new webpack.optimize.ModuleConcatenationPlugin(),
         new webpack.DefinePlugin({
-            'process.env.VERSION': `'${pkg.version}'`
+            'process.env.VERSION': `'${pkg.version}'`,
         }),
         new VueLoaderPlugin(),
-    ]
+    ],
 };
