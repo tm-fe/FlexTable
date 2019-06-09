@@ -5,6 +5,15 @@ export default {
             required: true,
         },
     },
+    computed: {
+        owner() {
+            let parent = this.$parent;
+            while (parent && !parent.tableId) {
+                parent = parent.$parent;
+            }
+            return parent;
+        },
+    },
     methods: {
         setCellStyle(column) {
             const sWidth = this.calWidth[column.key];

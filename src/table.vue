@@ -38,13 +38,14 @@
 
         </div>
 
-        <div class="flex-table-fixed" v-if="hasFixed" :style="{'width': fixedLeftWidth + 'px'}">
+        <div class="flex-table-fixed-left" v-if="hasFixedLeft" :style="{'width': fixedLeftWidth + 'px'}">
             <table-head
                 :cal-width="calWidth"
                 :columns="tableColumns"
-                :onlyFixed="true"
+                onlyFixed="left"
                 :data="dataList"
                 :resizable="resizable"
+                :rowHeight="rowHeight.header"
                 @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
@@ -52,23 +53,63 @@
 
             <table-body
                 ref="fixedLeftBody"
-                :onlyFixed="true"
+                onlyFixed="left"
                 :scroll="handleFixedBodyScroll"
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 :data="dataList"
                 :maxHeight="maxHeight"
                 :hover="fixedScrollOver"
+                :rowHeight="rowHeight"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
             <table-foot
                 v-if="sum"
-                :onlyFixed="true"
+                onlyFixed="left"
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 :sum="sum"
+                :rowHeight="rowHeight.footer"
             ></table-foot>
+        </div>
+
+        <div class="flex-table-fixed-right-wrap" v-if="hasFixedRight" :style="{'width': fixedRightWidth + 'px'}">
+            <div class="flex-table-fixed-right">
+                <table-head
+                    :cal-width="calWidth"
+                    :columns="tableColumns"
+                    onlyFixed="right"
+                    :data="dataList"
+                    :resizable="resizable"
+                    :rowHeight="rowHeight.header"
+                    @on-select-all="selectAll"
+                    @on-sort-change="onSortChange"
+                    @on-col-resize="onColResizeStart"
+                ></table-head>
+
+                <table-body
+                    ref="fixedRightBody"
+                    onlyFixed="right"
+                    :scroll="handleFixedRightBodyScroll"
+                    :cal-width="calWidth"
+                    :columns="tableColumns"
+                    :data="dataList"
+                    :maxHeight="maxHeight"
+                    :hover="fixedRightScrollOver"
+                    :rowHeight="rowHeight"
+                    @on-toggle-select="toggleSelect"
+                ></table-body>
+
+                <table-foot
+                    v-if="sum"
+                    onlyFixed="right"
+                    :cal-width="calWidth"
+                    :columns="tableColumns"
+                    :sum="sum"
+                    :rowHeight="rowHeight.footer"
+                ></table-foot>
+            </div>
         </div>
 
         <div class="flex-table-reference-line" :class="{'cur': colResize.currentX !== 0}" :style="{'left': `${colResize.currentX}px`}"></div>
@@ -155,16 +196,18 @@ export default {
     data(){
         return {
             tableId: tableIdSeed++,
+            rowHeight: { header: 0, footer: 0 },
             dataList: this.initData(),
             style:{},
             calWidth: {},
-            tableColumns: this.columns,
+            tableColumns: [],
             headerH: 38,
             bodyH: 0,
             footH: 54,
             maxHeight: 0,
             bodyScrolling: false,
             fixedBodyScrolling: false,
+            fixedRightBodyScrolling: false,
             scrollYScrolling: false,
             colResize: {
                 onColResizing: false,
@@ -172,7 +215,7 @@ export default {
                 currentX: 0, // 拖动实时位置
                 resizeIndex: -1, // 调整的表头 index
                 minX: 0, // 可拖动调整最小值
-            }
+            },
         }
     },
     computed: {
@@ -186,10 +229,16 @@ export default {
             if (this.theme === 'dark') {
                 arr.push(`${prefixCls}-dark`)
             }
+            if (this.showScrollBar) {
+                arr.push('has-scroll-bar')
+            }
             return arr;
         },
-        hasFixed: function() {
+        hasFixedLeft: function() {
             return this.tableColumns.some(item => item.fixed === 'left');
+        },
+        hasFixedRight: function() {
+            return this.tableColumns.some(item => item.fixed === 'right');
         },
         fixedLeftWidth: function() {
             return this.tableColumns.reduce((width, item) => {
@@ -198,6 +247,17 @@ export default {
                 }
                 return width;
             }, 0);
+        },
+        fixedRightWidth: function() {
+            return this.tableColumns.reduce((width, item) => {
+                if (item.fixed === 'right') {
+                    width += this.calWidth[item.key];
+                }
+                return width;
+            }, 0);
+        },
+        showScrollBar: function() {
+            return this.bodyH > this.maxHeight;
         }
     },
     mounted(){
@@ -222,8 +282,24 @@ export default {
         height: function(val){
             this.calHeight();
         },
-        columns: function(arr) {
-            this.tableColumns = arr;
+        columns: {
+            handler: function(arr) {
+                // sort cols
+                const fixedLeftColumns = [];
+                const fixedRightColumns = [];
+                const ordinaryColumns = [];
+                arr.forEach(col => {
+                    if (col.fixed === 'left') {
+                        fixedLeftColumns.push(col);
+                    } else if (col.fixed === 'right') {
+                        fixedRightColumns.push(col);
+                    } else {
+                        ordinaryColumns.push(col);
+                    }
+                });
+                this.tableColumns = [].concat(fixedLeftColumns, ordinaryColumns, fixedRightColumns);
+            },
+            immediate: true,
         },
         tableColumns: {
             handler: function(arr) {
@@ -247,12 +323,14 @@ export default {
     methods:{
         initData() {
             let list = [];
-            list = this.data.map(item => {
+            this.rowHeight = { header: 0, footer: 0 };
+            list = this.data.map((item, index) => {
                 const newItem = JSON.parse(JSON.stringify(item));
                 newItem._isChecked = !!newItem._checked;
                 newItem._isDisabled = !!newItem._disabled;
                 newItem._expanded = !!newItem._expanded;
                 newItem._disableExpand = !!newItem._disableExpand;
+                this.rowHeight[index] = 0;
                 return newItem;
             });
             return list;
@@ -334,39 +412,59 @@ export default {
             }
         },
         handleFixedBodyScroll(e) {
-            if(this.bodyScrolling || this.scrollYScrolling) return;
+            if(this.bodyScrolling || this.scrollYScrolling || this.fixedRightBodyScrolling) return;
             this.fixedBodyScrolling = true;
             const scrollTop = e.target.scrollTop;
             this.$refs.tableBody.$el.scrollTop = scrollTop;
+            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
+            if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
+        },
+        handleFixedRightBodyScroll(e) {
+            if(this.bodyScrolling || this.scrollYScrolling || this.fixedBodyScrolling) return;
+            this.fixedRightBodyScrolling = true;
+            const scrollTop = e.target.scrollTop;
+            this.$refs.tableBody.$el.scrollTop = scrollTop;
+            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
             if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
         handleBodyScroll(e) {
-            if(this.scrollYScrolling || this.fixedBodyScrolling) return;
+            if(this.scrollYScrolling || this.fixedBodyScrolling || this.fixedRightBodyScrolling) return;
             this.bodyScrolling = true;
             const scrollTop = e.target.scrollTop;
-            if (this.hasFixed) this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;
+            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
+            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
             if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
         handleScrollYScroll(e) {
-            if(this.bodyScrolling || this.fixedBodyScrolling) return;
+            if(this.bodyScrolling || this.fixedBodyScrolling || this.fixedRightBodyScrolling) return;
             this.scrollYScrolling = true;
             const scrollTop = e.target.scrollTop;
             this.$refs.tableBody.$el.scrollTop = scrollTop;
-            if (this.hasFixed) this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;
+            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
+            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
         },
         bodyScrollOver(){
             this.bodyScrolling = true;
             this.fixedBodyScrolling = false;
+            this.fixedRightBodyScrolling = false;
             this.scrollYScrolling = false;
         },
         fixedScrollOver(){
             this.bodyScrolling = false;
             this.fixedBodyScrolling = true;
+            this.fixedRightBodyScrolling = false;
+            this.scrollYScrolling = false;
+        },
+        fixedRightScrollOver(){
+            this.bodyScrolling = false;
+            this.fixedBodyScrolling = false;
+            this.fixedRightBodyScrolling = true;
             this.scrollYScrolling = false;
         },
         scrollScrollOver(){
             this.bodyScrolling = false;
             this.fixedBodyScrolling = false;
+            this.fixedRightBodyScrolling = false;
             this.scrollYScrolling = true;
         },
         onSortChange(item) {
@@ -387,7 +485,8 @@ export default {
         resize(){
             requestAnimationFrame(() => {
                 // wrapper 宽度
-                const nTableWidth = this.$el.offsetWidth-2;
+                const scrollBarWidth = this.showScrollBar ? 16 : 0;
+                const nTableWidth = this.$el.offsetWidth - 2 - scrollBarWidth;
 
                 const oWidth = {};
                 let defineTotalWidth = 0; //定义的宽度总和
@@ -433,6 +532,9 @@ export default {
                 };
                 this.calWidth = oWidth;
             });
+        },
+        onRowHeightChange(row) {
+            this.$set(this.rowHeight, row.rowIndex, row.height);
         }
     }
 }

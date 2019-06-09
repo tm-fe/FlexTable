@@ -14,6 +14,7 @@
                     :columns="columns"
                     :cal-width="calWidth"
                     :onlyFixed="onlyFixed"
+                    :rowHeight="rowHeight[index]"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
@@ -65,12 +66,16 @@ export default {
             }
         },
         onlyFixed: {
-            type: Boolean,
-            default: false
+            type: String,
+            default: ''
         },
         noData: {
             type: String,
             default: 'No Data'
+        },
+        rowHeight: {
+            type: Object,
+            default: () => ({}),
         }
     },
     computed: {
@@ -79,6 +84,9 @@ export default {
         },
         expandRender() {
             let render = noop;
+            if (this.owner.$scopedSlots.expand) {
+                return render = (h, params) => h('div', this.owner.$scopedSlots.expand(params));
+            }
             this.columns.some(obj => {
                 if (obj.type === 'expand') {
                     render = obj.render;

@@ -223,7 +223,8 @@
         }
     }
 
-    &-fixed{
+    &-fixed-left,
+    &-fixed-right-wrap{
         position: absolute;
         top: 0;
         left: 0;
@@ -233,6 +234,17 @@
 
         .@{fb}-body{
             margin-right: -13px;
+        }
+    }
+    &-fixed-right-wrap{
+        height: 100%;
+        left: auto;
+        right: 0;
+        box-shadow: -2px 0 6px -2px rgba(0,0,0,.2);
+        
+        .@{fb}-fixed-right{
+            position: absolute;
+            right: 0;
         }
     }
     &-reference-line{
@@ -288,6 +300,11 @@
     &-expand-disabled{
         opacity: 0.3;
         cursor: not-allowed;
+    }
+}
+.has-scroll-bar{
+    .@{fb}-fixed-right-wrap{
+        right: 16px;
     }
 }
 .checkbox-component{
