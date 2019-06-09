@@ -9,9 +9,5 @@ Thumbs.db
 .build
 node_modules
 .cache
-<<<<<<< HEAD
-=======
-example/dist
->>>>>>> master
 yarn.lock
 **/coverage
