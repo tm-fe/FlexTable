@@ -110,7 +110,7 @@ describe('Flex-Table', () => {
         });
 
         // 检测 fiexed header
-        it('check fixed-head base', async () => {
+        it('check fixed-header base', async () => {
             vm.$data.height = 250;
             await waitImmediate();
             let bCheck = false;
@@ -122,7 +122,7 @@ describe('Flex-Table', () => {
 
             expect(bCheck).to.eql(true);
         });
-        it('check fixed-head height', async () => {
+        it('check fixed-header height', async () => {
             const nHeight = 250;
             vm.$data.height = nHeight;
             await waitImmediate();
