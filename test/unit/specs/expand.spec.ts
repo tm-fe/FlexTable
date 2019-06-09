@@ -104,4 +104,77 @@ describe('Flex-Table', () => {
 
         // destroyVM(vm); // 这里不用销毁方法，因为点击后出发vue的修改，如果销毁了vm，则获取dom有误
     });
+    describe('expand scoped slot', () => {
+        const vm = createVue({
+            template: `
+                <flex-table
+                    resizable
+                    :loading="loading" 
+                    :columns="columns" 
+                    :data="list"
+                    :sum="sum"
+                >
+                    <template slot-scope="{ row, index }" slot="expand">
+                        <p>{{ row.name }}</p>
+                    </template>
+                </flex-table>
+            `,
+            data() {
+                return {
+                    columns: [
+                        {
+                            type: 'expand',
+                            width: 50,
+                        },
+                        {
+                            title: 'Name',
+                            key: 'name',
+                        },
+                        {
+                            title: 'Age',
+                            key: 'age',
+                            render(h, params) {
+                                return h(
+                                    'span',
+                                    `age: ${params.row.age}`,
+                                );
+                            },
+                        },
+                        {
+                            title: 'Address',
+                            key: 'address',
+                        },
+                        {
+                            title: 'Date',
+                            key: 'date',
+                        },
+                    ],
+                    loading: false,
+                    list: aTestList,
+                    sum: {
+                        name: 'Jim Green',
+                        age: 24,
+                        address: 'London',
+                        date: '2016-10-01',
+                    },
+                    height: 250,
+                };
+            }
+        });
+        const elemExpandBtn = vm.$el.querySelector('.flex-table-col-icon');
+        // 检测
+        it('check expand', async () => {
+            triggerEvent(elemExpandBtn, 'click');
+            await waitImmediate();
+            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            expect(elemNext.innerHTML).to.eql('<div><p>John Brown</p></div>');
+        });
+
+        it('check unexpanded', async () => {
+            triggerEvent(elemExpandBtn, 'click');
+            await waitImmediate();
+            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            expect(elemNext).to.eql(null);
+        });
+    });
 });
