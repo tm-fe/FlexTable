@@ -18,9 +18,13 @@ const createElm = function() {
  * 回收 vm
  * @param  {Object} vm
  */
-export const destroyVM = function(vm) {
-    vm.$destroy && vm.$destroy();
-    vm.$el && vm.$el.parentNode && vm.$el.parentNode.removeChild(vm.$el);
+export const destroyVM = function(vm: Vue) {
+    if (vm.$destroy) {
+        vm.$destroy();
+    }
+    if (vm.$el && vm.$el.parentNode) {
+        vm.$el.parentNode.removeChild(vm.$el);
+    }
 };
 
 /**
@@ -29,11 +33,11 @@ export const destroyVM = function(vm) {
  * @param  {Boolean=false} mounted 是否添加到 DOM 上
  * @return {Object} vm
  */
-export const createVue = function(Compo, mounted = false) {
+export const createVue = function(Compo: any, mounted = false) {
     if (Object.prototype.toString.call(Compo) === '[object String]') {
         Compo = { template: Compo };
     }
-    return new Vue(Compo).$mount(mounted === false ? null : createElm());
+    return new Vue(Compo).$mount(mounted === false ? undefined : createElm());
 };
 
 /**
@@ -44,14 +48,14 @@ export const createVue = function(Compo, mounted = false) {
  * @param  {Boolean=false} mounted  - 是否添加到 DOM 上
  * @return {Object} vm
  */
-export const createTest = function(Compo, propsData = {}, mounted = false) {
+export const createTest = function(Compo: any, propsData = {}, mounted = false) {
     if (propsData === true || propsData === false) {
-        mounted = propsData;
+        mounted = !!propsData;
         propsData = {};
     }
     const elm = createElm();
     const Ctor = Vue.extend(Compo);
-    return new Ctor({ propsData }).$mount(mounted === false ? null : elm);
+    return new Ctor({ propsData }).$mount(mounted === false ? undefined : elm);
 };
 
 /**
@@ -61,7 +65,7 @@ export const createTest = function(Compo, propsData = {}, mounted = false) {
  * @param  {String} name
  * @param  {*} opts
  */
-export const triggerEvent = function(elm, name, ...opts) {
+export const triggerEvent = function(elm: any, name: string, ...opts: any[]) {
     let eventName;
 
     if (/^mouse|click/.test(name)) {
@@ -86,7 +90,7 @@ export const triggerEvent = function(elm, name, ...opts) {
  * @param {Element} elm
  * @param {*} opts
  */
-export const triggerClick = function(elm, ...opts) {
+export const triggerClick = function(elm: HTMLElement, ...opts: any[]) {
     triggerEvent(elm, 'mousedown', ...opts);
     triggerEvent(elm, 'mouseup', ...opts);
 
@@ -98,8 +102,8 @@ export const triggerClick = function(elm, ...opts) {
  * @param {Element} elm
  * @param {keyCode} int
  */
-export const triggerKeyDown = function(el, keyCode) {
-    const evt = document.createEvent('Events');
+export const triggerKeyDown = function(el: HTMLElement, keyCode: number|string) {
+    const evt: any = document.createEvent('Events');
     evt.initEvent('keydown', true, true);
     evt.keyCode = keyCode;
     el.dispatchEvent(evt);
@@ -109,8 +113,8 @@ export const triggerKeyDown = function(el, keyCode) {
  * 等待 ms 毫秒，返回 Promise
  * @param {Number} ms
  */
-export const wait = function(ms = 50) {
-    return new Promise(resolve => setTimeout(() => resolve(), ms));
+export const wait = function(ms: number = 50) {
+    return new Promise((resolve) => setTimeout(() => resolve(), ms));
 };
 
 /**

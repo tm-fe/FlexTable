@@ -1,12 +1,12 @@
-/* eslint-disable no-undef */
 import {
     createVue,
     // destroyVM,
     triggerEvent,
     waitImmediate,
-} from '../util';
+} from '@/util';
+import { expect } from 'chai';
 
-const aTestList = [];
+const aTestList: FlexTableColumnOption[] = [];
 for (let i = 0; i < 1; i += 1) {
     const oTestData = {
         name: 'John Brown',
@@ -25,8 +25,8 @@ describe('Flex-Table', () => {
             template: `
                 <flex-table
                     resizable
-                    :loading="loading" 
-                    :columns="columns" 
+                    :loading="loading"
+                    :columns="columns"
                     :data="list"
                     :sum="sum"
                 ></flex-table>
@@ -37,7 +37,7 @@ describe('Flex-Table', () => {
                         {
                             type: 'expand',
                             width: 50,
-                            render: (h, params) => {
+                            render: (h: any, params: FlexTableRow) => {
                                 return h('p', {}, params.row.name);
                             },
                         },
@@ -48,7 +48,7 @@ describe('Flex-Table', () => {
                         {
                             title: 'Age',
                             key: 'age',
-                            render(h, params) {
+                            render(h: any, params: FlexTableRow) {
                                 return h('span', `age: ${params.row.age}`);
                             },
                         },
@@ -76,16 +76,29 @@ describe('Flex-Table', () => {
         const elemExpandBtn = vm.$el.querySelector('.flex-table-col-icon');
         // 检测
         it('check expand', async () => {
-            triggerEvent(elemExpandBtn, 'click');
-            await waitImmediate();
-            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
-            expect(elemNext.innerHTML).to.eql('<p>John Brown</p>');
+            let elemNextHtml = '';
+            if (elemExpandBtn) {
+                triggerEvent(elemExpandBtn, 'click');
+                await waitImmediate();
+                if ( elemExpandBtn.parentElement ) {
+                    const elemNext = elemExpandBtn.parentElement.nextElementSibling;
+                    if ( elemNext && elemNext.innerHTML) {
+                        elemNextHtml = elemNext.innerHTML;
+                    }
+                }
+            }
+
+            expect(elemNextHtml).to.eql('<p>John Brown</p>');
         });
 
         it('check unexpanded', async () => {
             triggerEvent(elemExpandBtn, 'click');
             await waitImmediate();
-            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            let elemNext;
+            if (elemExpandBtn && elemExpandBtn.parentElement){
+                elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            }
+
             expect(elemNext).to.eql(null);
         });
 
@@ -153,14 +166,20 @@ describe('Flex-Table', () => {
         it('check expand', async () => {
             triggerEvent(elemExpandBtn, 'click');
             await waitImmediate();
-            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            let elemNext;
+            if (elemExpandBtn && elemExpandBtn.parentElement) {
+                elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            }
             expect(elemNext.innerHTML).to.eql('<div><p>John Brown</p></div>');
         });
 
         it('check unexpanded', async () => {
             triggerEvent(elemExpandBtn, 'click');
             await waitImmediate();
-            const elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            let elemNext;
+            if (elemExpandBtn && elemExpandBtn.parentElement) {
+                elemNext = elemExpandBtn.parentElement.nextElementSibling;
+            }
             expect(elemNext).to.eql(null);
         });
     });

@@ -1,9 +1,10 @@
-/* eslint-disable no-undef */
-import { createVue } from '../util';
+import { createVue } from '@/util';
+import { expect } from 'chai';
+import Vue from 'vue';
 
-const aTestList = [];
-const aTestBtn = [];
-const aTestHtml = [];
+const aTestList: FlexTableColumnOption[] = [];
+const aTestBtn: string[] = [];
+const aTestHtml: string[] = [];
 for (let i = 0; i < 5; i += 1) {
     const sCon = `2016-10-03(${i})`;
     const oTestData = {
@@ -20,12 +21,12 @@ for (let i = 0; i < 5; i += 1) {
 describe('Flex-Table', () => {
     // 基础测试
     describe('scopedSlot', () => {
-        const vm = createVue({
+        const vm: Vue = createVue({
             template: `
                 <flex-table
                     resizable
-                    :loading="loading" 
-                    :columns="columns" 
+                    :loading="loading"
+                    :columns="columns"
                     :data="list">
                     <template slot-scope="{ row, index }" slot="operation">
                         <button>View{{index}}</button>
@@ -67,21 +68,25 @@ describe('Flex-Table', () => {
         });
 
         // 检测 slot
-        it('check slot', async() => {
+        it('check slot', async () => {
             const aOperation = vm.$el.querySelectorAll('.flex-table-body button');
-            const aBtnStr = [];
+            const aBtnStr: string[] = [];
             aOperation.forEach((elem) => {
-                aBtnStr.push(elem.textContent);
+                if (elem && elem.textContent) {
+                    aBtnStr.push(elem.textContent);
+                }
             });
 
             expect(aTestBtn).to.eql(aBtnStr);
         });
 
-        it('check html', async() => {
+        it('check html', async () => {
             const aOperation = vm.$el.querySelectorAll('.flex-table-body i');
-            const aHtmlStr = [];
+            const aHtmlStr: string[] = [];
             aOperation.forEach((elem) => {
-                aHtmlStr.push(elem.textContent);
+                if (elem && elem.textContent) {
+                    aHtmlStr.push(elem.textContent);
+                }
             });
 
             expect(aTestHtml).to.eql(aHtmlStr);

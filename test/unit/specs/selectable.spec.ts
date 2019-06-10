@@ -1,11 +1,12 @@
-/* eslint-disable no-undef */
 import {
     createVue,
     triggerEvent,
     wait,
-} from '../util';
+} from '@/util';
+import { expect } from 'chai';
+import Vue from 'vue';
 
-const aTestList = [];
+const aTestList: FlexTableColumnOption[] = [];
 for (let i = 0; i < 2; i += 1) {
     const oTestData = {
         name: 'John Brown',
@@ -20,12 +21,12 @@ for (let i = 0; i < 2; i += 1) {
 describe('Flex-Table', () => {
     // 基础测试
     describe('select', () => {
-        const vm = createVue({
+        const vm: any = createVue({
             template: `
                 <flex-table
                     resizable
-                    :loading="loading" 
-                    :columns="columns" 
+                    :loading="loading"
+                    :columns="columns"
                     :data="list"
                     :sum="sum"
                 ></flex-table>
@@ -45,7 +46,7 @@ describe('Flex-Table', () => {
                         {
                             title: 'Age',
                             key: 'age',
-                            render(h, params) {
+                            render(h: Vue.CreateElement, params: FlexTableRow) {
                                 return h('span', `age: ${params.row.age}`);
                             },
                         },
@@ -69,7 +70,7 @@ describe('Flex-Table', () => {
                 };
             },
         });
-        const elemAllCheckedBtn = vm.$el.querySelector('.flex-table-head input[type="checkbox"]');
+        const elemAllCheckedBtn: any = vm.$el.querySelector('.flex-table-head input[type="checkbox"]');
         // 检测 全选
         it('check select all', async () => {
             triggerEvent(elemAllCheckedBtn, 'click');
@@ -78,7 +79,7 @@ describe('Flex-Table', () => {
             let bCheck = true;
             const aElemBodyCheck = vm.$el.querySelectorAll('.flex-table-body input[type="checkbox"]');
 
-            aElemBodyCheck.forEach((element) => {
+            aElemBodyCheck.forEach((element: any) => {
                 if (!element.checked) {
                     bCheck = false;
                 }
@@ -96,7 +97,7 @@ describe('Flex-Table', () => {
             let bCheck = true;
             const aElemBodyCheck = vm.$el.querySelectorAll('.flex-table-body input[type="checkbox"]');
 
-            aElemBodyCheck.forEach((element) => {
+            aElemBodyCheck.forEach((element: any) => {
                 if (element.checked) {
                     bCheck = false;
                 }
@@ -107,15 +108,14 @@ describe('Flex-Table', () => {
 
         // 检测 全选,有diabled的情况
         it('check select all-_isDisabled', async () => {
-            // eslint-disable-next-line no-underscore-dangle
             vm.$children[0].dataList[0]._isDisabled = true;
             triggerEvent(elemAllCheckedBtn, 'click');
             vm.$children[0].$children[0].$children[0].toggle(); // 这里需要手动程序触发
             await wait(100);
-            const aCheck = [];
+            const aCheck: boolean[] = [];
             const aElemBodyCheck = vm.$el.querySelectorAll('.flex-table-body input[type="checkbox"]');
 
-            aElemBodyCheck.forEach((element) => {
+            aElemBodyCheck.forEach((element: any) => {
                 aCheck.push(element.checked);
             });
 
@@ -124,15 +124,14 @@ describe('Flex-Table', () => {
 
         // 检测 取消全选,有diabled的情况
         it('check unselect all-_isDisabled', async () => {
-            // eslint-disable-next-line no-underscore-dangle
             vm.$children[0].dataList[0]._isDisabled = true;
             triggerEvent(elemAllCheckedBtn, 'click');
             vm.$children[0].$children[0].$children[0].toggle(); // 这里需要手动程序触发
             await wait(100);
-            const aCheck = [];
+            const aCheck: boolean[] = [];
             const aElemBodyCheck = vm.$el.querySelectorAll('.flex-table-body input[type="checkbox"]');
 
-            aElemBodyCheck.forEach((element) => {
+            aElemBodyCheck.forEach((element: any) => {
                 aCheck.push(element.checked);
             });
 
@@ -141,7 +140,6 @@ describe('Flex-Table', () => {
 
         // 检测 全选后，点击body中一个input 此时全选应该被取消
         it('check unselect all->body unselect', async () => {
-            // eslint-disable-next-line no-underscore-dangle
             vm.$children[0].dataList[0]._isDisabled = false;
             triggerEvent(elemAllCheckedBtn, 'click');
             vm.$children[0].$children[0].$children[0].toggle(); // 这里需要手动程序触发
@@ -161,15 +159,14 @@ describe('Flex-Table', () => {
 
         // 检测 点击body中的input 此时全选应该被选中
         it('check select all->body select', async () => {
-            // eslint-disable-next-line no-underscore-dangle
             vm.$children[0].dataList[0]._isDisabled = false;
             const aElemBodyCheck = vm.$el.querySelectorAll('.flex-table-body input[type="checkbox"]');
-            aElemBodyCheck.forEach(async (elem, index) => {
+            aElemBodyCheck.forEach(async (elem: Element, index: number) => {
                 triggerEvent(elem, 'click');
                 vm.$children[0].$children[1].$children[0].toggleSelect(index); // 这里需要手动程序触发
                 await wait(50);
             });
-            const bCheck = elemAllCheckedBtn.checked;
+            const bCheck = elemAllCheckedBtn && elemAllCheckedBtn.checked;
 
             expect(bCheck).to.eql(true);
         });
