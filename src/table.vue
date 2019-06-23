@@ -328,7 +328,7 @@ export default {
                 const newItem = JSON.parse(JSON.stringify(item));
                 newItem._isChecked = !!newItem._checked;
                 newItem._isDisabled = !!newItem._disabled;
-                newItem._expanded = !!newItem._expanded;
+                newItem._expanded = newItem.expandStatus || !!newItem._expanded;
                 newItem._disableExpand = !!newItem._disableExpand;
                 this.rowHeight[index] = 0;
                 return newItem;
@@ -495,14 +495,16 @@ export default {
 
                 //计算每一个单元的宽度
                 this.tableColumns.forEach(item => {
-                    let sKey = item.key || item.title;
-                    let nWidth = item.width;
-                    if(nWidth){
-                        nWidth = Math.max(nWidth,MIN_WIDTH);
-                        oWidth[sKey] = nWidth;
-                        defineTotalWidth += nWidth;
-                    }else{
-                        nCalLength++;
+                    if (!item.hidden) {
+                        let sKey = item.key || item.title;
+                        let nWidth = item.width;
+                        if(nWidth){
+                            nWidth = Math.max(nWidth,MIN_WIDTH);
+                            oWidth[sKey] = nWidth;
+                            defineTotalWidth += nWidth;
+                        } else{
+                            nCalLength++;
+                        }
                     }
                 });
                 // 给没有定义宽度的 cell 平均分配或指定最小宽度
@@ -511,18 +513,22 @@ export default {
                     nCalWidth = Math.max(nLessWidth/nCalLength, MIN_WIDTH);
 
                     this.tableColumns.forEach(item=>{
-                        let sKey = item.key || item.title;
-                        let nWidth = item.width;
-                        if(!nWidth){
-                            oWidth[sKey] = nCalWidth ;
+                        if (!item.hidden) {
+                            let sKey = item.key || item.title;
+                            let nWidth = item.width;
+                            if(!nWidth){
+                                oWidth[sKey] = nCalWidth ;
+                            }
                         }
                     });
                 } else if (nTableWidth > defineTotalWidth) {
                     let dWidth = (nTableWidth-defineTotalWidth)/this.tableColumns.length;
                     dWidth = dWidth > 0 ? dWidth : 0;
                     this.tableColumns.forEach(item=>{
-                        let sKey = item.key || item.title;
-                        oWidth[sKey] = oWidth[sKey] + dWidth;
+                        if (!item.hidden) {
+                            let sKey = item.key || item.title;
+                            oWidth[sKey] = oWidth[sKey] + dWidth;
+                        }
                     });
                 }
                 // 计算真实宽度
@@ -535,6 +541,13 @@ export default {
         },
         onRowHeightChange(row) {
             this.$set(this.rowHeight, row.rowIndex, row.height);
+        },
+        toToggleExpand(index) {
+            const row = this.dataList[index];
+            if (!row._disableExpand) {
+                this.dataList[index]._expanded = !this.dataList[index]._expanded;
+                this.$emit('on-toggle-expand', index, this.dataList[index]._expanded);
+            }
         }
     }
 }

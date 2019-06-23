@@ -5,26 +5,40 @@
     
     <flex-table
         resizable
-        :loading="loading" 
-        :columns="columns" 
+        :loading="loading"
+        :columns="columns"
         :data="list"
         :sum="sum"></flex-table>
 
     <p>expand scoped slot 用法</p>
     <flex-table
         resizable
-        :loading="loading" 
-        :columns="columns2" 
-        :data="list"
+        :loading="loading"
+        :columns="columns2"
+        :data="list2"
+        ref="expandTable"
+        @on-toggle-expand="onToggleExpand"
         :sum="sum">
+        <template slot-scope="{ row, index }" slot="name">
+            <a
+                type="text"
+                @click="toggle(index)"
+            >
+                {{row.name}} <span style="color: blue">[{{row.expandStatus?'收起':'展开'}}]</span>
+            </a>
+        </template>
         <template slot-scope="{ row, index }" slot="expand">
             <div style="padding: 15px 20px;">
                 <div>第 {{ index+1 }} 行</div>
-                <ul>
+                <!-- <ul>
                     <li>姓名： {{ row.name }}</li>
                     <li>年龄： {{ row.age }}</li>
                     <li>详细地址： {{ row.address }}</li>
-                </ul>
+                </ul> -->
+                <flex-table
+                    :columns="columnsEx"
+                    :data="list"
+                ></flex-table>
             </div>
         </template>
     </flex-table>
@@ -43,6 +57,9 @@ for(let i=0;i<10;i++){
         address: 'New York No. 1 Lake Park',
         date: '2016-10-03',
     };
+    if (i === 0){
+        oTestData.expandStatus = true;
+    }
     aTestList.push(oTestData);
 }
 
@@ -87,11 +104,12 @@ export default {
             columns2: [
                 {
                     type: 'expand',
-                    width: 50,
+                    hidden: true
                 },
                 {
                     title: 'Name',
                     key: 'name',
+                    type: 'slot'
                 },
                 {
                     title: 'Age',
@@ -109,8 +127,23 @@ export default {
                     key: 'date',
                 },
             ],
+            columnsEx: [
+                {
+                    title: 'Name',
+                    key: 'name',
+                },
+                {
+                    title: 'Address',
+                    key: 'address',
+                },
+                {
+                    title: 'Date',
+                    key: 'date',
+                }
+            ],
             loading: false,
             list: aTestList,
+            list2: JSON.parse(JSON.stringify(aTestList)),
             sum:{
                 name: 'Jim Green',
                 age: 24,
@@ -120,6 +153,15 @@ export default {
         }
     },
     mounted() {},
-    methods: {}
+    methods: {
+        toggle(index){
+            this.$refs.expandTable.toToggleExpand(index);
+        },
+        onToggleExpand(index, status) {
+            const obj = Object.assign({}, this.list2[index]);
+            obj.expandStatus = status;
+            this.$set(this.list2, index, obj);
+        }
+    }
 }
 </script>

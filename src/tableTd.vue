@@ -5,6 +5,7 @@
             'flex-table-col-icon': renderType === 'expand',
             'flex-table-expand-disabled': renderType === 'expand' && row._disableExpand,
             }"
+        v-if="!column.hidden"
         :style="setCellStyle(column)"
         @click="onToggleExpand"
         ref="cell">

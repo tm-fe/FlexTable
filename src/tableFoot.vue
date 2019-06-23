@@ -2,25 +2,29 @@
 <template>
     <div class="flex-table-foot">
         <div class="flex-table-row" :style="{ height: height }">
-            <div 
-                class="flex-table-col" 
+            <template
                 v-for="(item, index) in columns"
-                :key="index"
-                :style="setCellStyle(item)"
             >
-                <template v-if="sum[item.key] && !isHidden(item)">
-                    <Expand
-                        v-if="item.render"
-                        :row="sum"
-                        :column="item"
-                        :index="index"
-                        :render="item.render"></Expand>
-                    <p v-else>{{sum[item.key]}}</p>
-                    <p class="foot-label">{{item.title}}</p>
-                </template>
-            </div>
-        </div>
+                <div 
+                    class="flex-table-col" 
+                    :key="index"
+                    :style="setCellStyle(item)"
+                    v-if="!item.hidden"
+                >
+                    <template v-if="sum[item.key] && !isHidden(item)">
+                        <Expand
+                            v-if="item.render"
+                            :row="sum"
+                            :column="item"
+                            :index="index"
+                            :render="item.render"></Expand>
+                        <p v-else>{{sum[item.key]}}</p>
+                        <p class="foot-label">{{item.title}}</p>
+                    </template>
+                </div>
+        </template>
     </div>
+</div>
 </template>
 <script>
 import Expand from './expand.js';

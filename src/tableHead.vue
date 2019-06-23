@@ -1,29 +1,33 @@
 <template>
     <div class="flex-table-head">
         <div class="flex-table-row" :style="{ height: height }">
-            <div
-                class="flex-table-col"
+            <template
                 v-for="(item, index) in headRow"
-                :key="item.key + '_' + index"
-                :style="setCellStyle(item)"
             >
-                <template v-if="!isHidden(item)">
-                    <template v-if="item.type === 'selection'"><Checkbox :checked="isSelectAll" :disabled="!data.length" @input="selectAll"></Checkbox></template>
-                    <template v-else>
-                        <Expand
-                            v-if="item.renderHeader"
-                            :column="item"
-                            :index="index"
-                            :render="item.renderHeader"></Expand>
-                        <span v-else>{{item.title}}</span>
-                        <span class="flex-table-sort" v-if="item.sortable">
-                            <i @click="handleSort(index, 'asc')" :class="{'on': getColumns(index)._sort === 'asc'}" class="flex-table-arrow-dropup"></i>
-                            <i @click="handleSort(index, 'desc')" :class="{'on': getColumns(index)._sort === 'desc'}" class="flex-table-arrow-dropdown"></i>
-                        </span>
-                        <div v-if="resizable" @mousedown="onColResize($event, index)" class="flex-table-col-resize j-col-resize"></div>
+                <div
+                    class="flex-table-col"
+                    :key="item.key + '_' + index"
+                    :style="setCellStyle(item)"
+                    v-if="!item.hidden"
+                >
+                    <template v-if="!isHidden(item)">
+                        <template v-if="item.type === 'selection'"><Checkbox :checked="isSelectAll" :disabled="!data.length" @input="selectAll"></Checkbox></template>
+                        <template v-else>
+                            <Expand
+                                v-if="item.renderHeader"
+                                :column="item"
+                                :index="index"
+                                :render="item.renderHeader"></Expand>
+                            <span v-else>{{item.title}}</span>
+                            <span class="flex-table-sort" v-if="item.sortable">
+                                <i @click="handleSort(index, 'asc')" :class="{'on': getColumns(index)._sort === 'asc'}" class="flex-table-arrow-dropup"></i>
+                                <i @click="handleSort(index, 'desc')" :class="{'on': getColumns(index)._sort === 'desc'}" class="flex-table-arrow-dropdown"></i>
+                            </span>
+                            <div v-if="resizable" @mousedown="onColResize($event, index)" class="flex-table-col-resize j-col-resize"></div>
+                        </template>
                     </template>
-                </template>
-            </div>
+                </div>
+            </template>
         </div>
     </div>
 </template>
