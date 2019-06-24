@@ -19,14 +19,6 @@
         ref="expandTable"
         @on-toggle-expand="onToggleExpand"
         :sum="sum">
-        <template slot-scope="{ row, index }" slot="name">
-            <a
-                type="text"
-                @click="toggle(index)"
-            >
-                {{row.name}} <span style="color: blue">[{{row.expandStatus?'收起':'展开'}}]</span>
-            </a>
-        </template>
         <template slot-scope="{ row, index }" slot="expand">
             <div style="padding: 15px 20px;">
                 <div>第 {{ index+1 }} 行</div>
@@ -104,12 +96,11 @@ export default {
             columns2: [
                 {
                     type: 'expand',
-                    hidden: true
+                    width: 50
                 },
                 {
                     title: 'Name',
-                    key: 'name',
-                    type: 'slot'
+                    key: 'name'
                 },
                 {
                     title: 'Age',
