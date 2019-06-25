@@ -73,8 +73,9 @@ describe('Flex-Table', () => {
 
         const $resizeDiv = vm.$el.querySelectorAll('.flex-table-head .flex-table-col-resize')[0];
         const vmTable: any = vm.$children[0];
+        const vmHeaer = vmTable.$children[0];
 
-        vmTable.onColResizeStart.call(vmTable, {
+        vmHeaer.onColResize.call(vmHeaer, {
             clientX: 0,
             target: $resizeDiv,
             stopPropagation: () => void 0,
