@@ -18,7 +18,7 @@
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
-                <div class="flex-table-row" v-if="row._expanded" :key="'expand_'+index">
+                <div class="flex-table-expanded" v-if="row._expanded" :key="'expand_'+index">
                     <Expand
                         :row="row"
                         :index="index"

@@ -106,15 +106,17 @@
         user-select: none;
     }
     &-body{
-        .@{fb}-row{
-            &:nth-child(odd){
-                background: #f9f9f9;
-            }
-            &:last-child{
-                border-bottom: 1px solid @borderColor
-            }
-            &:hover{
-                background-color: #ebf7ff;
+        .@{fb}-tr{
+            >.@{fb}-row{
+                &:nth-child(odd){
+                    background: #f9f9f9;
+                }
+                &:last-child{
+                    border-bottom: 1px solid @borderColor
+                }
+                &:hover{
+                    background-color: #ebf7ff;
+                }
             }
         }
     }
@@ -139,6 +141,12 @@
     &-row{
         display: flex;
         align-items: stretch;
+        border-bottom: 1px solid @borderColor;
+        &:last-child{
+            border: none;
+        }
+    }
+    &-expanded{
         border-bottom: 1px solid @borderColor;
         &:last-child{
             border: none;
