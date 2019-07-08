@@ -8,7 +8,7 @@
                 :key="index"
                 :style="setCellStyle(item)"
             >
-                <template v-if="sum[item.key] && !isHidden(item)">
+                <template v-if="shouldRender(item)">
                     <Expand
                         v-if="item.render"
                         :row="sum"
@@ -76,6 +76,9 @@ export default {
         },
         isHidden(item) {
             return this.onlyFixed && (item.fixed !== this.onlyFixed);
+        },
+        shouldRender(item) {
+            return this.sum[item.key] !== undefined && !this.isHidden(item)
         }
     }
 }
