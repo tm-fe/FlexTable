@@ -170,5 +170,15 @@ describe('Flex-Table', () => {
 
             expect(bCheck).to.eql(true);
         });
+
+        // 检测 没有数据时 点击全选
+        it('check select all->no data', async () => {
+            vm.list = [];
+            await wait(100);
+            triggerEvent(elemAllCheckedBtn, 'click');
+            await wait(100);
+            const bCheck = vm.$children[0].$children[0].$children[0].state; // 属性有问题，这里改成用组件的state判断
+            expect(bCheck).to.eql(false);
+        });
     });
 });
