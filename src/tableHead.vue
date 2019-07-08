@@ -1,6 +1,6 @@
 <template>
-    <div class="flex-table-head">
-        <div class="flex-table-row" :style="{ height: height }">
+    <div class="flex-table-head" :style="{ height: height }">
+        <div class="flex-table-row">
             <div
                 class="flex-table-col"
                 v-for="(item, index) in headRow"
@@ -129,7 +129,7 @@ export default {
             if (!this.onlyFixed) {
                 this.owner.onRowHeightChange({
                     rowIndex: 'header',
-                    height: this.$el.offsetHeight-1,
+                    height: this.$el.offsetHeight,
                 });
             }
         },

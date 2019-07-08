@@ -5,12 +5,17 @@
     background-color: #fff;
     border-bottom: 1px solid #dddee1;
     position: relative;
+
     &-wrap{
         position: relative;
         border: 1px solid #dddee1;
         // border-bottom: none;
         display: flex;
         align-content: stretch;
+
+        & *{
+            box-sizing: border-box;
+        }
     }
     &-big{
         .@{fb}{
