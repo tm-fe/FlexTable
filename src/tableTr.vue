@@ -69,7 +69,7 @@ export default {
             if (!this.onlyFixed) {
                 this.owner.onRowHeightChange({
                     rowIndex: this.rowIndex,
-                    height: this.$el.offsetHeight-1,
+                    height: this.$el.offsetHeight,
                 })
             }
         }
