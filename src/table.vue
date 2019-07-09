@@ -330,7 +330,7 @@ export default {
                 newItem._isDisabled = !!newItem._disabled;
                 newItem._expanded = !!newItem._expanded;
                 newItem._disableExpand = !!newItem._disableExpand;
-                this.rowHeight[index] = 0;
+                this.$set(this.rowHeight, index, 0);
                 return newItem;
             });
             return list;
