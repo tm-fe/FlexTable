@@ -139,6 +139,7 @@ import tableBody from './tableBody.vue';
 import tableFoot from './tableFoot.vue';
 import tableScrollBar from './tableScrollBar.vue';
 import Spinner from './Spinner.vue';
+import debounce from "lodash.debounce";
 
 import { MIN_WIDTH } from './data';
 
@@ -317,13 +318,12 @@ export default {
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
     methods:{
-        doLayout() {
-            // todo dobounce
+        doLayout: debounce(function() {
             this.$nextTick(() => {
                 this.resize();
                 this.calHeight();
             });
-        },
+        }, 50),
         computedFixedLeft: function() {
             return this.tableColumns.some(item => item.fixed === 'left');
         },
