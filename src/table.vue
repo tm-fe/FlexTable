@@ -205,6 +205,8 @@ export default {
             bodyH: 0,
             footH: 54,
             maxHeight: 0,
+            hasFixedLeft: false,
+            hasFixedRight: false,
             bodyScrolling: false,
             fixedBodyScrolling: false,
             fixedRightBodyScrolling: false,
@@ -234,12 +236,6 @@ export default {
             }
             return arr;
         },
-        hasFixedLeft: function() {
-            return this.tableColumns.some(item => item.fixed === 'left');
-        },
-        hasFixedRight: function() {
-            return this.tableColumns.some(item => item.fixed === 'right');
-        },
         fixedLeftWidth: function() {
             return this.tableColumns.reduce((width, item) => {
                 if (item.fixed === 'left') {
@@ -261,10 +257,8 @@ export default {
         }
     },
     mounted(){
-        this.resize();
-        this.calHeight();
-        window.addEventListener('resize',this.resize);
-        window.addEventListener('resize',this.calHeight);
+        this.doLayout();
+        window.addEventListener('resize',this.doLayout);
         if (this.resizable) {
             window.addEventListener('mouseup', this.onColResizeEnd);
             this.$el.addEventListener('mousemove', this.onColResizeMove);
@@ -274,8 +268,7 @@ export default {
         data: {
             handler: function() {
                 this.dataList = this.initData();
-                this.resize();
-                this.calHeight();
+                this.doLayout();
             },
             deep: true,
         },
@@ -303,11 +296,15 @@ export default {
         },
         tableColumns: {
             handler: function(arr) {
-                this.resize();
-                this.calHeight();
+                this.doLayout();
+                this.$nextTick(() => {
+                    this.hasFixedLeft = this.computedFixedLeft();
+                    this.hasFixedRight = this.computedFixedRight();
+                });
                 this.$emit('update:columns', arr);
             },
-            deep: true
+            deep: true,
+            immediate: true,
         },
         sum: function() {
             this.calHeight();
@@ -315,12 +312,24 @@ export default {
     },
     updated() {},
     beforeDestroy() {
-        window.removeEventListener('resize',this.resize);
-        window.removeEventListener('resize',this.calHeight);
+        window.removeEventListener('resize',this.doLayout);
         window.removeEventListener('mouseup', this.onColResizeEnd);
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
     methods:{
+        doLayout() {
+            // todo dobounce
+            this.$nextTick(() => {
+                this.resize();
+                this.calHeight();
+            });
+        },
+        computedFixedLeft: function() {
+            return this.tableColumns.some(item => item.fixed === 'left');
+        },
+        computedFixedRight: function() {
+            return this.tableColumns.some(item => item.fixed === 'right');
+        },
         initData() {
             let list = [];
             this.rowHeight = { header: 0, footer: 0 };
