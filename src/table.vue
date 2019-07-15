@@ -192,13 +192,17 @@ export default {
         theme: {
             type: String,
             default: 'light'
+        },
+        initRowNumber: {
+            type: Number,
+            default: 10,
         }
     },
     data(){
         return {
             tableId: tableIdSeed++,
             rowHeight: { header: 0, footer: 0 },
-            dataList: this.initData(),
+            dataList: [],
             style:{},
             calWidth: {},
             tableColumns: [],
@@ -268,10 +272,11 @@ export default {
     watch: {
         data: {
             handler: function() {
-                this.dataList = this.initData();
+                this.initData();
                 this.doLayout();
             },
             deep: true,
+            immediate: true,
         },
         height: function(val){
             this.calHeight();
@@ -331,18 +336,43 @@ export default {
             return this.tableColumns.some(item => item.fixed === 'right');
         },
         initData() {
-            let list = [];
             this.rowHeight = { header: 0, footer: 0 };
-            list = this.data.map((item, index) => {
-                const newItem = JSON.parse(JSON.stringify(item));
-                newItem._isChecked = !!newItem._checked;
-                newItem._isDisabled = !!newItem._disabled;
-                newItem._expanded = !!newItem._expanded;
-                newItem._disableExpand = !!newItem._disableExpand;
-                this.$set(this.rowHeight, index, 0);
-                return newItem;
+            this.dataList = [];
+            this.data.slice(0, this.initRowNumber).forEach((item, index) => {
+                this.copyItem(item, index)
             });
-            return list;
+            if (this.data.length > this.initRowNumber) {
+                this.eachQueue(this.data, this.initRowNumber);
+            } else {
+                this.$emit("on-render-done");
+            }
+        },
+        copyItem(item, index) {
+            const newItem = JSON.parse(JSON.stringify(item));
+            newItem._isChecked = !!newItem._checked;
+            newItem._isDisabled = !!newItem._disabled;
+            newItem._expanded = !!newItem._expanded;
+            newItem._disableExpand = !!newItem._disableExpand;
+            this.$set(this.rowHeight, index, 0);
+            this.dataList.push(newItem);
+        },
+        eachQueue(arr, i) {
+            return new Promise((resolve, reject) => {
+                requestAnimationFrame(() => {
+                    this.copyItem(arr[i], i);
+                    i++;
+                    resolve();
+                });
+            }).then(() => {
+                if (arr.length <= i) {
+                    this.doLayout();
+                    this.$emit("on-render-done");
+                    reject();
+                    return;
+                } else {
+                    return this.eachQueue(arr, i);
+                }
+            }).catch(() => {})
         },
         toggleSelect(index) {
             const row = this.dataList[index];
