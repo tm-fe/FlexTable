@@ -50,4 +50,4 @@ export declare class FlexTable extends Vue {
         eventName: "on-sort-change",
         option: sortOption
     ): this;
-};
+}
