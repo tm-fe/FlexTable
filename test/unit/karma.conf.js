@@ -5,7 +5,9 @@ module.exports = function(config) {
         browsers: ['ChromeHeadless'],
         frameworks: ['mocha', 'sinon-chai'],
         reporters: ['spec', 'coverage'],
-        files: ['index.js'],
+        files: [
+            'index.js',
+        ],
         preprocessors: {
             'index.js': ['webpack', 'sourcemap'],
         },

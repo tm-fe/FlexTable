@@ -5,12 +5,17 @@
     background-color: #fff;
     border-bottom: 1px solid #dddee1;
     position: relative;
+
     &-wrap{
         position: relative;
         border: 1px solid #dddee1;
         // border-bottom: none;
         display: flex;
         align-content: stretch;
+
+        & *{
+            box-sizing: border-box;
+        }
     }
     &-big{
         .@{fb}{
@@ -106,15 +111,17 @@
         user-select: none;
     }
     &-body{
-        .@{fb}-row{
-            &:nth-child(odd){
-                background: #f9f9f9;
-            }
-            &:last-child{
-                border-bottom: 1px solid @borderColor
-            }
-            &:hover{
-                background-color: #ebf7ff;
+        .@{fb}-tr{
+            >.@{fb}-row{
+                &:nth-child(odd){
+                    background: #f9f9f9;
+                }
+                &:last-child{
+                    border-bottom: 1px solid @borderColor
+                }
+                &:hover{
+                    background-color: #ebf7ff;
+                }
             }
         }
     }
@@ -139,6 +146,13 @@
     &-row{
         display: flex;
         align-items: stretch;
+        height: 100%;
+        border-bottom: 1px solid @borderColor;
+        &:last-child{
+            border: none;
+        }
+    }
+    &-expanded{
         border-bottom: 1px solid @borderColor;
         &:last-child{
             border: none;
@@ -304,7 +318,7 @@
 }
 .has-scroll-bar{
     .@{fb}-fixed-right-wrap{
-        right: 16px;
+        right: 15px;
     }
 }
 .checkbox-component{

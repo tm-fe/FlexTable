@@ -45,7 +45,8 @@ To view demo examples locally clone the repo and run `yarn install && yarn dev` 
 - [x] 排序
 - [x] 拖动调整列宽（resizable）
 - [x] selectable
-- [x] 子表格嵌套
+- [x] expand 嵌套功能
+- [x] 异步渲染
 - [ ] 合并单元格
 - [ ] 拖动改变列顺序
 - [ ] 行loading(row.loading)
@@ -136,6 +137,7 @@ export default {
 | resizable | 是否可拖动调整列宽 | Boolean | false |
 | height | 表格高度，单位 px，设置后，如果表格内容大于此值，会固定表头 | Number | - |
 | no-data | 数据为空时显示的提示内容 | String | No Data |
+| initRowNumber | 异步渲染时，mounted 触发前渲染的行数(建议是刚好首屏) | number | 10 |
 
 ### Table events
 
@@ -145,6 +147,7 @@ export default {
 | on-selection-change | 点击全选时触发 | selection：已选项数据； row: 当前选中行数据 |
 | on-all-cancel | 全选取消时触发 | selection：已选项数据 |
 | on-selection-cancel | 单选取消时触发 | selection：已选项数据 |
+| on-render-done | 异步渲染完成时触发 | 无 |
 
 ### column
 列描述数据对象，是 columns 中的一项

@@ -17,7 +17,7 @@
 // import flexTable from '../../index.js';
 
 const aTestList = [];
-for(let i=0;i<20;i++){
+for(let i=0;i<100;i++){
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -27,7 +27,7 @@ for(let i=0;i<20;i++){
     };
     aTestList.push(oTestData);
 }
-
+console.time('fixed')
 export default {
     // components:{
     //     flexTable
@@ -80,6 +80,9 @@ export default {
                 date: '2016-10-01'
             },
         }
+    },
+    mounted() {
+        console.timeEnd('fixed')
     },
     methods: {
         onSortChange(obj) {

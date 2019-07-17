@@ -1,9 +1,8 @@
-/* eslint-disable no-undef */
-import { createVue } from '../util';
+import { createVue, triggerEvent, wait } from '@/util';
+import { expect } from 'chai';
+import Vue from 'vue';
 
-const aTestList = [];
-const aTestBtn = [];
-const aTestHtml = [];
+const aTestList: FlexTableColumnOption[] = [];
 for (let i = 0; i < 5; i += 1) {
     const sCon = `2016-10-03(${i})`;
     const oTestData = {
@@ -13,23 +12,18 @@ for (let i = 0; i < 5; i += 1) {
         date: `<i>${sCon}</i>`,
     };
     aTestList.push(oTestData);
-    aTestBtn.push(`View${i}`);
-    aTestHtml.push(sCon);
 }
 
 describe('Flex-Table', () => {
     // 基础测试
-    describe('scopedSlot', () => {
-        const vm = createVue({
+    describe('scrollBar', () => {
+        const vm: Vue = createVue({
             template: `
                 <flex-table
-                    resizable
-                    :loading="loading" 
-                    :columns="columns" 
+                    :loading="loading"
+                    :columns="columns"
+                    :height="height"
                     :data="list">
-                    <template slot-scope="{ row, index }" slot="operation">
-                        <button>View{{index}}</button>
-                    </template>
                 </flex-table>
             `,
             data() {
@@ -50,15 +44,14 @@ describe('Flex-Table', () => {
                         {
                             title: 'Date',
                             key: 'date',
-                            type: 'html',
                         },
                         {
                             title: 'operation',
                             key: 'operation',
-                            type: 'slot',
                         },
                     ],
                     loading: false,
+                    height: 200,
                     list: aTestList,
                 };
             },
@@ -66,25 +59,13 @@ describe('Flex-Table', () => {
             },
         });
 
-        // 检测 slot
-        it('check slot', async() => {
-            const aOperation = vm.$el.querySelectorAll('.flex-table-body button');
-            const aBtnStr = [];
-            aOperation.forEach((elem) => {
-                aBtnStr.push(elem.textContent);
-            });
-
-            expect(aTestBtn).to.eql(aBtnStr);
-        });
-
-        it('check html', async() => {
-            const aOperation = vm.$el.querySelectorAll('.flex-table-body i');
-            const aHtmlStr = [];
-            aOperation.forEach((elem) => {
-                aHtmlStr.push(elem.textContent);
-            });
-
-            expect(aTestHtml).to.eql(aHtmlStr);
+        // 检测 滚动条
+        it('check', async () => {
+            const vmTable: any = vm.$children[0];
+            vmTable.bodyH = 210; // 不能获取offsetHeight，所以这样处理
+            await wait(0);
+            const srcollY = vm.$el.querySelectorAll('.flex-table-scroll-y');
+            expect(srcollY.length).to.eql(1);
         });
     });
 });

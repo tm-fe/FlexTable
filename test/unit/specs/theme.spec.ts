@@ -1,34 +1,31 @@
-/* eslint-disable no-undef */
-import {
-    createVue,
-    destroyVM,
-} from '../util';
+import { createVue, waitImmediate } from '@/util';
+import { expect } from 'chai';
+import Vue from 'vue';
 
-const aTestList = [];
+const aTestList: FlexTableColumnOption[] = [];
 for (let i = 0; i < 5; i += 1) {
     const oTestData = {
         name: 'John Brown',
-        age: 18,
+        age: 18 + i,
         address: 'New York No. 1 Lake Park',
         date: '2016-10-03',
     };
     aTestList.push(oTestData);
 }
 
-
 describe('Flex-Table', () => {
     // 基础测试
-    describe('resizable', () => {
-        const nInitWidth = 50;
-        const nAddWidth = 100;
-        const vm = createVue({
+    describe('theme', () => {
+        const vm: Vue = createVue({
             template: `
                 <flex-table
                     resizable
-                    :loading="loading" 
-                    :columns="columns" 
+                    :loading="loading"
+                    :columns="columns"
                     :data="list"
                     :sum="sum"
+                    :size="size"
+                    :theme="theme"
                 ></flex-table>
             `,
             data() {
@@ -37,17 +34,11 @@ describe('Flex-Table', () => {
                         {
                             title: 'Name',
                             key: 'name',
-                            width: nInitWidth,
-                            renderHeader(h, params) {
-                                return h('span', `Custom Title : ${params.column.title}`);
-                            },
                         },
                         {
                             title: 'Age',
                             key: 'age',
-                            render(h, params) {
-                                return h('span', `age: ${params.row.age}`);
-                            },
+                            sortable: true,
                         },
                         {
                             title: 'Address',
@@ -66,33 +57,39 @@ describe('Flex-Table', () => {
                         address: 'London',
                         date: '2016-10-01',
                     },
+                    size: '',
+                    theme: '',
                 };
+            },
+            methods: {
             },
         });
 
-        const $resizeDiv = vm.$el.querySelectorAll('.flex-table-head .flex-table-col-resize')[0];
-        const vmTable = vm.$children[0];
+        // 检测 size-big
+        it('check size-big', async () => {
+            vm.$data.size = 'big';
 
-        vmTable.onColResizeStart.call(vmTable, {
-            clientX: 0,
-            target: $resizeDiv,
-            stopPropagation: () => {},
-        }, 0);
-
-        vmTable.onColResizeMove.call(vmTable, {
-            clientX: nAddWidth,
-            target: $resizeDiv,
-            stopPropagation: () => {},
+            await waitImmediate();
+            const bBig = vm.$el.classList.contains('flex-table-big');
+            expect(bBig).to.eql(true);
         });
 
-        vmTable.onColResizeEnd.call(vmTable);
+        // 检测 size-small
+        it('check size-small', async () => {
+            vm.$data.size = 'small';
 
-        // 检测
-        it('check', () => {
-            const row = vmTable.tableColumns[0];
-            expect(row.width).to.eql(nInitWidth + nAddWidth);
+            await waitImmediate();
+            const bBig = vm.$el.classList.contains('flex-table-small');
+            expect(bBig).to.eql(true);
         });
 
-        destroyVM(vm);
+        // 检测 theme-dark
+        it('check theme-dark', async () => {
+            vm.$data.theme = 'dark';
+
+            await waitImmediate();
+            const bBig = vm.$el.classList.contains('flex-table-dark');
+            expect(bBig).to.eql(true);
+        });
     });
 });
