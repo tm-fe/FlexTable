@@ -1,4 +1,4 @@
-import { createVue, triggerEvent } from '@/util';
+import { createVue, triggerEvent, wait } from '@/util';
 import { expect } from 'chai';
 import Vue from 'vue';
 
@@ -59,10 +59,11 @@ describe('Flex-Table', () => {
             },
         });
 
-        const vmTable: any = vm.$children[0];
-        vmTable.bodyH = 210; // 不能获取offsetHeight，所以这样处理
         // 检测 滚动条
         it('check', async () => {
+            const vmTable: any = vm.$children[0];
+            vmTable.bodyH = 210; // 不能获取offsetHeight，所以这样处理
+            await wait(0);
             const srcollY = vm.$el.querySelectorAll('.flex-table-scroll-y');
             expect(srcollY.length).to.eql(1);
         });

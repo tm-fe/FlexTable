@@ -139,6 +139,7 @@ import tableBody from './tableBody.vue';
 import tableFoot from './tableFoot.vue';
 import tableScrollBar from './tableScrollBar.vue';
 import Spinner from './Spinner.vue';
+import debounce from "lodash.debounce";
 
 import { MIN_WIDTH } from './data';
 
@@ -191,13 +192,17 @@ export default {
         theme: {
             type: String,
             default: 'light'
+        },
+        initRowNumber: {
+            type: Number,
+            default: 10,
         }
     },
     data(){
         return {
             tableId: tableIdSeed++,
             rowHeight: { header: 0, footer: 0 },
-            dataList: this.initData(),
+            dataList: [],
             style:{},
             calWidth: {},
             tableColumns: [],
@@ -205,6 +210,8 @@ export default {
             bodyH: 0,
             footH: 54,
             maxHeight: 0,
+            hasFixedLeft: false,
+            hasFixedRight: false,
             bodyScrolling: false,
             fixedBodyScrolling: false,
             fixedRightBodyScrolling: false,
@@ -234,12 +241,6 @@ export default {
             }
             return arr;
         },
-        hasFixedLeft: function() {
-            return this.tableColumns.some(item => item.fixed === 'left');
-        },
-        hasFixedRight: function() {
-            return this.tableColumns.some(item => item.fixed === 'right');
-        },
         fixedLeftWidth: function() {
             return this.tableColumns.reduce((width, item) => {
                 if (item.fixed === 'left') {
@@ -261,10 +262,8 @@ export default {
         }
     },
     mounted(){
-        this.resize();
-        this.calHeight();
-        window.addEventListener('resize',this.resize);
-        window.addEventListener('resize',this.calHeight);
+        this.doLayout();
+        window.addEventListener('resize',this.doLayout);
         if (this.resizable) {
             window.addEventListener('mouseup', this.onColResizeEnd);
             this.$el.addEventListener('mousemove', this.onColResizeMove);
@@ -273,11 +272,11 @@ export default {
     watch: {
         data: {
             handler: function() {
-                this.dataList = this.initData();
-                this.resize();
-                this.calHeight();
+                this.initData();
+                this.doLayout();
             },
             deep: true,
+            immediate: true,
         },
         height: function(val){
             this.calHeight();
@@ -303,11 +302,15 @@ export default {
         },
         tableColumns: {
             handler: function(arr) {
-                this.resize();
-                this.calHeight();
+                this.doLayout();
+                this.$nextTick(() => {
+                    this.hasFixedLeft = this.computedFixedLeft();
+                    this.hasFixedRight = this.computedFixedRight();
+                });
                 this.$emit('update:columns', arr);
             },
-            deep: true
+            deep: true,
+            immediate: true,
         },
         sum: function() {
             this.calHeight();
@@ -315,25 +318,61 @@ export default {
     },
     updated() {},
     beforeDestroy() {
-        window.removeEventListener('resize',this.resize);
-        window.removeEventListener('resize',this.calHeight);
+        window.removeEventListener('resize',this.doLayout);
         window.removeEventListener('mouseup', this.onColResizeEnd);
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
     methods:{
-        initData() {
-            let list = [];
-            this.rowHeight = { header: 0, footer: 0 };
-            list = this.data.map((item, index) => {
-                const newItem = JSON.parse(JSON.stringify(item));
-                newItem._isChecked = !!newItem._checked;
-                newItem._isDisabled = !!newItem._disabled;
-                newItem._expanded = !!newItem._expanded;
-                newItem._disableExpand = !!newItem._disableExpand;
-                this.$set(this.rowHeight, index, 0);
-                return newItem;
+        doLayout: debounce(function() {
+            this.$nextTick(() => {
+                this.resize();
+                this.calHeight();
             });
-            return list;
+        }, 50, {leading: true}),
+        computedFixedLeft: function() {
+            return this.tableColumns.some(item => item.fixed === 'left');
+        },
+        computedFixedRight: function() {
+            return this.tableColumns.some(item => item.fixed === 'right');
+        },
+        initData() {
+            this.rowHeight = { header: 0, footer: 0 };
+            this.dataList = [];
+            this.data.slice(0, this.initRowNumber).forEach((item, index) => {
+                this.copyItem(item, index)
+            });
+            if (this.data.length > this.initRowNumber) {
+                this.eachQueue(this.data, this.initRowNumber);
+            } else {
+                this.$emit("on-render-done");
+            }
+        },
+        copyItem(item, index) {
+            const newItem = JSON.parse(JSON.stringify(item));
+            newItem._isChecked = !!newItem._checked;
+            newItem._isDisabled = !!newItem._disabled;
+            newItem._expanded = !!newItem._expanded;
+            newItem._disableExpand = !!newItem._disableExpand;
+            this.$set(this.rowHeight, index, 0);
+            this.dataList.push(newItem);
+        },
+        eachQueue(arr, i) {
+            return new Promise((resolve, reject) => {
+                requestAnimationFrame(() => {
+                    this.copyItem(arr[i], i);
+                    i++;
+                    resolve();
+                });
+            }).then(() => {
+                if (arr.length <= i) {
+                    this.doLayout();
+                    this.$emit("on-render-done");
+                    reject();
+                    return;
+                } else {
+                    return this.eachQueue(arr, i);
+                }
+            }).catch(() => {})
         },
         toggleSelect(index) {
             const row = this.dataList[index];
