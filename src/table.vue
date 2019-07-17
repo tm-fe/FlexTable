@@ -328,7 +328,7 @@ export default {
                 this.resize();
                 this.calHeight();
             });
-        }, 50),
+        }, 50, {leading: true}),
         computedFixedLeft: function() {
             return this.tableColumns.some(item => item.fixed === 'left');
         },
