@@ -147,6 +147,7 @@ const prefixCls = 'flex-table';
 
 let tableIdSeed = 1;
 export default {
+    name: "flexTable",
     components: {
         tableHead,
         tableBody,
@@ -210,6 +211,7 @@ export default {
             bodyH: 0,
             footH: 54,
             maxHeight: 0,
+            shouldEachRenderQueue: false,
             hasFixedLeft: false,
             hasFixedRight: false,
             bodyScrolling: false,
@@ -318,6 +320,7 @@ export default {
     },
     updated() {},
     beforeDestroy() {
+        this.shouldEachRenderQueue = false;
         window.removeEventListener('resize',this.doLayout);
         window.removeEventListener('mouseup', this.onColResizeEnd);
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
@@ -342,6 +345,7 @@ export default {
                 this.copyItem(item, index)
             });
             if (this.data.length > this.initRowNumber) {
+                this.shouldEachRenderQueue = true;
                 this.eachQueue(this.data, this.initRowNumber);
             } else {
                 this.$emit("on-render-done");
@@ -357,6 +361,7 @@ export default {
             this.dataList.push(newItem);
         },
         eachQueue(arr, i) {
+            if (!this.shouldEachRenderQueue) { return; }
             return new Promise((resolve, reject) => {
                 requestAnimationFrame(() => {
                     this.copyItem(arr[i], i);
@@ -367,6 +372,7 @@ export default {
                 if (arr.length <= i) {
                     this.doLayout();
                     this.$emit("on-render-done");
+                    this.shouldEachRenderQueue = false;
                     reject();
                     return;
                 } else {
