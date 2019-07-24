@@ -10,6 +10,15 @@
             :sum="sum"
             :height="height"
         ></flex-table>
+
+        <div style="margin-top: 40px">
+            <flex-table
+                :loading="loading" 
+                :columns="columns" 
+                :data="[]"
+                :height="height"
+            ></flex-table>
+        </div>
    </div>
 </template>
 <script>
