@@ -75,7 +75,12 @@ export default {
     data(){
         return {
             renderType: 'normal',
-            expandOpen: false,
+            expandOpen: this.row._expanded,
+        }
+    },
+    watch: {
+        'row._expanded'(val) {
+            this.expandOpen = val;
         }
     },
     computed: {

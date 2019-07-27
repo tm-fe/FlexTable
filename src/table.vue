@@ -355,7 +355,7 @@ export default {
             const newItem = JSON.parse(JSON.stringify(item));
             newItem._isChecked = !!newItem._checked;
             newItem._isDisabled = !!newItem._disabled;
-            newItem._expanded = !!newItem._expanded;
+            newItem._expanded = newItem.expandStatus || !!newItem._expanded;
             newItem._disableExpand = !!newItem._disableExpand;
             this.$set(this.rowHeight, index, 0);
             this.dataList.push(newItem);
@@ -521,7 +521,7 @@ export default {
             const $tableFoot = $refs.tableFoot;
             const $tableBodyTr = $refs.tableBody.$el.querySelector('.flex-table-tr');
             const headerH = $refs.tableHeader.$el.offsetHeight;
-            const bodyH = $tableFoot ? $tableFoot.offsetHeight : 0;
+            const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
             const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
             this.headerH = headerH;
             this.footH = footH;

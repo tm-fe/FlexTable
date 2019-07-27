@@ -2,7 +2,7 @@
 <div>
     <h3>展开功能</h3>
     <p>表格行展开 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/expand.vue">source code</a></p>
-    
+    <a href="javascript:;" @click="refresh">刷新数据</a>
     <flex-table
         resizable
         :loading="loading"
@@ -40,19 +40,21 @@
 // import flexTable from '../../index.js';
 import expandRow from './expandRow.vue';
 
-
-const aTestList = [];
-for(let i=0;i<10;i++){
-    const oTestData = {
-        name: 'John Brown',
-        age: 18,
-        address: 'New York No. 1 Lake Park',
-        date: '2016-10-03',
-    };
-    if (i === 0){
-        oTestData.expandStatus = true;
+const getMockList = (num = 10) => {
+    const aTestList = [];
+    for(let i=0;i<num;i++){
+        const oTestData = {
+            name: 'John Brown',
+            age: 18,
+            address: 'New York No. 1 Lake Park',
+            date: '2016-10-03',
+        };
+        if (i === 0){
+            oTestData.expandStatus = true;
+        }
+        aTestList.push(oTestData);
     }
-    aTestList.push(oTestData);
+    return aTestList;
 }
 
 export default {
@@ -133,8 +135,8 @@ export default {
                 }
             ],
             loading: false,
-            list: aTestList,
-            list2: JSON.parse(JSON.stringify(aTestList)),
+            list: getMockList(),
+            list2: getMockList(),
             sum:{
                 name: 'Jim Green',
                 age: 24,
@@ -152,6 +154,11 @@ export default {
             const obj = Object.assign({}, this.list2[index]);
             obj.expandStatus = status;
             this.$set(this.list2, index, obj);
+        },
+        refresh() {
+            const num = parseInt(Math.random()*(10+1),10);
+            console.log(num);
+            this.list = getMockList(num);
         }
     }
 }

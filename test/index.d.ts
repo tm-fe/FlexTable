@@ -1,6 +1,6 @@
 
 interface FlexTableColumnOption {
-    [index: string]: string | number;
+    [index: string]: string | number | boolean;
     name: string;
     age: number;
     address: string;
