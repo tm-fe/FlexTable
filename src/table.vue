@@ -321,6 +321,7 @@ export default {
     updated() {},
     beforeDestroy() {
         this.shouldEachRenderQueue = false;
+        this._queueId = null;
         window.removeEventListener('resize',this.doLayout);
         window.removeEventListener('mouseup', this.onColResizeEnd);
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
@@ -346,7 +347,8 @@ export default {
             });
             if (this.data.length > this.initRowNumber) {
                 this.shouldEachRenderQueue = true;
-                this.eachQueue(this.data, this.initRowNumber);
+                this._queueId = new Date().getTime();
+                this.eachQueue(this.data, this.initRowNumber, this._queueId);
             } else {
                 this.$emit("on-render-done");
             }
@@ -360,23 +362,24 @@ export default {
             this.$set(this.rowHeight, index, 0);
             this.dataList.push(newItem);
         },
-        eachQueue(arr, i) {
+        eachQueue(arr, i, queueId) {
             if (!this.shouldEachRenderQueue) { return; }
             return new Promise((resolve, reject) => {
                 requestAnimationFrame(() => {
-                    this.copyItem(arr[i], i);
-                    i++;
-                    resolve();
+                    if (this._queueId !== queueId) {
+                        reject();
+                    } else {
+                        this.copyItem(arr[i], i++);
+                        resolve();
+                    }
                 });
             }).then(() => {
                 if (arr.length <= i) {
                     this.doLayout();
                     this.$emit("on-render-done");
                     this.shouldEachRenderQueue = false;
-                    reject();
-                    return;
                 } else {
-                    return this.eachQueue(arr, i);
+                    this.eachQueue(arr, i, queueId);
                 }
             }).catch(() => {})
         },
