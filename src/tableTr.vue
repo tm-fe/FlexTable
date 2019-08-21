@@ -1,5 +1,5 @@
 <template>
-    <div class="flex-table-row">
+    <div class="flex-table-row" :style="{ 'height': height }">
         <table-td
             v-for="(column, i) in columns"
             :key="column.key + '_'+ i + '_' + rowIndex"
@@ -35,8 +35,28 @@ export default {
             type: Array
         },
         onlyFixed: {
-            type: Boolean
+            type: String
+        },
+        rowHeight: {
+            type: Number,
         }
+    },
+    mounted() {
+        this.onRowHeightChange();
+    },
+    updated() {
+        this.$nextTick(() => {
+            this.onRowHeightChange();
+        });
+    },
+    computed: {
+        height() {
+            if (this.onlyFixed && this.rowHeight) {
+                return `${this.rowHeight}px`;
+            } else {
+                return 'auto';
+            }
+        },
     },
     methods: {
         toggleSelect(index) {
@@ -44,6 +64,14 @@ export default {
         },
         toggleExpand() {
             this.$emit('on-toggle-expand', this.rowIndex);
+        },
+        onRowHeightChange() {
+            if (!this.onlyFixed) {
+                this.owner.onRowHeightChange({
+                    rowIndex: this.rowIndex,
+                    height: this.$el.offsetHeight,
+                })
+            }
         }
     }
 }

@@ -14,10 +14,11 @@
                     :columns="columns"
                     :cal-width="calWidth"
                     :onlyFixed="onlyFixed"
+                    :rowHeight="rowHeight[index]"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
-                <div class="flex-table-row" v-if="row._expanded" :key="'expand_'+index">
+                <div class="flex-table-expanded" v-if="row._expanded" :key="'expand_'+index">
                     <Expand
                         :row="row"
                         :index="index"
@@ -65,12 +66,16 @@ export default {
             }
         },
         onlyFixed: {
-            type: Boolean,
-            default: false
+            type: String,
+            default: ''
         },
         noData: {
             type: String,
             default: 'No Data'
+        },
+        rowHeight: {
+            type: Object,
+            default: () => ({}),
         }
     },
     computed: {
@@ -79,6 +84,9 @@ export default {
         },
         expandRender() {
             let render = noop;
+            if (this.owner.$scopedSlots.expand) {
+                return render = (h, params) => h('div', this.owner.$scopedSlots.expand(params));
+            }
             this.columns.some(obj => {
                 if (obj.type === 'expand') {
                     render = obj.render;

@@ -5,12 +5,17 @@
     background-color: #fff;
     border-bottom: 1px solid #dddee1;
     position: relative;
+
     &-wrap{
         position: relative;
         border: 1px solid #dddee1;
         // border-bottom: none;
         display: flex;
         align-content: stretch;
+
+        & *{
+            box-sizing: border-box;
+        }
     }
     &-big{
         .@{fb}{
@@ -106,15 +111,17 @@
         user-select: none;
     }
     &-body{
-        .@{fb}-row{
-            &:nth-child(odd){
-                background: #f9f9f9;
-            }
-            &:last-child{
-                border-bottom: 1px solid @borderColor
-            }
-            &:hover{
-                background-color: #ebf7ff;
+        .@{fb}-tr{
+            >.@{fb}-row{
+                &:nth-child(odd){
+                    background: #f9f9f9;
+                }
+                &:last-child{
+                    border-bottom: 1px solid @borderColor
+                }
+                &:hover{
+                    background-color: #ebf7ff;
+                }
             }
         }
     }
@@ -139,6 +146,13 @@
     &-row{
         display: flex;
         align-items: stretch;
+        height: 100%;
+        border-bottom: 1px solid @borderColor;
+        &:last-child{
+            border: none;
+        }
+    }
+    &-expanded{
         border-bottom: 1px solid @borderColor;
         &:last-child{
             border: none;
@@ -223,7 +237,8 @@
         }
     }
 
-    &-fixed{
+    &-fixed-left,
+    &-fixed-right-wrap{
         position: absolute;
         top: 0;
         left: 0;
@@ -233,6 +248,17 @@
 
         .@{fb}-body{
             margin-right: -13px;
+        }
+    }
+    &-fixed-right-wrap{
+        height: 100%;
+        left: auto;
+        right: 0;
+        box-shadow: -2px 0 6px -2px rgba(0,0,0,.2);
+        
+        .@{fb}-fixed-right{
+            position: absolute;
+            right: 0;
         }
     }
     &-reference-line{
@@ -288,6 +314,11 @@
     &-expand-disabled{
         opacity: 0.3;
         cursor: not-allowed;
+    }
+}
+.has-scroll-bar{
+    .@{fb}-fixed-right-wrap{
+        right: 15px;
     }
 }
 .checkbox-component{

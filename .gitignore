@@ -9,6 +9,5 @@ Thumbs.db
 .build
 node_modules
 .cache
-dist
-yarn.lock
+example/dist
 **/coverage
