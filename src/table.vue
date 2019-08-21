@@ -343,6 +343,7 @@ export default {
             return this.tableColumns.some(item => item.fixed === 'right');
         },
         initData() {
+            this._queueId = new Date().getTime();
             this.rowHeight = { header: 0, footer: 0 };
             this.dataList = [];
             this.data.slice(0, this.initRowNumber).forEach((item, index) => {
@@ -350,7 +351,6 @@ export default {
             });
             if (this.data.length > this.initRowNumber) {
                 this.shouldEachRenderQueue = true;
-                this._queueId = new Date().getTime();
                 this.eachQueue(this.data, this.initRowNumber, this._queueId);
             } else {
                 this.$emit("on-render-done");
