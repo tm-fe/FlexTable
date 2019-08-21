@@ -1,6 +1,9 @@
 <template>
     <div :class="wrapClasses">
-    <div class="flex-table-layout">
+    <div
+        class="flex-table-layout"
+        @scroll="onTableScrollX"
+    >
         <div class="flex-table" :style="style">
             <table-head
                 ref="tableHeader"
@@ -475,8 +478,10 @@ export default {
             if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
             if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
+        onTableScrollX(event) {
+            this.$emit('on-scroll-x', event);
+        },
         handleBodyScroll(e) {
-            this.$emit('on-body-scroll', e);
             if(this.scrollYScrolling || this.fixedBodyScrolling || this.fixedRightBodyScrolling) return;
             this.bodyScrolling = true;
             const scrollTop = e.target.scrollTop;
