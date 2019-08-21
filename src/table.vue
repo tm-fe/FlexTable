@@ -476,6 +476,7 @@ export default {
             if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
         handleBodyScroll(e) {
+            this.$emit('on-body-scroll', e);
             if(this.scrollYScrolling || this.fixedBodyScrolling || this.fixedRightBodyScrolling) return;
             this.bodyScrolling = true;
             const scrollTop = e.target.scrollTop;
