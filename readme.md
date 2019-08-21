@@ -23,10 +23,6 @@ An efficiently updated div table Vue component. Compatible with Vue 2.x
 - [API](#api)
 - [Demo](#demo)
 
-## Why div table?
-
-Due to table has rendering performance problems: [表格宽度布局算法](https://www.w3.org/TR/CSS2/tables.html#width-layout)
-
 ## Demo
 To view a demo online: [https://tm-fe.github.io/FlexTable/examples/dist/](https://tm-fe.github.io/FlexTable/examples/dist/)
 
@@ -49,7 +45,6 @@ To view demo examples locally clone the repo and run `yarn install && yarn dev` 
 - [x] 异步渲染
 - [ ] 合并单元格
 - [ ] 拖动改变列顺序
-- [ ] 行loading(row.loading)
 
 ## Install
 
@@ -148,6 +143,7 @@ export default {
 | on-all-cancel | 全选取消时触发 | selection：已选项数据 |
 | on-selection-cancel | 单选取消时触发 | selection：已选项数据 |
 | on-render-done | 异步渲染完成时触发 | 无 |
+| on-scroll-x | 横向滚动事件 | event |
 
 ### column
 列描述数据对象，是 columns 中的一项
