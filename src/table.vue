@@ -200,6 +200,13 @@ export default {
         initRowNumber: {
             type: Number,
             default: 10,
+        },
+        minWidth: {
+            type: Number,
+            default: MIN_WIDTH,
+        },
+        maxWidth: {
+            type: Number,
         }
     },
     data(){
@@ -437,7 +444,10 @@ export default {
             if (colResize.onColResizing) {
                 const row = this.tableColumns[colResize.resizeIndex];
                 const dX = colResize.currentX - colResize.originX;
-                const finalX = Math.max((row.width || this.calWidth[row.key]) + dX, MIN_WIDTH);
+                let finalX = Math.max((row.width || this.calWidth[row.key]) + dX, this.minWidth);
+                if (this.maxWidth !== undefined) {
+                    finalX = Math.min(finalX, this.maxWidth);
+                }
                 if (row.width) {
                     row.width = finalX;
                 } else {
@@ -459,7 +469,7 @@ export default {
                 colResize.resizeIndex = index;
                 colResize.nTableLeft = this.$el.getBoundingClientRect().left;
                 colResize.originX = colResize.currentX = e.clientX - colResize.nTableLeft;
-                colResize.minX = MIN_WIDTH - colWidth;
+                colResize.minX = this.minWidth - colWidth;
             }
         },
         handleFixedBodyScroll(e) {
@@ -553,7 +563,7 @@ export default {
                     let sKey = item.key || item.title;
                     let nWidth = item.width;
                     if(nWidth){
-                        nWidth = Math.max(nWidth,MIN_WIDTH);
+                        nWidth = Math.max(nWidth, this.minWidth);
                         oWidth[sKey] = nWidth;
                         defineTotalWidth += nWidth;
                     }else{
@@ -563,7 +573,7 @@ export default {
                 // 给没有定义宽度的 cell 平均分配或指定最小宽度
                 if (nCalLength > 0) {
                     let nLessWidth = nTableWidth - defineTotalWidth;
-                    nCalWidth = Math.max(nLessWidth/nCalLength, MIN_WIDTH);
+                    nCalWidth = Math.max(nLessWidth/nCalLength, this.minWidth);
 
                     this.tableColumns.forEach(item=>{
                         let sKey = item.key || item.title;

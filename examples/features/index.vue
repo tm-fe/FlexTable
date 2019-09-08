@@ -9,6 +9,8 @@
         :columns="columns"
         :data="list"
         :sum="sum"
+        :minWidth="80"
+        :maxWidth="600"
         @on-scroll-x="onTableScroll"
     ></flex-table>
 </div>
