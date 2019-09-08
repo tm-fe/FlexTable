@@ -133,6 +133,8 @@ export default {
 | height | 表格高度，单位 px，设置后，如果表格内容大于此值，会固定表头 | Number | - |
 | no-data | 数据为空时显示的提示内容 | String | No Data |
 | initRowNumber | 异步渲染时，mounted 触发前渲染的行数(建议是刚好首屏) | number | 10 |
+| minWidth | 最小列宽 | number | 40 |
+| maxWidth | 拖动调整时，可调的最大列宽 | number | - |
 
 ### Table events
 
