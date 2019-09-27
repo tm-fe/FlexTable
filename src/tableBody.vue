@@ -1,8 +1,6 @@
 <template>
     <div
         class="flex-table-body"
-        @scroll="scroll"
-        @mouseenter="hover"
         :class="{'flex-table-fixed-header': maxHeight}"
         :style="style">
         <div class="flex-table-tr" v-if="data.length">
@@ -53,18 +51,6 @@ export default {
         maxHeight: {
             type: Number
         },
-        scroll: {
-            type: Function,
-            default: function() {
-                return noop;
-            }
-        },
-        hover: {
-            type: Function,
-            default: function() {
-                return noop;
-            }
-        },
         onlyFixed: {
             type: String,
             default: ''
@@ -76,6 +62,10 @@ export default {
         rowHeight: {
             type: Object,
             default: () => ({}),
+        },
+        scrollTop: {
+            type: Number,
+            default: 0
         }
     },
     computed: {
@@ -96,10 +86,13 @@ export default {
             return render;
         }
     },
+    watch: {
+        scrollTop(scrollTop) {
+            this.$el.scrollTop = scrollTop;
+        }
+    },
     data(){
-        return {
-
-        };
+        return {};
     },
     methods: {
         toggleSelect(index) {

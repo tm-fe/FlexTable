@@ -3,6 +3,8 @@
     <div
         class="flex-table-layout"
         @scroll="onTableScrollX"
+        @mousewheel="handleMousewheel"
+        @DOMMouseScroll="handleMousewheel"
     >
         <div class="flex-table" :style="style">
             <table-head
@@ -23,9 +25,8 @@
                 :columns="tableColumns"
                 :data="dataList"
                 :maxHeight="maxHeight"
-                :scroll="handleBodyScroll"
                 :no-data="noData"
-                :hover="bodyScrollOver"
+                :scrollTop="scrollTop"
                 @on-toggle-select="toggleSelect"
             ></table-body>
             <!-- /flex-table-body -->
@@ -57,13 +58,12 @@
             <table-body
                 ref="fixedLeftBody"
                 onlyFixed="left"
-                :scroll="handleFixedLeftBodyScroll"
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 :data="dataList"
                 :maxHeight="maxHeight"
-                :hover="fixedLeftScrollOver"
                 :rowHeight="rowHeight"
+                :scrollTop="scrollTop"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
@@ -94,13 +94,12 @@
                 <table-body
                     ref="fixedRightBody"
                     onlyFixed="right"
-                    :scroll="handleFixedRightBodyScroll"
                     :cal-width="calWidth"
                     :columns="tableColumns"
                     :data="dataList"
                     :maxHeight="maxHeight"
-                    :hover="fixedRightScrollOver"
                     :rowHeight="rowHeight"
+                    :scrollTop="scrollTop"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
 
@@ -121,13 +120,16 @@
         </slot>
     </div>
     <tableScrollBar
+        v-if="showScrollBar"
         :body-h="bodyH"
         :header-h="headerH"
         :max-height="maxHeight"
         :scroll="handleScrollYScroll"
         :sum="!!sum"
+        :scrollTop="scrollTop"
         ref="scrollYBody"
-        :hover="scrollScrollOver"
+        @mouseenter.native="scrollBarOver"
+        @mouseleave.native="scrollBarLeave"
     ></tableScrollBar>
     <!-- /Y轴固定滚动条 -->
     </div>
@@ -143,6 +145,7 @@ import tableFoot from './tableFoot.vue';
 import tableScrollBar from './tableScrollBar.vue';
 import Spinner from './Spinner.vue';
 import debounce from "lodash.debounce";
+import normalizeWheel from 'normalize-wheel';
 
 import { MIN_WIDTH } from './data';
 
@@ -221,6 +224,7 @@ export default {
             bodyH: 0,
             footH: 54,
             maxHeight: 0,
+            scrollTop: 0,
             shouldEachRenderQueue: false,
             hasFixedLeft: false,
             hasFixedRight: false,
@@ -337,6 +341,13 @@ export default {
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
     methods:{
+        handleMousewheel(event) {
+            const normalized = normalizeWheel(event);
+            if (Math.abs(normalized.spinY) > 0) {
+                event.preventDefault();
+                this.scrollTop += Math.ceil(normalized.pixelY);
+            }
+        },
         doLayout: debounce(function() {
             this.$nextTick(() => {
                 this.resize();
@@ -472,58 +483,19 @@ export default {
                 colResize.minX = this.minWidth - colWidth;
             }
         },
-        handleFixedLeftBodyScroll(e) {
-            if(!this.fixedLeftBodyScrolling) { return; }
-            const scrollTop = e.target.scrollTop;
-            this.$refs.tableBody.$el.scrollTop = scrollTop;
-            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
-            if(this.showScrollBar) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
-        },
-        handleFixedRightBodyScroll(e) {
-            if(!this.fixedRightBodyScrolling) { return; }
-            const scrollTop = e.target.scrollTop;
-            this.$refs.tableBody.$el.scrollTop = scrollTop;
-            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
-            if(this.showScrollBar) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
-        },
         onTableScrollX(event) {
             this.$emit('on-scroll-x', event);
-        },
-        handleBodyScroll(e) {
-            if(!this.bodyScrolling) { return; }
-            const scrollTop = e.target.scrollTop;
-            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
-            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
-            if(this.showScrollBar) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
         handleScrollYScroll(e) {
             if(!this.scrollYScrolling) { return; }
             const scrollTop = e.target.scrollTop;
-            this.$refs.tableBody.$el.scrollTop = scrollTop;
-            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
-            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
+            this.scrollTop = scrollTop;
         },
-        resetScrollFlag() {
-            this.bodyScrolling = false;
-            this.fixedLeftBodyScrolling = false;
-            this.fixedRightBodyScrolling = false;
-            this.scrollYScrolling = false;
-        },
-        bodyScrollOver(){
-            this.resetScrollFlag();
-            this.bodyScrolling = true;
-        },
-        fixedLeftScrollOver(){
-            this.resetScrollFlag();
-            this.fixedLeftBodyScrolling = true;
-        },
-        fixedRightScrollOver(){
-            this.resetScrollFlag();
-            this.fixedRightBodyScrolling = true;
-        },
-        scrollScrollOver(){
-            this.resetScrollFlag();
+        scrollBarOver(){
             this.scrollYScrolling = true;
+        },
+        scrollBarLeave(){
+            this.scrollYScrolling = false;
         },
         onSortChange(item) {
             this.$emit('on-sort-change', item);

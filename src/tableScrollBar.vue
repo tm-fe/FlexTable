@@ -1,18 +1,11 @@
 <template>
-    <div
-        class="flex-table-scroll-y"
-        v-if="bodyH > maxHeight"
-    >
-        <div
-            class="flex-table-scroll-y-head"
-            :style="{'height': `${headerH}px`}"
-        ></div>
+    <div class="flex-table-scroll-y">
+        <div class="flex-table-scroll-y-head" :style="{'height': `${headerH}px`}"></div>
         <div
             class="flex-table-scroll-y-body"
             :style="{'height': `${maxHeight}px`}"
             ref="scrollYBody"
             @scroll="scroll"
-            @mouseenter="hover"
         >
             <div :style="{'height': `${bodyH}px`}"></div>
         </div>
@@ -37,15 +30,18 @@ export default {
                 return noop;
             }
         },
-        hover: {
-            type: Function,
-            default: function() {
-                return noop;
-            }
-        },
         sum: {
             type: Boolean
+        },
+        scrollTop: {
+            type: Number,
+            default: 0
+        }
+    },
+    watch: {
+        scrollTop(scrollTop) {
+            this.$refs.scrollYBody.scrollTop = scrollTop;
         }
     }
-}
+};
 </script>
