@@ -41,6 +41,7 @@ export default {
                     width: 100,
                     fixed: 'left',
                     sortable: true,
+                    resizable: false
                 },
                 {
                     title: 'Age',

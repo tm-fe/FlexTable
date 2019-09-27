@@ -20,7 +20,7 @@
                             <i @click="handleSort(index, 'asc')" :class="{'on': getColumns(index)._sort === 'asc'}" class="flex-table-arrow-dropup"></i>
                             <i @click="handleSort(index, 'desc')" :class="{'on': getColumns(index)._sort === 'desc'}" class="flex-table-arrow-dropdown"></i>
                         </span>
-                        <div v-if="resizable" @mousedown="onColResize($event, index)" class="flex-table-col-resize j-col-resize"></div>
+                        <div v-if="isColResizable(item)" @mousedown="onColResize($event, index)" class="flex-table-col-resize j-col-resize"></div>
                     </template>
                 </template>
             </div>
@@ -99,6 +99,9 @@ export default {
         });
     },
     methods: {
+        isColResizable(col) {
+            return this.resizable && col.resizable !== false;
+        },
         selectAll() {
             const status = !this.isSelectAll;
             this.$emit('on-select-all', status);
