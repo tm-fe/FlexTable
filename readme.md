@@ -162,6 +162,7 @@ export default {
 | renderHeader | 自定义列头显示内容，使用 Vue 的 Render 函数。传入两个参数，第一个是 h，第二个为对象，包含 column 和 index，分别为当前列数据和当前列索引。 | Function | - |
 | sortable | 对应列是否可以排序，如果设置为 custom，则代表用户希望远程排序，需要监听 Table 的 on-sort-change 事件 | Boolean | false |
 | sortType | 设置初始化排序。值为 asc, desc 和 normal | String | normal |
+| resizable | 是否可拖动调整列宽(必须设置table props 的 resizable 为 true 才生效) | Boolean | - |
 
 ### Table slot
 
