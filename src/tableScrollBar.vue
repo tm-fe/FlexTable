@@ -12,7 +12,7 @@
             :style="{'height': `${maxHeight}px`}"
             ref="scrollYBody"
             @scroll="scroll"
-            @mouseover="hover"
+            @mouseenter="hover"
         >
             <div :style="{'height': `${bodyH}px`}"></div>
         </div>

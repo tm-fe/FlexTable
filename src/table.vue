@@ -57,12 +57,12 @@
             <table-body
                 ref="fixedLeftBody"
                 onlyFixed="left"
-                :scroll="handleFixedBodyScroll"
+                :scroll="handleFixedLeftBodyScroll"
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 :data="dataList"
                 :maxHeight="maxHeight"
-                :hover="fixedScrollOver"
+                :hover="fixedLeftScrollOver"
                 :rowHeight="rowHeight"
                 @on-toggle-select="toggleSelect"
             ></table-body>
@@ -225,7 +225,7 @@ export default {
             hasFixedLeft: false,
             hasFixedRight: false,
             bodyScrolling: false,
-            fixedBodyScrolling: false,
+            fixedLeftBodyScrolling: false,
             fixedRightBodyScrolling: false,
             scrollYScrolling: false,
             colResize: {
@@ -472,63 +472,57 @@ export default {
                 colResize.minX = this.minWidth - colWidth;
             }
         },
-        handleFixedBodyScroll(e) {
-            if(this.bodyScrolling || this.scrollYScrolling || this.fixedRightBodyScrolling) return;
-            this.fixedBodyScrolling = true;
+        handleFixedLeftBodyScroll(e) {
+            if(!this.fixedLeftBodyScrolling) { return; }
             const scrollTop = e.target.scrollTop;
             this.$refs.tableBody.$el.scrollTop = scrollTop;
             if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
-            if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
+            if(this.showScrollBar) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
         handleFixedRightBodyScroll(e) {
-            if(this.bodyScrolling || this.scrollYScrolling || this.fixedBodyScrolling) return;
-            this.fixedRightBodyScrolling = true;
+            if(!this.fixedRightBodyScrolling) { return; }
             const scrollTop = e.target.scrollTop;
             this.$refs.tableBody.$el.scrollTop = scrollTop;
             if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
-            if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
+            if(this.showScrollBar) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
         onTableScrollX(event) {
             this.$emit('on-scroll-x', event);
         },
         handleBodyScroll(e) {
-            if(this.scrollYScrolling || this.fixedBodyScrolling || this.fixedRightBodyScrolling) return;
-            this.bodyScrolling = true;
+            if(!this.bodyScrolling) { return; }
             const scrollTop = e.target.scrollTop;
             if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
             if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
-            if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
+            if(this.showScrollBar) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
         },
         handleScrollYScroll(e) {
-            if(this.bodyScrolling || this.fixedBodyScrolling || this.fixedRightBodyScrolling) return;
-            this.scrollYScrolling = true;
+            if(!this.scrollYScrolling) { return; }
             const scrollTop = e.target.scrollTop;
             this.$refs.tableBody.$el.scrollTop = scrollTop;
             if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
             if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
         },
-        bodyScrollOver(){
-            this.bodyScrolling = true;
-            this.fixedBodyScrolling = false;
+        resetScrollFlag() {
+            this.bodyScrolling = false;
+            this.fixedLeftBodyScrolling = false;
             this.fixedRightBodyScrolling = false;
             this.scrollYScrolling = false;
         },
-        fixedScrollOver(){
-            this.bodyScrolling = false;
-            this.fixedBodyScrolling = true;
-            this.fixedRightBodyScrolling = false;
-            this.scrollYScrolling = false;
+        bodyScrollOver(){
+            this.resetScrollFlag();
+            this.bodyScrolling = true;
+        },
+        fixedLeftScrollOver(){
+            this.resetScrollFlag();
+            this.fixedLeftBodyScrolling = true;
         },
         fixedRightScrollOver(){
-            this.bodyScrolling = false;
-            this.fixedBodyScrolling = false;
+            this.resetScrollFlag();
             this.fixedRightBodyScrolling = true;
-            this.scrollYScrolling = false;
         },
         scrollScrollOver(){
-            this.bodyScrolling = false;
-            this.fixedBodyScrolling = false;
-            this.fixedRightBodyScrolling = false;
+            this.resetScrollFlag();
             this.scrollYScrolling = true;
         },
         onSortChange(item) {

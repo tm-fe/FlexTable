@@ -2,7 +2,7 @@
     <div
         class="flex-table-body"
         @scroll="scroll"
-        @mouseover="hover"
+        @mouseenter="hover"
         :class="{'flex-table-fixed-header': maxHeight}"
         :style="style">
         <div class="flex-table-tr" v-if="data.length">
