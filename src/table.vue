@@ -27,6 +27,7 @@
                 :maxHeight="maxHeight"
                 :no-data="noData"
                 :scrollTop="scrollTop"
+                :hoverIndex="hoverIndex"
                 @on-toggle-select="toggleSelect"
             ></table-body>
             <!-- /flex-table-body -->
@@ -64,6 +65,7 @@
                 :maxHeight="maxHeight"
                 :rowHeight="rowHeight"
                 :scrollTop="scrollTop"
+                :hoverIndex="hoverIndex"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
@@ -100,6 +102,7 @@
                     :maxHeight="maxHeight"
                     :rowHeight="rowHeight"
                     :scrollTop="scrollTop"
+                    :hoverIndex="hoverIndex"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
 
@@ -228,10 +231,8 @@ export default {
             shouldEachRenderQueue: false,
             hasFixedLeft: false,
             hasFixedRight: false,
-            bodyScrolling: false,
-            fixedLeftBodyScrolling: false,
-            fixedRightBodyScrolling: false,
             scrollYScrolling: false,
+            hoverIndex: undefined,
             colResize: {
                 onColResizing: false,
                 originX: 0, // 记录拖动起点
@@ -341,6 +342,9 @@ export default {
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
     methods:{
+        updateHoverIndex: debounce(function(index) {
+            this.hoverIndex = index;
+        }, 50),
         handleMousewheel(event) {
             const normalized = normalizeWheel(event);
             if (Math.abs(normalized.spinY) > 0) {

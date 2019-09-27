@@ -2,7 +2,9 @@
     <div
         class="flex-table-body"
         :class="{'flex-table-fixed-header': maxHeight}"
-        :style="style">
+        :style="style"
+        @mouseleave="mouseleave"
+        >
         <div class="flex-table-tr" v-if="data.length">
             <template v-for="(row, index) in data">
                 <table-tr
@@ -13,6 +15,7 @@
                     :cal-width="calWidth"
                     :onlyFixed="onlyFixed"
                     :rowHeight="rowHeight[index]"
+                    :hoverIndex="hoverIndex"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
@@ -66,6 +69,10 @@ export default {
         scrollTop: {
             type: Number,
             default: 0
+        },
+        hoverIndex: {
+            type: Number | undefined,
+            required: true
         }
     },
     computed: {
@@ -103,6 +110,9 @@ export default {
             if (!row._disableExpand) {
                 this.data[index]._expanded = !this.data[index]._expanded;
             }
+        },
+        mouseleave() {
+            this.owner.updateHoverIndex();
         }
     }
 }
