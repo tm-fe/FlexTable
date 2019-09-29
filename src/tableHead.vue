@@ -2,9 +2,12 @@
     <div class="flex-table-head" :style="{ height: height }">
         <div class="flex-table-row">
             <div
-                class="flex-table-col"
                 v-for="(item, index) in headRow"
                 :key="item.key + '_' + index"
+                :class="{
+                    'flex-table-col': true,
+                    'flex-table-hidden': isInvisible(item)
+                    }"
                 :style="setCellStyle(item)"
             >
                 <template v-if="!isHidden(item)">
@@ -138,6 +141,9 @@ export default {
         },
         isHidden(item) {
             return this.onlyFixed && (item.fixed !== this.onlyFixed);
+        },
+        isInvisible(col) { // 非固定层的固定列应不可见
+            return col.fixed && !this.onlyFixed;
         }
     }
 }

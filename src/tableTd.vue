@@ -4,6 +4,7 @@
             'flex-table-col': true,
             'flex-table-col-icon': renderType === 'expand',
             'flex-table-expand-disabled': renderType === 'expand' && row._disableExpand,
+            'flex-table-hidden': isInvisible
             }"
         :style="setCellStyle(column)"
         @click="onToggleExpand"
@@ -84,8 +85,11 @@ export default {
         }
     },
     computed: {
-        isHidden() {
+        isHidden() { // 固定层的非固定列无需渲染
             return this.onlyFixed && (this.column.fixed !== this.onlyFixed);
+        },
+        isInvisible() { // 非固定层的固定列应不可见
+            return this.column.fixed && !this.onlyFixed;
         }
     },
     created(){
