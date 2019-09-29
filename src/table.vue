@@ -349,8 +349,14 @@ export default {
         handleMousewheel(event) {
             const normalized = normalizeWheel(event);
             if (Math.abs(normalized.spinY) > 0) {
-                event.preventDefault();
-                this.scrollTop += Math.ceil(normalized.pixelY);
+                const bodyWrapper = this.$refs.tableBody.$el;
+                const currentScrollTop = this.scrollTop;
+                const noYetScrollToTop = normalized.pixelY < 0 && currentScrollTop !== 0;
+                const noYetScrollToBottom = normalized.pixelY > 0 && bodyWrapper.scrollHeight - bodyWrapper.clientHeight > currentScrollTop;
+                if (noYetScrollToTop || noYetScrollToBottom) {
+                    event.preventDefault();
+                    this.scrollTop += Math.ceil(normalized.pixelY);
+                }
             }
         },
         doLayout: debounce(function() {
