@@ -239,6 +239,7 @@ export default {
                 currentX: 0, // 拖动实时位置
                 resizeIndex: -1, // 调整的表头 index
                 minX: 0, // 可拖动调整最小值
+                maxX: Infinity, // 可拖动调整最大值
             },
         }
     },
@@ -449,7 +450,9 @@ export default {
             if (colResize.onColResizing) {
                 const currentX = e.clientX - colResize.nTableLeft;
                 const dX = currentX - colResize.originX;
-                if (dX >= colResize.minX) { // 限制参考线最小值
+                if (dX < 0 && dX >= colResize.minX) { // 限制参考线最小值
+                    colResize.currentX = currentX;
+                } else if (dX > 0 && dX <= colResize.maxX) {
                     colResize.currentX = currentX;
                 }
             }
@@ -457,17 +460,11 @@ export default {
         onColResizeEnd(e) {
             const colResize = this.colResize;
             if (colResize.onColResizing) {
-                const row = this.tableColumns[colResize.resizeIndex];
+                const col = this.tableColumns[colResize.resizeIndex];
                 const dX = colResize.currentX - colResize.originX;
-                let finalX = Math.max((row.width || this.calWidth[row.key]) + dX, this.minWidth);
-                if (this.maxWidth !== undefined) {
-                    finalX = Math.min(finalX, this.maxWidth);
-                }
-                if (row.width) {
-                    row.width = finalX;
-                } else {
-                    this.$set(row, 'width', finalX);
-                }
+                let finalX = Math.max((col.width || this.calWidth[col.key]) + dX);
+                finalX = this.limitWidth(finalX, col);
+                this.$set(col, 'width', finalX);
                 // reset
                 colResize.onColResizing = false;
                 colResize.currentX = 0;
@@ -478,13 +475,18 @@ export default {
             if (e.target.classList.contains('j-col-resize')) {
                 e.stopPropagation();
                 const colResize = this.colResize;
-                const row = this.tableColumns[index];
-                const colWidth = row.width || this.calWidth[row.key];
+                const col = this.tableColumns[index];
+                const colWidth = col.width || this.calWidth[col.key];
+                const minWidth = this.getMinWidth(col);
+                const maxWidth = this.getMaxWidth(col);
                 colResize.onColResizing = true;
                 colResize.resizeIndex = index;
                 colResize.nTableLeft = this.$el.getBoundingClientRect().left;
                 colResize.originX = colResize.currentX = e.clientX - colResize.nTableLeft;
-                colResize.minX = this.minWidth - colWidth;
+                colResize.minX = minWidth - colWidth;
+                if (maxWidth !== undefined) {
+                    colResize.maxX = maxWidth - colWidth;
+                }
             }
         },
         onTableScrollX(event) {
@@ -517,6 +519,21 @@ export default {
             this.bodyH = bodyH;
             this.maxHeight = this.height - headerH - footH;
         },
+        getMinWidth(col) {
+            return col.minWidth || this.minWidth;
+        },
+        getMaxWidth(col) {
+            return col.maxWidth || this.maxWidth;
+        },
+        limitWidth(currentWidth, col) {
+            const minWidth = this.getMinWidth(col);
+            const maxWidth = this.getMaxWidth(col);
+            currentWidth = Math.max(currentWidth, minWidth);
+            if (maxWidth !== undefined) {
+                currentWidth = Math.min(currentWidth, maxWidth);
+            }
+            return currentWidth;
+        },
         resize(){
             requestAnimationFrame(() => {
                 // wrapper 宽度
@@ -525,7 +542,6 @@ export default {
 
                 const oWidth = {};
                 let defineTotalWidth = 0; //定义的宽度总和
-                let nCalWidth = 0 ; //计算出来的宽度
                 let nCalLength = 0;
 
                 //计算每一个单元的宽度
@@ -533,7 +549,7 @@ export default {
                     let sKey = item.key || item.title;
                     let nWidth = item.width;
                     if(nWidth){
-                        nWidth = Math.max(nWidth, this.minWidth);
+                        nWidth = this.limitWidth(nWidth, item);
                         oWidth[sKey] = nWidth;
                         defineTotalWidth += nWidth;
                     }else{
@@ -543,13 +559,14 @@ export default {
                 // 给没有定义宽度的 cell 平均分配或指定最小宽度
                 if (nCalLength > 0) {
                     let nLessWidth = nTableWidth - defineTotalWidth;
-                    nCalWidth = Math.max(nLessWidth/nCalLength, this.minWidth);
+                    let nCalWidth = nLessWidth/nCalLength; //计算出来的宽度
 
                     this.tableColumns.forEach(item=>{
                         let sKey = item.key || item.title;
                         let nWidth = item.width;
                         if(!nWidth){
-                            oWidth[sKey] = nCalWidth ;
+                            const autoWidth = this.limitWidth(nCalWidth, item);
+                            oWidth[sKey] = autoWidth;
                         }
                     });
                 } else if (nTableWidth > defineTotalWidth) {
