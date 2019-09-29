@@ -203,9 +203,9 @@ export default {
             type: String,
             default: 'light'
         },
-        initRowNumber: {
+        asyncRender: {
             type: Number,
-            default: 10,
+            default: 0,
         },
         minWidth: {
             type: Number,
@@ -369,14 +369,20 @@ export default {
             this._queueId = new Date().getTime();
             this.rowHeight = { header: 0, footer: 0 };
             this.dataList = [];
-            this.data.slice(0, this.initRowNumber).forEach((item, index) => {
-                this.copyItem(item, index)
-            });
-            if (this.data.length > this.initRowNumber) {
-                this.shouldEachRenderQueue = true;
-                this.eachQueue(this.data, this.initRowNumber, this._queueId);
+            if (this.asyncRender > 0) {
+                this.data.slice(0, this.asyncRender).forEach((item, index) => {
+                    this.copyItem(item, index)
+                });
+                if (this.data.length > this.asyncRender) {
+                    this.shouldEachRenderQueue = true;
+                    this.eachQueue(this.data, this.asyncRender, this._queueId);
+                } else {
+                    this.$emit("on-render-done");
+                }
             } else {
-                this.$emit("on-render-done");
+                this.data.forEach((item, index) => {
+                    this.copyItem(item, index)
+                });
             }
         },
         copyItem(item, index) {

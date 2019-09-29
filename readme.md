@@ -132,7 +132,7 @@ export default {
 | resizable | 是否可拖动调整列宽 | Boolean | false |
 | height | 表格高度，单位 px，设置后，如果表格内容大于此值，会固定表头 | Number | - |
 | no-data | 数据为空时显示的提示内容 | String | No Data |
-| initRowNumber | 异步渲染时，mounted 触发前渲染的行数(建议是刚好首屏) | number | 10 |
+| asyncRender | 不为 0 时使用异步渲染模式，mounted 触发前渲染的行数(建议是刚好首屏，**见后文详细说明**) | number | 0 |
 | minWidth | 最小列宽 | number | 40 |
 | maxWidth | 拖动调整时，可调的最大列宽, 默认不限制 | number | - |
 
@@ -144,7 +144,7 @@ export default {
 | on-selection-change | 点击全选时触发 | selection：已选项数据； row: 当前选中行数据 |
 | on-all-cancel | 全选取消时触发 | selection：已选项数据 |
 | on-selection-cancel | 单选取消时触发 | selection：已选项数据 |
-| on-render-done | 异步渲染完成时触发 | 无 |
+| on-render-done | 异步渲染完成时触发（asyncRender 不为 0 时生效） | - |
 | on-scroll-x | 横向滚动事件 | event |
 
 ### column
@@ -171,6 +171,10 @@ export default {
 | 名称 | 说明 |
 | ------------ | ------- |
 | loading | 加载中 |
+
+## asyncRender
+
+**异步渲染功能，适用于数据量特别大，改善首次渲染慢的情况。asyncRender 值为 mounted 之前首次渲染的行数，剩余行数会在 mounted 之后以 RAF 的方式逐行渲染，因些如果设置表格最大高度 height, 可能会造成页面抖动和 reflow, 建议设置 table height prop。 此外， 当表格数据 data 属性变化时，也会造成整表重新渲染，而失去 vue diff 的优势， 可以在首次异步渲染完成后的 on-render-done 事件中，将 asyncRender 的值改为 pageSize 相同的值，这样可以避免整表重新渲染。**
 
 ## Test
 ```bash
