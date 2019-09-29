@@ -10,6 +10,8 @@
             :data="list"
             :sum="sum"
             :height="height"
+            :minWidth="40"
+            :maxWidth="300"
             @on-sort-change="onSortChange"
         ></flex-table>
     </div>
@@ -41,7 +43,9 @@ export default {
                     width: 100,
                     fixed: 'left',
                     sortable: true,
-                    resizable: false
+                    // resizable: false,
+                    minWidth: 100,
+                    maxWidth: 200,
                 },
                 {
                     title: 'Age',

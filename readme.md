@@ -134,7 +134,7 @@ export default {
 | no-data | 数据为空时显示的提示内容 | String | No Data |
 | initRowNumber | 异步渲染时，mounted 触发前渲染的行数(建议是刚好首屏) | number | 10 |
 | minWidth | 最小列宽 | number | 40 |
-| maxWidth | 拖动调整时，可调的最大列宽 | number | - |
+| maxWidth | 拖动调整时，可调的最大列宽, 默认不限制 | number | - |
 
 ### Table events
 
@@ -163,6 +163,8 @@ export default {
 | sortable | 对应列是否可以排序，如果设置为 custom，则代表用户希望远程排序，需要监听 Table 的 on-sort-change 事件 | Boolean | false |
 | sortType | 设置初始化排序。值为 asc, desc 和 normal | String | normal |
 | resizable | 是否可拖动调整列宽(必须设置table props 的 resizable 为 true 才生效) | Boolean | - |
+| minWidth | 最小列宽(优先级高于table props) | number | - |
+| maxWidth | 拖动调整时，可调的最大列宽, 默认不限制(优先级高于table props) | number | - |
 
 ### Table slot
 
