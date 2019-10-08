@@ -1,7 +1,7 @@
 {
   "name": "tm-flextable",
-  "version": "0.2.2",
-  "description": "Use div to build flexible、efficiently updated table components with Vue.js",
+  "version": "0.2.3",
+  "description": "Using div to implement flexible、high performance table",
   "main": "dist/index.js",
   "typings": "types/index.d.ts",
   "scripts": {
