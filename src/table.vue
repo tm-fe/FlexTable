@@ -28,6 +28,7 @@
                 :no-data="noData"
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
+                @scroll.native.passive="syncScroll"
                 @on-toggle-select="toggleSelect"
             ></table-body>
             <!-- /flex-table-body -->
@@ -148,6 +149,7 @@ import tableFoot from './tableFoot.vue';
 import tableScrollBar from './tableScrollBar.vue';
 import Spinner from './Spinner.vue';
 import debounce from "lodash.debounce";
+import throttle from "lodash.throttle";
 import normalizeWheel from 'normalize-wheel';
 
 import { MIN_WIDTH } from './data';
@@ -343,6 +345,10 @@ export default {
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
     methods:{
+        syncScroll: throttle(function(event) {
+            const { scrollTop } = event.target;
+            this.scrollTop = scrollTop;
+        }, 20),
         updateHoverIndex: debounce(function(index) {
             this.hoverIndex = index;
         }, 50),
