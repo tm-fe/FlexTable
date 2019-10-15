@@ -367,11 +367,9 @@ export default {
             }
         },
         doLayout: debounce(function() {
-            this.$nextTick(() => {
-                this.resize();
-                this.calHeight();
-            });
-        }, 50, {leading: true}),
+            this.resize();
+            this.calHeight();
+        }, 50),
         computedFixedLeft: function() {
             return this.tableColumns.some(item => item.fixed === 'left');
         },
@@ -488,6 +486,7 @@ export default {
                 colResize.onColResizing = false;
                 colResize.currentX = 0;
                 colResize.resizeIndex = -1;
+                this.doLayout();
             }
         },
         onColResizeStart(e, index) {
@@ -526,17 +525,19 @@ export default {
             this.$emit('on-sort-change', item);
         },
         calHeight() {
-            if (!this.height) { return; }
-            const $refs = this.$refs;
-            const $tableFoot = $refs.tableFoot;
-            const $tableBodyTr = $refs.tableBody.$el.querySelector('.flex-table-tr');
-            const headerH = $refs.tableHeader.$el.offsetHeight;
-            const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
-            const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
-            this.headerH = headerH;
-            this.footH = footH;
-            this.bodyH = bodyH;
-            this.maxHeight = this.height - headerH - footH;
+            requestAnimationFrame(() => {
+                if (!this.height) { return; }
+                const $refs = this.$refs;
+                const $tableFoot = $refs.tableFoot;
+                const $tableBodyTr = $refs.tableBody.$el.querySelector('.flex-table-tr');
+                const headerH = $refs.tableHeader.$el.offsetHeight;
+                const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
+                const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
+                this.headerH = headerH;
+                this.footH = footH;
+                this.bodyH = bodyH;
+                this.maxHeight = this.height - headerH - footH;
+            });
         },
         getMinWidth(col) {
             return col.minWidth || this.minWidth;
