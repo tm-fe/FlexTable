@@ -334,6 +334,9 @@ export default {
         },
         sum: function() {
             this.calHeight();
+        },
+        showScrollBar() {
+            this.resize();
         }
     },
     updated() {},
@@ -369,7 +372,7 @@ export default {
         doLayout: debounce(function() {
             this.resize();
             this.calHeight();
-        }, 50),
+        }, 50, {leading: true}),
         computedFixedLeft: function() {
             return this.tableColumns.some(item => item.fixed === 'left');
         },
