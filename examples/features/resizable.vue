@@ -11,7 +11,7 @@
                     :height="height"
                     :minWidth="40"
                     :maxWidth="300"
-                    @on-col-resize="onResizeWidth"
+                    @on-col-width-resize="onResizeWidth"
                     @on-sort-change="onSortChange"></flex-table>
     </div>
 </template>
@@ -80,8 +80,11 @@ export default {
         onSortChange(obj) {
             console.log(obj);
         },
-        onResizeWidth(obj) {
-            console.log(obj);
+        onResizeWidth(newWidth, oldWidth, column, event) {
+            console.log(`newWidth--${newWidth}`);
+            console.log(`oldWidth--${oldWidth}`);
+            console.log(`column--${JSON.stringify(column)}`);
+            console.log(event);
         }
     }
 }

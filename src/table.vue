@@ -243,6 +243,12 @@ export default {
                 minX: 0, // 可拖动调整最小值
                 maxX: Infinity, // 可拖动调整最大值
             },
+            emitColResize: {
+                newWidth: 0,
+                oldWidth: 0,
+                column: {},
+                event: null
+            }
         }
     },
     computed: {
@@ -490,6 +496,16 @@ export default {
                 colResize.currentX = 0;
                 colResize.resizeIndex = -1;
                 this.doLayout();
+                this.emitColResize.newWidth = finalX;
+                this.emitColResize.event = e;
+
+                // 列宽拖拽结束后，回调返回
+                this.$emit('on-col-width-resize', 
+                            this.emitColResize.newWidth, 
+                            this.emitColResize.oldWidth, 
+                            this.emitColResize.column, 
+                            this.emitColResize.event
+                )
             }
         },
         onColResizeStart(e, index) {
@@ -508,6 +524,8 @@ export default {
                 if (maxWidth !== undefined) {
                     colResize.maxX = maxWidth - colWidth;
                 }
+                this.emitColResize.oldWidth  = colWidth;
+                this.emitColResize.column = this.columns[index];
             }
         },
         onTableScrollX(event) {
@@ -606,7 +624,6 @@ export default {
                     'min-width': Math.max(nTableWidth, nTotalWidth)+'px'
                 };
                 this.calWidth = oWidth;
-                this.$emit('on-col-resize', this.calWidth);
             });
         },
         onRowHeightChange(row) {
