@@ -606,6 +606,7 @@ export default {
                     'min-width': Math.max(nTableWidth, nTotalWidth)+'px'
                 };
                 this.calWidth = oWidth;
+                this.$emit('on-col-resize', this.calWidth);
             });
         },
         onRowHeightChange(row) {
