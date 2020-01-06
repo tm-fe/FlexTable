@@ -550,7 +550,9 @@ export default {
                 if (!this.height) { return; }
                 const $refs = this.$refs;
                 const $tableFoot = $refs.tableFoot;
-                const $tableBodyTr = $refs.tableBody.$el.querySelector('.flex-table-tr');
+                const $tableBody = $refs.tableBody;
+                if (!$tableBody) { reutrn; }
+                const $tableBodyTr = $tableBody.$el.querySelector('.flex-table-tr');
                 const headerH = $refs.tableHeader.$el.offsetHeight;
                 const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
                 const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
