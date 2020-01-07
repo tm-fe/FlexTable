@@ -146,6 +146,7 @@ export default {
 | on-selection-cancel | 单选取消时触发 | selection：已选项数据 |
 | on-render-done | 异步渲染完成时触发（asyncRender 不为 0 时生效） | - |
 | on-scroll-x | 横向滚动事件 | event |
+| on-col-width-resize | 调整列宽事件 | newWidth, oldWidth, column, event |
 
 ### column
 列描述数据对象，是 columns 中的一项
@@ -174,7 +175,7 @@ export default {
 
 ## asyncRender
 
-**异步渲染功能，适用于数据量特别大，改善首次渲染慢的情况。asyncRender 值为 mounted 之前首次渲染的行数，剩余行数会在 mounted 之后以 RAF 的方式逐行渲染，因些如果设置表格最大高度 height, 可能会造成页面抖动和 reflow, 建议设置 table height prop。 此外， 当表格数据 data 属性变化时，也会造成整表重新渲染，而失去 vue diff 的优势， 可以在首次异步渲染完成后的 on-render-done 事件中，将 asyncRender 的值改为 pageSize 相同的值，这样可以避免整表重新渲染。**
+**异步渲染功能，适用于数据量特别大，改善首次渲染慢的情况。asyncRender 值为 mounted 之前首次渲染的行数，剩余行数会在 mounted 之后以 RAF 的方式逐行渲染，因此如果没有设置表格最大高度 height, 可能会造成页面抖动和 reflow, 建议设置 table height prop。 此外， 当表格数据 data 属性变化时，也会造成整表重新渲染，而失去 vue diff 的优势， 可以在首次异步渲染完成后的 on-render-done 事件中，将 asyncRender 的值改为 pageSize 相同的值，这样可以避免整表重新渲染。**
 
 ## Test
 ```bash
