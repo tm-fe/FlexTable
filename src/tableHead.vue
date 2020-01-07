@@ -11,7 +11,7 @@
                 :style="setCellStyle(item)"
             >
                 <template v-if="!isHidden(item)">
-                    <template v-if="item.type === 'selection'"><Checkbox :checked="isSelectAll" :disabled="!data.length" @input="selectAll"></Checkbox></template>
+                    <template v-if="item.type === 'selection'"><Checkbox :checked="isSelectAll" :disabled="!data.length || !isRenderDone" @input="selectAll"></Checkbox></template>
                     <template v-else>
                         <Expand
                             v-if="item.renderHeader"
@@ -54,6 +54,10 @@ export default {
         rowHeight: {
             type: Number,
             default: 0,
+        },
+        isRenderDone: {
+            type: Boolean,
+            default: true,
         }
     },
     data() {

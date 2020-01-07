@@ -16,6 +16,18 @@
         & *{
             box-sizing: border-box;
         }
+        &.no-boder{
+            border-left: none;
+            border-right: none;
+            .@{fb}-col{
+                border-right: none;
+            }
+        }
+        &.no-stripe{
+            .@{fb}-body .@{fb}-tr .@{fb}-row:nth-child(odd){
+                background: none;
+            }
+        }
     }
     &-big{
         .@{fb}{
@@ -48,29 +60,6 @@
             }
         }
     }
-    &-dark{
-        color:#fff;
-        .@{fb}{
-            background-color: #333;
-            &-body{
-                .@{fb}-row{
-                    &:nth-child(odd){
-                        background: #3d3d3d;
-                    }
-                    &:hover{
-                        background-color: #444;
-                    }
-                }
-            }
-            &-col{
-                color: #fff;
-                .checkbox-component>input+label>.input-box{
-                    border-color: #fff;
-                }
-            }
-        }
-    }
-
     &-layout{
         max-width: 100%;
         overflow: auto;
@@ -122,6 +111,28 @@
                 // &:hover,
                 &.@{fb}-hover{
                     background-color: #ebf7ff;
+                }
+            }
+        }
+    }
+    &-dark{
+        color:#fff;
+        .@{fb}{
+            background-color: #333;
+            &-body{
+                .@{fb}-row{
+                    &:nth-child(odd){
+                        background: #555;
+                    }
+                    &.@{fb}-hover{
+                        background-color: #888;
+                    }
+                }
+            }
+            &-col{
+                color: #fff;
+                .checkbox-component>input+label>.input-box{
+                    border-color: #fff;
                 }
             }
         }
