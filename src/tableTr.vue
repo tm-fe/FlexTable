@@ -1,5 +1,5 @@
 <template>
-    <div class="flex-table-row" :style="{ 'height': height }">
+    <div class="flex-table-row" :class="{'flex-table-hover': isHover}" :style="{ 'height': height }" @mouseenter="mouseenter">
         <table-td
             v-for="(column, i) in columns"
             :key="column.key + '_'+ i + '_' + rowIndex"
@@ -25,6 +25,9 @@ export default {
     },
     mixins: [Mixin],
     props: {
+        className: {
+            type: String | Object
+        },
         row: {
             type: Object
         },
@@ -39,6 +42,9 @@ export default {
         },
         rowHeight: {
             type: Number,
+        },
+        hoverIndex: {
+            type: Number | undefined
         }
     },
     mounted() {
@@ -57,6 +63,9 @@ export default {
                 return 'auto';
             }
         },
+        isHover() {
+            return this.hoverIndex === this.rowIndex;
+        },
     },
     methods: {
         toggleSelect(index) {
@@ -72,6 +81,9 @@ export default {
                     height: this.$el.offsetHeight,
                 })
             }
+        },
+        mouseenter() {
+            this.owner.updateHoverIndex(this.rowIndex);
         }
     }
 }

@@ -8,6 +8,7 @@
         :columns="columns" 
         :data="list"
         :sum="sum"
+        :async-render="10"
         @on-selection-change="onSelectionChange"
         @on-selection-cancel="onSelectionCancel"
         @on-all-cancel="onAllCancel"
@@ -19,7 +20,7 @@
 
 
 const aTestList = [];
-for(let i=0;i<10;i++){
+for(let i=0;i<200;i++){
     const oTestData = {
         name: 'John Brown',
         age: 18,

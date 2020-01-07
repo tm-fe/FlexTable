@@ -1,6 +1,11 @@
 <template>
     <div :class="wrapClasses">
-    <div class="flex-table-layout">
+    <div
+        class="flex-table-layout"
+        @scroll="onTableScrollX"
+        @mousewheel="handleMousewheel"
+        @DOMMouseScroll="handleMousewheel"
+    >
         <div class="flex-table" :style="style">
             <table-head
                 ref="tableHeader"
@@ -20,9 +25,10 @@
                 :columns="tableColumns"
                 :data="dataList"
                 :maxHeight="maxHeight"
-                :scroll="handleBodyScroll"
                 :no-data="noData"
-                :hover="bodyScrollOver"
+                :scrollTop="scrollTop"
+                :hoverIndex="hoverIndex"
+                @scroll.native.passive="syncScroll"
                 @on-toggle-select="toggleSelect"
             ></table-body>
             <!-- /flex-table-body -->
@@ -46,6 +52,7 @@
                 :data="dataList"
                 :resizable="resizable"
                 :rowHeight="rowHeight.header"
+                :is-render-done="isRenderDone"
                 @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
@@ -54,13 +61,13 @@
             <table-body
                 ref="fixedLeftBody"
                 onlyFixed="left"
-                :scroll="handleFixedBodyScroll"
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 :data="dataList"
                 :maxHeight="maxHeight"
-                :hover="fixedScrollOver"
                 :rowHeight="rowHeight"
+                :scrollTop="scrollTop"
+                :hoverIndex="hoverIndex"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
@@ -83,6 +90,7 @@
                     :data="dataList"
                     :resizable="resizable"
                     :rowHeight="rowHeight.header"
+                    :is-render-done="isRenderDone"
                     @on-select-all="selectAll"
                     @on-sort-change="onSortChange"
                     @on-col-resize="onColResizeStart"
@@ -91,13 +99,13 @@
                 <table-body
                     ref="fixedRightBody"
                     onlyFixed="right"
-                    :scroll="handleFixedRightBodyScroll"
                     :cal-width="calWidth"
                     :columns="tableColumns"
                     :data="dataList"
                     :maxHeight="maxHeight"
-                    :hover="fixedRightScrollOver"
                     :rowHeight="rowHeight"
+                    :scrollTop="scrollTop"
+                    :hoverIndex="hoverIndex"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
 
@@ -118,13 +126,16 @@
         </slot>
     </div>
     <tableScrollBar
+        v-if="showScrollBar"
         :body-h="bodyH"
         :header-h="headerH"
         :max-height="maxHeight"
         :scroll="handleScrollYScroll"
         :sum="!!sum"
+        :scrollTop="scrollTop"
         ref="scrollYBody"
-        :hover="scrollScrollOver"
+        @mouseenter.native="scrollBarOver"
+        @mouseleave.native="scrollBarLeave"
     ></tableScrollBar>
     <!-- /Y轴固定滚动条 -->
     </div>
@@ -140,6 +151,8 @@ import tableFoot from './tableFoot.vue';
 import tableScrollBar from './tableScrollBar.vue';
 import Spinner from './Spinner.vue';
 import debounce from "lodash.debounce";
+import throttle from "lodash.throttle";
+import normalizeWheel from 'normalize-wheel';
 
 import { MIN_WIDTH } from './data';
 
@@ -194,9 +207,24 @@ export default {
             type: String,
             default: 'light'
         },
-        initRowNumber: {
+        border: {
+            type: Boolean,
+            default: true
+        },
+        stripe: {
+            type: Boolean,
+            default: true
+        },
+        asyncRender: {
             type: Number,
-            default: 10,
+            default: 0,
+        },
+        minWidth: {
+            type: Number,
+            default: MIN_WIDTH,
+        },
+        maxWidth: {
+            type: Number,
         }
     },
     data(){
@@ -211,20 +239,27 @@ export default {
             bodyH: 0,
             footH: 54,
             maxHeight: 0,
+            scrollTop: 0,
             shouldEachRenderQueue: false,
             hasFixedLeft: false,
             hasFixedRight: false,
-            bodyScrolling: false,
-            fixedBodyScrolling: false,
-            fixedRightBodyScrolling: false,
             scrollYScrolling: false,
+            hoverIndex: undefined,
+            isRenderDone: true,
             colResize: {
                 onColResizing: false,
                 originX: 0, // 记录拖动起点
                 currentX: 0, // 拖动实时位置
                 resizeIndex: -1, // 调整的表头 index
                 minX: 0, // 可拖动调整最小值
+                maxX: Infinity, // 可拖动调整最大值
             },
+            emitColResize: {
+                newWidth: 0,
+                oldWidth: 0,
+                column: {},
+                event: null
+            }
         }
     },
     computed: {
@@ -240,6 +275,12 @@ export default {
             }
             if (this.showScrollBar) {
                 arr.push('has-scroll-bar')
+            }
+            if (!this.border) {
+                arr.push(`no-boder`)
+            }
+            if (!this.stripe) {
+                arr.push(`no-stripe`)
             }
             return arr;
         },
@@ -316,6 +357,9 @@ export default {
         },
         sum: function() {
             this.calHeight();
+        },
+        showScrollBar() {
+            this.resize();
         }
     },
     updated() {},
@@ -327,11 +371,30 @@ export default {
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
     methods:{
+        syncScroll: throttle(function(event) {
+            const { scrollTop } = event.target;
+            this.scrollTop = scrollTop;
+        }, 20),
+        updateHoverIndex: debounce(function(index) {
+            this.hoverIndex = index;
+        }, 50),
+        handleMousewheel(event) {
+            const normalized = normalizeWheel(event);
+            if (Math.abs(normalized.spinY) > 0) {
+                const bodyWrapper = this.$refs.tableBody.$el;
+                const currentScrollTop = this.scrollTop;
+                const noYetScrollToTop = normalized.pixelY < 0 && currentScrollTop > 0;
+                const noYetScrollToBottom = normalized.pixelY > 0 && bodyWrapper.scrollHeight - bodyWrapper.clientHeight > currentScrollTop;
+                if (noYetScrollToTop || noYetScrollToBottom) {
+                    event.preventDefault();
+                    this.scrollTop += Math.ceil(normalized.pixelY);
+                    this.scrollTop = Math.max(this.scrollTop, 0);
+                }
+            }
+        },
         doLayout: debounce(function() {
-            this.$nextTick(() => {
-                this.resize();
-                this.calHeight();
-            });
+            this.resize();
+            this.calHeight();
         }, 50, {leading: true}),
         computedFixedLeft: function() {
             return this.tableColumns.some(item => item.fixed === 'left');
@@ -340,17 +403,25 @@ export default {
             return this.tableColumns.some(item => item.fixed === 'right');
         },
         initData() {
+            this._queueId = new Date().getTime();
             this.rowHeight = { header: 0, footer: 0 };
             this.dataList = [];
-            this.data.slice(0, this.initRowNumber).forEach((item, index) => {
-                this.copyItem(item, index)
-            });
-            if (this.data.length > this.initRowNumber) {
-                this.shouldEachRenderQueue = true;
-                this._queueId = new Date().getTime();
-                this.eachQueue(this.data, this.initRowNumber, this._queueId);
+            if (this.asyncRender > 0) {
+                this.isRenderDone = false;
+                this.data.slice(0, this.asyncRender).forEach((item, index) => {
+                    this.copyItem(item, index)
+                });
+                if (this.data.length > this.asyncRender) {
+                    this.shouldEachRenderQueue = true;
+                    this.eachQueue(this.data, this.asyncRender, this._queueId);
+                } else {
+                    this.isRenderDone = true;
+                    this.$emit("on-render-done");
+                }
             } else {
-                this.$emit("on-render-done");
+                this.data.forEach((item, index) => {
+                    this.copyItem(item, index)
+                });
             }
         },
         copyItem(item, index) {
@@ -376,6 +447,7 @@ export default {
             }).then(() => {
                 if (arr.length <= i) {
                     this.doLayout();
+                    this.isRenderDone = true;
                     this.$emit("on-render-done");
                     this.shouldEachRenderQueue = false;
                 } else {
@@ -424,7 +496,9 @@ export default {
             if (colResize.onColResizing) {
                 const currentX = e.clientX - colResize.nTableLeft;
                 const dX = currentX - colResize.originX;
-                if (dX >= colResize.minX) { // 限制参考线最小值
+                if (dX < 0 && dX >= colResize.minX) { // 限制参考线最小值
+                    colResize.currentX = currentX;
+                } else if (dX > 0 && dX <= colResize.maxX) {
                     colResize.currentX = currentX;
                 }
             }
@@ -432,105 +506,96 @@ export default {
         onColResizeEnd(e) {
             const colResize = this.colResize;
             if (colResize.onColResizing) {
-                const row = this.tableColumns[colResize.resizeIndex];
+                const col = this.tableColumns[colResize.resizeIndex];
                 const dX = colResize.currentX - colResize.originX;
-                const finalX = Math.max((row.width || this.calWidth[row.key]) + dX, MIN_WIDTH);
-                if (row.width) {
-                    row.width = finalX;
-                } else {
-                    this.$set(row, 'width', finalX);
-                }
+                let finalX = Math.max((col.width || this.calWidth[col.key]) + dX);
+                finalX = this.limitWidth(finalX, col);
+                this.$set(col, 'width', finalX);
                 // reset
                 colResize.onColResizing = false;
                 colResize.currentX = 0;
                 colResize.resizeIndex = -1;
+                this.doLayout();
+                this.emitColResize.newWidth = finalX;
+                this.emitColResize.event = e;
+
+                // 列宽拖拽结束后，回调返回
+                this.$emit('on-col-width-resize', 
+                            this.emitColResize.newWidth, 
+                            this.emitColResize.oldWidth, 
+                            this.emitColResize.column, 
+                            this.emitColResize.event
+                )
             }
         },
         onColResizeStart(e, index) {
             if (e.target.classList.contains('j-col-resize')) {
                 e.stopPropagation();
                 const colResize = this.colResize;
-                const row = this.tableColumns[index];
-                const colWidth = row.width || this.calWidth[row.key];
+                const col = this.tableColumns[index];
+                const colWidth = col.width || this.calWidth[col.key];
+                const minWidth = this.getMinWidth(col);
+                const maxWidth = this.getMaxWidth(col);
                 colResize.onColResizing = true;
                 colResize.resizeIndex = index;
                 colResize.nTableLeft = this.$el.getBoundingClientRect().left;
                 colResize.originX = colResize.currentX = e.clientX - colResize.nTableLeft;
-                colResize.minX = MIN_WIDTH - colWidth;
+                colResize.minX = minWidth - colWidth;
+                if (maxWidth !== undefined) {
+                    colResize.maxX = maxWidth - colWidth;
+                }
+                this.emitColResize.oldWidth  = colWidth;
+                this.emitColResize.column = this.columns[index];
             }
         },
-        handleFixedBodyScroll(e) {
-            if(this.bodyScrolling || this.scrollYScrolling || this.fixedRightBodyScrolling) return;
-            this.fixedBodyScrolling = true;
-            const scrollTop = e.target.scrollTop;
-            this.$refs.tableBody.$el.scrollTop = scrollTop;
-            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
-            if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
-        },
-        handleFixedRightBodyScroll(e) {
-            if(this.bodyScrolling || this.scrollYScrolling || this.fixedBodyScrolling) return;
-            this.fixedRightBodyScrolling = true;
-            const scrollTop = e.target.scrollTop;
-            this.$refs.tableBody.$el.scrollTop = scrollTop;
-            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
-            if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
-        },
-        handleBodyScroll(e) {
-            this.$emit('on-body-scroll', e);
-            if(this.scrollYScrolling || this.fixedBodyScrolling || this.fixedRightBodyScrolling) return;
-            this.bodyScrolling = true;
-            const scrollTop = e.target.scrollTop;
-            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
-            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
-            if(this.bodyH > this.maxHeight) this.$refs.scrollYBody.$refs.scrollYBody.scrollTop = scrollTop;
+        onTableScrollX(event) {
+            this.$emit('on-scroll-x', event);
         },
         handleScrollYScroll(e) {
-            if(this.bodyScrolling || this.fixedBodyScrolling || this.fixedRightBodyScrolling) return;
-            this.scrollYScrolling = true;
+            if(!this.scrollYScrolling) { return; }
             const scrollTop = e.target.scrollTop;
-            this.$refs.tableBody.$el.scrollTop = scrollTop;
-            if (this.hasFixedLeft) {this.$refs.fixedLeftBody.$el.scrollTop = scrollTop;}
-            if (this.hasFixedRight) {this.$refs.fixedRightBody.$el.scrollTop = scrollTop;}
+            this.scrollTop = scrollTop;
         },
-        bodyScrollOver(){
-            this.bodyScrolling = true;
-            this.fixedBodyScrolling = false;
-            this.fixedRightBodyScrolling = false;
-            this.scrollYScrolling = false;
-        },
-        fixedScrollOver(){
-            this.bodyScrolling = false;
-            this.fixedBodyScrolling = true;
-            this.fixedRightBodyScrolling = false;
-            this.scrollYScrolling = false;
-        },
-        fixedRightScrollOver(){
-            this.bodyScrolling = false;
-            this.fixedBodyScrolling = false;
-            this.fixedRightBodyScrolling = true;
-            this.scrollYScrolling = false;
-        },
-        scrollScrollOver(){
-            this.bodyScrolling = false;
-            this.fixedBodyScrolling = false;
-            this.fixedRightBodyScrolling = false;
+        scrollBarOver(){
             this.scrollYScrolling = true;
+        },
+        scrollBarLeave(){
+            this.scrollYScrolling = false;
         },
         onSortChange(item) {
             this.$emit('on-sort-change', item);
         },
         calHeight() {
-            if (!this.height) { return; }
-            const $refs = this.$refs;
-            const $tableFoot = $refs.tableFoot;
-            const $tableBodyTr = $refs.tableBody.$el.querySelector('.flex-table-tr');
-            const headerH = $refs.tableHeader.$el.offsetHeight;
-            const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
-            const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
-            this.headerH = headerH;
-            this.footH = footH;
-            this.bodyH = bodyH;
-            this.maxHeight = this.height - headerH - footH;
+            requestAnimationFrame(() => {
+                if (!this.height) { return; }
+                const $refs = this.$refs;
+                const $tableFoot = $refs.tableFoot;
+                const $tableBody = $refs.tableBody;
+                if (!$tableBody) { reutrn; }
+                const $tableBodyTr = $tableBody.$el.querySelector('.flex-table-tr');
+                const headerH = $refs.tableHeader.$el.offsetHeight;
+                const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
+                const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
+                this.headerH = headerH;
+                this.footH = footH;
+                this.bodyH = bodyH;
+                this.maxHeight = this.height - headerH - footH;
+            });
+        },
+        getMinWidth(col) {
+            return col.minWidth || this.minWidth;
+        },
+        getMaxWidth(col) {
+            return col.maxWidth || this.maxWidth;
+        },
+        limitWidth(currentWidth, col) {
+            const minWidth = this.getMinWidth(col);
+            const maxWidth = this.getMaxWidth(col);
+            currentWidth = Math.max(currentWidth, minWidth);
+            if (maxWidth !== undefined) {
+                currentWidth = Math.min(currentWidth, maxWidth);
+            }
+            return currentWidth;
         },
         resize(){
             requestAnimationFrame(() => {
@@ -540,7 +605,6 @@ export default {
 
                 const oWidth = {};
                 let defineTotalWidth = 0; //定义的宽度总和
-                let nCalWidth = 0 ; //计算出来的宽度
                 let nCalLength = 0;
 
                 //计算每一个单元的宽度
@@ -548,7 +612,7 @@ export default {
                     let sKey = item.key || item.title;
                     let nWidth = item.width;
                     if(nWidth){
-                        nWidth = Math.max(nWidth,MIN_WIDTH);
+                        nWidth = this.limitWidth(nWidth, item);
                         oWidth[sKey] = nWidth;
                         defineTotalWidth += nWidth;
                     }else{
@@ -558,13 +622,14 @@ export default {
                 // 给没有定义宽度的 cell 平均分配或指定最小宽度
                 if (nCalLength > 0) {
                     let nLessWidth = nTableWidth - defineTotalWidth;
-                    nCalWidth = Math.max(nLessWidth/nCalLength, MIN_WIDTH);
+                    let nCalWidth = nLessWidth/nCalLength; //计算出来的宽度
 
                     this.tableColumns.forEach(item=>{
                         let sKey = item.key || item.title;
                         let nWidth = item.width;
                         if(!nWidth){
-                            oWidth[sKey] = nCalWidth ;
+                            const autoWidth = this.limitWidth(nCalWidth, item);
+                            oWidth[sKey] = autoWidth;
                         }
                     });
                 } else if (nTableWidth > defineTotalWidth) {

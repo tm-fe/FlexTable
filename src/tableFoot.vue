@@ -3,7 +3,10 @@
     <div class="flex-table-foot" :style="{ height: height }">
         <div class="flex-table-row">
             <div 
-                class="flex-table-col" 
+                :class="{
+                    'flex-table-col': true,
+                    'flex-table-hidden': isInvisible(item)
+                    }" 
                 v-for="(item, index) in columns"
                 :key="index"
                 :style="setCellStyle(item)"
@@ -79,6 +82,9 @@ export default {
         },
         shouldRender(item) {
             return this.sum[item.key] !== undefined && !this.isHidden(item)
+        },
+        isInvisible(col) { // 非固定层的固定列应不可见
+            return col.fixed && !this.onlyFixed;
         }
     }
 }

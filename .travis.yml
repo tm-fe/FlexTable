@@ -35,6 +35,6 @@ branches:
     - master
 
 notifications:
-  webhooks: https://oapi.dingtalk.com/robot/send?access_token=af06d34dc153006f5dc4175296064662f00901c2d24fada39fdeac4bffd33822
+  webhooks: https://oapi.dingtalk.com/robot/send?access_token=fe13eaac0e256bce410fd755deaa489f89cc3ce7969a0db9ebfc9354e2296b90
   email:
     - lb.robin1991@gmail.com

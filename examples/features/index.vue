@@ -5,10 +5,13 @@
     
     <flex-table
         resizable
-        :loading="loading" 
-        :columns="columns" 
+        :loading="loading"
+        :columns="columns"
         :data="list"
         :sum="sum"
+        :minWidth="80"
+        :maxWidth="600"
+        @on-scroll-x="onTableScroll"
     ></flex-table>
 </div>
 </template>
@@ -20,6 +23,9 @@ for(let i=0;i<10;i++){
     const oTestData = {
         name: 'John Brown',
         age: 18,
+        sex: '男',
+        school: 'high school',
+        color: 'red',
         address: 'New York No. 1 Lake Park',
         date: '2016-10-03',
     };
@@ -36,10 +42,12 @@ export default {
                 {
                     title: 'Name',
                     key: 'name',
+                    width: 240
                 },
                 {
                     title: 'Age',
                     key: 'age',
+                    width: 140,
                     render(h, params){
                         return h('span', 'age: '+ params.row.age)
                     }
@@ -47,10 +55,27 @@ export default {
                 {
                     title: 'Address',
                     key: 'address',
+                    width: 240
+                },
+                {
+                    title: 'Sex',
+                    key: 'sex',
+                    width: 140
+                },
+                {
+                    title: 'School',
+                    key: 'school',
+                    width: 240
+                },
+                {
+                    title: 'Color',
+                    key: 'color',
+                    width: 140
                 },
                 {
                     title: 'Date',
                     key: 'date',
+                    width: 240
                 },
             ],
             loading: false,
@@ -64,6 +89,10 @@ export default {
         }
     },
     mounted() {},
-    methods: {}
+    methods: {
+        onTableScroll(event) {
+            console.log(event.target.scrollLeft);
+        }
+    }
 }
 </script>

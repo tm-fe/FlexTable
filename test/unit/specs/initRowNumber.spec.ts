@@ -25,7 +25,7 @@ for (let i = 0; i < 10; i += 1) {
 }
 
 describe('Flex-Table', () => {
-    describe('initRowNumber', () => {
+    describe('asyncRender', () => {
         const vm: Vue = createVue({
             template: `
                 <flex-table
@@ -34,7 +34,7 @@ describe('Flex-Table', () => {
                     :columns="columns"
                     :data="list"
                     :sum="sum"
-                    :init-row-number="initRowNumber"
+                    :asyncRender="asyncRender"
                 ></flex-table>
             `,
             data() {
@@ -75,7 +75,7 @@ describe('Flex-Table', () => {
                         address: 'London',
                         date: '2016-10-01',
                     },
-                    initRowNumber: 5,
+                    asyncRender: 5,
                 };
             },
         });

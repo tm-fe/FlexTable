@@ -2,13 +2,16 @@
     <div class="flex-table-head" :style="{ height: height }">
         <div class="flex-table-row">
             <div
-                class="flex-table-col"
                 v-for="(item, index) in headRow"
                 :key="item.key + '_' + index"
+                :class="{
+                    'flex-table-col': true,
+                    'flex-table-hidden': isInvisible(item)
+                    }"
                 :style="setCellStyle(item)"
             >
                 <template v-if="!isHidden(item)">
-                    <template v-if="item.type === 'selection'"><Checkbox :checked="isSelectAll" :disabled="!data.length" @input="selectAll"></Checkbox></template>
+                    <template v-if="item.type === 'selection'"><Checkbox :checked="isSelectAll" :disabled="!data.length || !isRenderDone" @input="selectAll"></Checkbox></template>
                     <template v-else>
                         <Expand
                             v-if="item.renderHeader"
@@ -20,7 +23,7 @@
                             <i @click="handleSort(index, 'asc')" :class="{'on': getColumns(index)._sort === 'asc'}" class="flex-table-arrow-dropup"></i>
                             <i @click="handleSort(index, 'desc')" :class="{'on': getColumns(index)._sort === 'desc'}" class="flex-table-arrow-dropdown"></i>
                         </span>
-                        <div v-if="resizable" @mousedown="onColResize($event, index)" class="flex-table-col-resize j-col-resize"></div>
+                        <div v-if="isColResizable(item)" @mousedown="onColResize($event, index)" class="flex-table-col-resize j-col-resize"></div>
                     </template>
                 </template>
             </div>
@@ -51,6 +54,10 @@ export default {
         rowHeight: {
             type: Number,
             default: 0,
+        },
+        isRenderDone: {
+            type: Boolean,
+            default: true,
         }
     },
     data() {
@@ -99,6 +106,9 @@ export default {
         });
     },
     methods: {
+        isColResizable(col) {
+            return this.resizable && col.resizable !== false;
+        },
         selectAll() {
             const status = !this.isSelectAll;
             this.$emit('on-select-all', status);
@@ -135,6 +145,9 @@ export default {
         },
         isHidden(item) {
             return this.onlyFixed && (item.fixed !== this.onlyFixed);
+        },
+        isInvisible(col) { // 非固定层的固定列应不可见
+            return col.fixed && !this.onlyFixed;
         }
     }
 }
