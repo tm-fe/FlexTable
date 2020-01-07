@@ -8,6 +8,8 @@
         <button @click="size = 'small'" :disabled="size === 'small'">Small</button>
         <button @click="theme = ''" :disabled="theme === ''">Light</button>
         <button @click="theme = 'dark'" :disabled="theme === 'dark'">Dark</button>
+        <button @click="isBorder = !isBorder">{{isBorder?'None Border':'Has Border'}}</button>
+        <button @click="stripe = !stripe">{{stripe?'None Stripe':'Has Stripe'}}</button>
     </div>
     <div :class="theme === 'dark'?'table dark':'table'">
         <flex-table
@@ -18,6 +20,8 @@
             :sum="sum"
             :size="size"
             :theme="theme"
+            :border="isBorder"
+            :stripe="stripe"
         ></flex-table>
     </div>
 </div>
@@ -72,7 +76,9 @@ export default {
                 date: '2016-10-01',
             },
             size: '',
-            theme: ''
+            theme: '',
+            isBorder: true,
+            stripe: true,
         }
     },
     mounted() {},

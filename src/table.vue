@@ -52,6 +52,7 @@
                 :data="dataList"
                 :resizable="resizable"
                 :rowHeight="rowHeight.header"
+                :is-render-done="isRenderDone"
                 @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
@@ -89,6 +90,7 @@
                     :data="dataList"
                     :resizable="resizable"
                     :rowHeight="rowHeight.header"
+                    :is-render-done="isRenderDone"
                     @on-select-all="selectAll"
                     @on-sort-change="onSortChange"
                     @on-col-resize="onColResizeStart"
@@ -205,6 +207,14 @@ export default {
             type: String,
             default: 'light'
         },
+        border: {
+            type: Boolean,
+            default: true
+        },
+        stripe: {
+            type: Boolean,
+            default: true
+        },
         asyncRender: {
             type: Number,
             default: 0,
@@ -235,6 +245,7 @@ export default {
             hasFixedRight: false,
             scrollYScrolling: false,
             hoverIndex: undefined,
+            isRenderDone: true,
             colResize: {
                 onColResizing: false,
                 originX: 0, // 记录拖动起点
@@ -264,6 +275,12 @@ export default {
             }
             if (this.showScrollBar) {
                 arr.push('has-scroll-bar')
+            }
+            if (!this.border) {
+                arr.push(`no-boder`)
+            }
+            if (!this.stripe) {
+                arr.push(`no-stripe`)
             }
             return arr;
         },
@@ -390,6 +407,7 @@ export default {
             this.rowHeight = { header: 0, footer: 0 };
             this.dataList = [];
             if (this.asyncRender > 0) {
+                this.isRenderDone = false;
                 this.data.slice(0, this.asyncRender).forEach((item, index) => {
                     this.copyItem(item, index)
                 });
@@ -397,6 +415,7 @@ export default {
                     this.shouldEachRenderQueue = true;
                     this.eachQueue(this.data, this.asyncRender, this._queueId);
                 } else {
+                    this.isRenderDone = true;
                     this.$emit("on-render-done");
                 }
             } else {
@@ -428,6 +447,7 @@ export default {
             }).then(() => {
                 if (arr.length <= i) {
                     this.doLayout();
+                    this.isRenderDone = true;
                     this.$emit("on-render-done");
                     this.shouldEachRenderQueue = false;
                 } else {
