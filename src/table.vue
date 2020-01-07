@@ -28,6 +28,7 @@
                 :no-data="noData"
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
+                @scroll.native.passive="syncScroll"
                 @on-toggle-select="toggleSelect"
             ></table-body>
             <!-- /flex-table-body -->
@@ -51,6 +52,7 @@
                 :data="dataList"
                 :resizable="resizable"
                 :rowHeight="rowHeight.header"
+                :is-render-done="isRenderDone"
                 @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
@@ -88,6 +90,7 @@
                     :data="dataList"
                     :resizable="resizable"
                     :rowHeight="rowHeight.header"
+                    :is-render-done="isRenderDone"
                     @on-select-all="selectAll"
                     @on-sort-change="onSortChange"
                     @on-col-resize="onColResizeStart"
@@ -148,6 +151,7 @@ import tableFoot from './tableFoot.vue';
 import tableScrollBar from './tableScrollBar.vue';
 import Spinner from './Spinner.vue';
 import debounce from "lodash.debounce";
+import throttle from "lodash.throttle";
 import normalizeWheel from 'normalize-wheel';
 
 import { MIN_WIDTH } from './data';
@@ -203,6 +207,14 @@ export default {
             type: String,
             default: 'light'
         },
+        border: {
+            type: Boolean,
+            default: true
+        },
+        stripe: {
+            type: Boolean,
+            default: true
+        },
         asyncRender: {
             type: Number,
             default: 0,
@@ -233,6 +245,7 @@ export default {
             hasFixedRight: false,
             scrollYScrolling: false,
             hoverIndex: undefined,
+            isRenderDone: true,
             colResize: {
                 onColResizing: false,
                 originX: 0, // 记录拖动起点
@@ -241,6 +254,12 @@ export default {
                 minX: 0, // 可拖动调整最小值
                 maxX: Infinity, // 可拖动调整最大值
             },
+            emitColResize: {
+                newWidth: 0,
+                oldWidth: 0,
+                column: {},
+                event: null
+            }
         }
     },
     computed: {
@@ -256,6 +275,12 @@ export default {
             }
             if (this.showScrollBar) {
                 arr.push('has-scroll-bar')
+            }
+            if (!this.border) {
+                arr.push(`no-boder`)
+            }
+            if (!this.stripe) {
+                arr.push(`no-stripe`)
             }
             return arr;
         },
@@ -332,6 +357,9 @@ export default {
         },
         sum: function() {
             this.calHeight();
+        },
+        showScrollBar() {
+            this.resize();
         }
     },
     updated() {},
@@ -343,6 +371,10 @@ export default {
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
     methods:{
+        syncScroll: throttle(function(event) {
+            const { scrollTop } = event.target;
+            this.scrollTop = scrollTop;
+        }, 20),
         updateHoverIndex: debounce(function(index) {
             this.hoverIndex = index;
         }, 50),
@@ -351,19 +383,18 @@ export default {
             if (Math.abs(normalized.spinY) > 0) {
                 const bodyWrapper = this.$refs.tableBody.$el;
                 const currentScrollTop = this.scrollTop;
-                const noYetScrollToTop = normalized.pixelY < 0 && currentScrollTop !== 0;
+                const noYetScrollToTop = normalized.pixelY < 0 && currentScrollTop > 0;
                 const noYetScrollToBottom = normalized.pixelY > 0 && bodyWrapper.scrollHeight - bodyWrapper.clientHeight > currentScrollTop;
                 if (noYetScrollToTop || noYetScrollToBottom) {
                     event.preventDefault();
                     this.scrollTop += Math.ceil(normalized.pixelY);
+                    this.scrollTop = Math.max(this.scrollTop, 0);
                 }
             }
         },
         doLayout: debounce(function() {
-            this.$nextTick(() => {
-                this.resize();
-                this.calHeight();
-            });
+            this.resize();
+            this.calHeight();
         }, 50, {leading: true}),
         computedFixedLeft: function() {
             return this.tableColumns.some(item => item.fixed === 'left');
@@ -376,6 +407,7 @@ export default {
             this.rowHeight = { header: 0, footer: 0 };
             this.dataList = [];
             if (this.asyncRender > 0) {
+                this.isRenderDone = false;
                 this.data.slice(0, this.asyncRender).forEach((item, index) => {
                     this.copyItem(item, index)
                 });
@@ -383,6 +415,7 @@ export default {
                     this.shouldEachRenderQueue = true;
                     this.eachQueue(this.data, this.asyncRender, this._queueId);
                 } else {
+                    this.isRenderDone = true;
                     this.$emit("on-render-done");
                 }
             } else {
@@ -414,6 +447,7 @@ export default {
             }).then(() => {
                 if (arr.length <= i) {
                     this.doLayout();
+                    this.isRenderDone = true;
                     this.$emit("on-render-done");
                     this.shouldEachRenderQueue = false;
                 } else {
@@ -481,6 +515,17 @@ export default {
                 colResize.onColResizing = false;
                 colResize.currentX = 0;
                 colResize.resizeIndex = -1;
+                this.doLayout();
+                this.emitColResize.newWidth = finalX;
+                this.emitColResize.event = e;
+
+                // 列宽拖拽结束后，回调返回
+                this.$emit('on-col-width-resize', 
+                            this.emitColResize.newWidth, 
+                            this.emitColResize.oldWidth, 
+                            this.emitColResize.column, 
+                            this.emitColResize.event
+                )
             }
         },
         onColResizeStart(e, index) {
@@ -499,6 +544,8 @@ export default {
                 if (maxWidth !== undefined) {
                     colResize.maxX = maxWidth - colWidth;
                 }
+                this.emitColResize.oldWidth  = colWidth;
+                this.emitColResize.column = this.columns[index];
             }
         },
         onTableScrollX(event) {
@@ -519,17 +566,21 @@ export default {
             this.$emit('on-sort-change', item);
         },
         calHeight() {
-            if (!this.height) { return; }
-            const $refs = this.$refs;
-            const $tableFoot = $refs.tableFoot;
-            const $tableBodyTr = $refs.tableBody.$el.querySelector('.flex-table-tr');
-            const headerH = $refs.tableHeader.$el.offsetHeight;
-            const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
-            const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
-            this.headerH = headerH;
-            this.footH = footH;
-            this.bodyH = bodyH;
-            this.maxHeight = this.height - headerH - footH;
+            requestAnimationFrame(() => {
+                if (!this.height) { return; }
+                const $refs = this.$refs;
+                const $tableFoot = $refs.tableFoot;
+                const $tableBody = $refs.tableBody;
+                if (!$tableBody) { reutrn; }
+                const $tableBodyTr = $tableBody.$el.querySelector('.flex-table-tr');
+                const headerH = $refs.tableHeader.$el.offsetHeight;
+                const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
+                const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
+                this.headerH = headerH;
+                this.footH = footH;
+                this.bodyH = bodyH;
+                this.maxHeight = this.height - headerH - footH;
+            });
         },
         getMinWidth(col) {
             return col.minWidth || this.minWidth;

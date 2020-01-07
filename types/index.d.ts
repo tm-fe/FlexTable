@@ -50,4 +50,17 @@ export declare class FlexTable extends Vue {
         eventName: "on-sort-change",
         option: sortOption
     ): this;
+
+    /**
+     * 拖拽调整列宽时触发
+     * @returns newWidth, oldWidth, column, event
+     * 
+     */
+    $emit(
+        eventName: "on-col-width-resize",
+        newWidth: number,
+        oldWidth: number,
+        column: object,
+        event: MouseEvent
+    ): this;
 }

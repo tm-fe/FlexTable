@@ -1,7 +1,7 @@
 {
   "name": "tm-flextable",
-  "version": "0.2.0",
-  "description": "Use div to build flexible、efficiently updated table components with Vue.js",
+  "version": "0.2.7",
+  "description": "Using div to implement flexible、high performance table",
   "main": "dist/index.js",
   "typings": "types/index.d.ts",
   "scripts": {
@@ -38,6 +38,7 @@
   "homepage": "https://github.com/tm-fe/FlexTable#readme",
   "dependencies": {
     "lodash.debounce": "^4.0.8",
+    "lodash.throttle": "^4.1.1",
     "normalize-wheel": "^1.0.1",
     "vue-checkbox-radio": "^0.6.0"
   },
