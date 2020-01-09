@@ -133,8 +133,14 @@ export default {
 | height | 表格高度，单位 px，设置后，如果表格内容大于此值，会固定表头 | Number | - |
 | no-data | 数据为空时显示的提示内容 | String | No Data |
 | asyncRender | 不为 0 时使用异步渲染模式，mounted 触发前渲染的行数(建议是刚好首屏，**见后文详细说明**) | number | 0 |
-| minWidth | 最小列宽 | number | 40 |
+| minWidth | 最小列宽 | Number | 40 |
 | maxWidth | 拖动调整时，可调的最大列宽, 默认不限制 | number | - |
+| size | 表格大小 default/big/small | String | default |
+| theme | 颜色 light/dark | String | light |
+| border | 边框显示 | Boolean | true |
+| stripe | 行的斑纹显示 | Boolean | true |
+| fixedHead | 全屏固定头部 | Boolean | false |
+| fixedHeadTop | 全屏固定头部离顶部距离 | Number | 0 |
 
 ### Table events
 
