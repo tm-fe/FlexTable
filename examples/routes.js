@@ -68,7 +68,7 @@ export default [
         name: 'selectable',
         component: resolve => require(['./features/selectable.vue'], resolve),
         meta: {
-            title: '多选',
+            title: '多选/全屏固定头部',
         },
     },
     {
