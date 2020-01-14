@@ -176,14 +176,14 @@ export default {
 | resizable | 是否可拖动调整列宽(必须设置table props 的 resizable 为 true 才生效) | Boolean | - |
 | minWidth | 最小列宽(优先级高于table props) | number | - |
 | maxWidth | 拖动调整时，可调的最大列宽, 默认不限制(优先级高于table props) | number | - |
-| className | 初始化是渲染列的背景色 | string | '' |
+| className | 初始化渲染列的背景色 | string | '' |
 
 ### data
 行描述数据对象，是 list 中的一项
 
 | 属性 | 说明 | 类型 | 默认值 |
 | ------------ | ------- | ------- | ----------- |
-| cellClassName | 指定任意一个单元格的格式 | Object | {} |
+| cellClassName | 指定任意一个单元格的背景色 | Object | {} |
 
 ### Table slot
 
