@@ -9,6 +9,7 @@
             :row="row"
             :rowIndex="rowIndex"
             :onlyFixed="onlyFixed"
+            :class="tdClassName(column, row)"
             @on-toggle-select="toggleSelect"
             @on-toggle-expand="toggleExpand"
         ></table-td>
@@ -84,7 +85,15 @@ export default {
         },
         mouseenter() {
             this.owner.updateHoverIndex(this.rowIndex);
-        }
+        },
+        rowClsName(_index) {
+            return this.$parent.$parent.rowClassName(this.row, _index);
+        },
+        tdClassName() {
+            return [
+                this.rowClsName(this.rowIndex),
+            ]
+        },
     }
 }
 </script>

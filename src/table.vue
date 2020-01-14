@@ -30,6 +30,7 @@
                 :no-data="noData"
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
+                :selectedColor="selectedColor"
                 @scroll.native.passive="syncScroll"
                 @on-toggle-select="toggleSelect"
             ></table-body>
@@ -69,6 +70,7 @@
                 :rowHeight="rowHeight"
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
+                :selectedColor="selectedColor"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
@@ -107,6 +109,7 @@
                     :rowHeight="rowHeight"
                     :scrollTop="scrollTop"
                     :hoverIndex="hoverIndex"
+                    :selectedColor="selectedColor"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
 
@@ -272,7 +275,17 @@ export default {
         fixedHeadTop: {
             type: Number,
             default: 0
-        }
+        },
+        selectedColor: {
+            type: String,
+            default: '',
+        },
+        rowClassName: {
+            type: Function,
+            default: () => {
+                return '';
+            },
+        },
     },
     data(){
         return {

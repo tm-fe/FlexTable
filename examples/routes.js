@@ -95,4 +95,12 @@ export default [
             title: '风格样式',
         },
     },
+    {
+        path: '/test',
+        name: 'test',
+        component: resolve => require(['./features/test.vue'], resolve),
+        meta: {
+            title: '初始渲染/勾选渲染',
+        },
+    },
 ];
