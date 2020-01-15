@@ -28,5 +28,17 @@ export default {
 
             return oStyle;
         },
+        alignCls (column, row = {}) {
+            let cellClassName = '';
+            if (row.cellClassName && column.key && row.cellClassName[column.key]) {
+                cellClassName = row.cellClassName[column.key];
+            }
+            return [
+                {
+                    [`${cellClassName}`]: cellClassName, // cell className
+                    [`${column.className}`]: column.className, // column className
+                },
+            ];
+        },
     },
 };
