@@ -3,7 +3,7 @@
 @hoverColor: #0b8df8;
 .@{fb}{
     background-color: #fff;
-    border-bottom: 1px solid #dddee1;
+    // border-bottom: 1px solid #dddee1;
     position: relative;
 
     &-wrap{
@@ -13,9 +13,9 @@
         display: flex;
         align-content: stretch;
 
-        & *{
-            box-sizing: border-box;
-        }
+        // & *{
+        //     box-sizing: border-box;
+        // }
         &.no-boder{
             border-left: none;
             border-right: none;
@@ -27,6 +27,31 @@
             .@{fb}-body .@{fb}-tr .@{fb}-row:nth-child(odd){
                 background: none;
             }
+            .@{fb}-body .@{fb}-tr .@{fb}-row.@{fb}-hover{
+                background-color: #ebf7ff;
+            }
+            &.@{fb}-dark{
+                .@{fb}-body .@{fb}-tr .@{fb}-row.@{fb}-hover{
+                    background-color: #888;
+                }
+            }
+        }
+    }
+    &-head-fixed-layout{
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: #fff;
+        &.is-fixed{
+            position: fixed;
+            box-shadow: 0 2px 2px rgba(0,0,0,.08);
+        }
+    }
+    &-head-fixed{
+        width: 100%;
+        overflow-x: auto;
+        &::-webkit-scrollbar {
+            display: none;
         }
     }
     &-big{
@@ -70,6 +95,7 @@
         width: 15px;
         flex-shrink: 0;
         border-left: 1px solid #dddee1;
+        box-sizing: border-box;
         &-head{
             width: 100%;
             height: 38px;
@@ -98,6 +124,7 @@
         border-bottom: 1px solid @borderColor;
         font-weight: 700;
         user-select: none;
+        box-sizing: border-box;
     }
     &-body{
         .@{fb}-tr{
@@ -111,6 +138,7 @@
                 // &:hover,
                 &.@{fb}-hover{
                     background-color: #ebf7ff;
+                    box-shadow: 0 2px 2px rgba(0,0,0,.08);
                 }
             }
         }
@@ -119,6 +147,9 @@
         color:#fff;
         .@{fb}{
             background-color: #333;
+            &-head-fixed{
+                background-color: #333;
+            }
             &-body{
                 .@{fb}-row{
                     &:nth-child(odd){
@@ -147,6 +178,7 @@
     &-foot{
         border-top: 1px solid @borderColor;
         text-align: right;
+        box-sizing: border-box;
 
         p{
             margin: 0;
@@ -160,6 +192,7 @@
         align-items: stretch;
         height: 100%;
         border-bottom: 1px solid @borderColor;
+        box-sizing: border-box;
         &:last-child{
             border: none;
         }
@@ -259,7 +292,9 @@
         left: 0;
         overflow: hidden;
         background-color: #fff;
-        box-shadow: 2px 0 6px -2px rgba(0,0,0,.2);
+        &.is-scroll{
+            box-shadow: 2px 0 6px -2px rgba(0,0,0,.2);
+        }
 
         .@{fb}-body{
             overflow: hidden;

@@ -39,10 +39,9 @@ ul,
 li {
     padding: 0;
     margin: 0;
-    overflow: hidden;
 }
 .container {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-flow: column;
     header {
@@ -61,6 +60,8 @@ li {
 }
 .main {
     flex: 1;
+    display: flex;
+    align-items: stretch;
     position: relative;
 }
 .btn-box{
@@ -78,10 +79,6 @@ li {
     flex-shrink: 0;
     overflow-x: hidden;
     overflow-y: auto;
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
     background: #fcfcfc;
     ul li{
         list-style: none;
@@ -108,13 +105,8 @@ li {
     }
 }
 .cont {
-    position: absolute;
     padding: 20px;
-    top: 0;
-    left: 181px;
-    right: 0;
-    bottom: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
+    width: 0;
+    flex: 1;
 }
 </style>

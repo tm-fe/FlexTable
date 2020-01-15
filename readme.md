@@ -43,6 +43,8 @@ To view demo examples locally clone the repo and run `yarn install && yarn dev` 
 - [x] selectable
 - [x] expand 嵌套功能
 - [x] 异步渲染
+- [x] selectable模式下渲染选中行背景色
+- [x] 初始化渲染行、列、单元格背景色
 - [ ] 合并单元格
 - [ ] 拖动改变列顺序
 
@@ -133,8 +135,16 @@ export default {
 | height | 表格高度，单位 px，设置后，如果表格内容大于此值，会固定表头 | Number | - |
 | no-data | 数据为空时显示的提示内容 | String | No Data |
 | asyncRender | 不为 0 时使用异步渲染模式，mounted 触发前渲染的行数(建议是刚好首屏，**见后文详细说明**) | number | 0 |
-| minWidth | 最小列宽 | number | 40 |
+| minWidth | 最小列宽 | Number | 40 |
 | maxWidth | 拖动调整时，可调的最大列宽, 默认不限制 | number | - |
+| size | 表格大小 default/big/small | String | default |
+| theme | 颜色 light/dark | String | light |
+| border | 边框显示 | Boolean | true |
+| stripe | 行的斑纹显示 | Boolean | true |
+| fixedHead | 全屏固定头部 | Boolean | false |
+| fixedHeadTop | 全屏固定头部离顶部距离 | Number | 0 |
+| selectedClass | 单选或多选模式下,渲染选中行样式 | string | '' |
+| rowClassName | 初始化渲染行背景色 | Function | '' |
 
 ### Table events
 
@@ -166,6 +176,18 @@ export default {
 | resizable | 是否可拖动调整列宽(必须设置table props 的 resizable 为 true 才生效) | Boolean | - |
 | minWidth | 最小列宽(优先级高于table props) | number | - |
 | maxWidth | 拖动调整时，可调的最大列宽, 默认不限制(优先级高于table props) | number | - |
+| className | 初始化渲染列的背景色 | string | '' |
+
+### data
+行描述数据对象，是 list 中的一项
+
+| 属性 | 说明 | 类型 | 默认值 |
+| ------------ | ------- | ------- | ----------- |
+| cellClassName | 指定任意一个单元格的背景色 | Object | {} |
+
+### 特别说明
+行类名、列类名、单元格类名和选中行类名的权重由它们的定义顺序决定
+定义在后面的权重相对较大
 
 ### Table slot
 

@@ -68,7 +68,7 @@ export default [
         name: 'selectable',
         component: resolve => require(['./features/selectable.vue'], resolve),
         meta: {
-            title: '多选',
+            title: '多选/全屏固定头部',
         },
     },
     {
@@ -93,6 +93,14 @@ export default [
         component: resolve => require(['./features/style.vue'], resolve),
         meta: {
             title: '风格样式',
+        },
+    },
+    {
+        path: '/addColor',
+        name: 'addColor',
+        component: resolve => require(['./features/addColor.vue'], resolve),
+        meta: {
+            title: '初始渲染/勾选渲染',
         },
     },
 ];
