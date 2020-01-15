@@ -46,6 +46,10 @@ export default {
         },
         hoverIndex: {
             type: Number | undefined
+        },
+        selectedClass: {
+            type: String,
+            default: ''
         }
     },
     mounted() {
@@ -89,8 +93,12 @@ export default {
         rowClsName(_index) {
             return this.$parent.$parent.rowClassName(this.row, _index);
         },
+        selectedCls(row) {
+            return row._isChecked ? this.selectedClass : ''
+        },
         tdClassName() {
             return [
+                this.selectedCls(this.row),
                 this.rowClsName(this.rowIndex),
             ]
         },

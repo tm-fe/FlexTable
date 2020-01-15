@@ -1,7 +1,7 @@
 <template>
   <div class="test">
       <flex-table
-        :row-class-name="rowClassName" :selectedColor="'#90EE90'" :columns="column1" :data="data1">
+        :row-class-name="rowClassName" :selectedClass="'selected-class'" :columns="column1" :data="data1">
       </flex-table>
   </div>
 </template>
@@ -77,6 +77,9 @@ export default {
 </script>
 
 <style lang="less">
+.selected-class{
+    background-color:chocolate;
+}
 .flag-one{
     background-color: yellow;
 }

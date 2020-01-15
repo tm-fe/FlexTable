@@ -30,7 +30,7 @@
                 :no-data="noData"
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
-                :selectedColor="selectedColor"
+                :selectedClass="selectedClass"
                 @scroll.native.passive="syncScroll"
                 @on-toggle-select="toggleSelect"
             ></table-body>
@@ -70,7 +70,7 @@
                 :rowHeight="rowHeight"
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
-                :selectedColor="selectedColor"
+                :selectedClass="selectedClass"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
@@ -109,7 +109,7 @@
                     :rowHeight="rowHeight"
                     :scrollTop="scrollTop"
                     :hoverIndex="hoverIndex"
-                    :selectedColor="selectedColor"
+                    :selectedClass="selectedClass"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
 
@@ -276,7 +276,7 @@ export default {
             type: Number,
             default: 0
         },
-        selectedColor: {
+        selectedClass: {
             type: String,
             default: '',
         },

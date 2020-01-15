@@ -16,7 +16,7 @@
                     :onlyFixed="onlyFixed"
                     :rowHeight="rowHeight[index]"
                     :hoverIndex="hoverIndex"
-                    :style="[row._isChecked ? selectedCls : '']"
+                    :selectedClass="selectedClass"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
@@ -75,7 +75,7 @@ export default {
             type: Number | undefined,
             required: true
         },
-        selectedColor: {
+        selectedClass: {
             type: String,
             default: '',
         },
@@ -96,13 +96,7 @@ export default {
                 }
             });
             return render;
-        },
-        selectedCls() {
-            const flag = {
-                'background-color': this.selectedColor,
-            }
-            return flag
-        },
+        }
     },
     watch: {
         scrollTop(scrollTop) {
