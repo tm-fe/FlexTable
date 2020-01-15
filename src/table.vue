@@ -436,7 +436,7 @@ export default {
         }, 20),
         updateHoverIndex: debounce(function(index) {
             this.hoverIndex = index;
-        }, 50),
+        }, 100),
         handleMousewheel(event) {
             const normalized = normalizeWheel(event);
             if (Math.abs(normalized.spinY) > 0) {
