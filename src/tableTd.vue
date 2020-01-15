@@ -1,11 +1,6 @@
 <template>
     <div
-        :class="{
-            'flex-table-col': true,
-            'flex-table-col-icon': renderType === 'expand',
-            'flex-table-expand-disabled': renderType === 'expand' && row._disableExpand,
-            'flex-table-hidden': isInvisible
-            }"
+        :class="cellClsName(column, row)"
         :style="setCellStyle(column)"
         @click="onToggleExpand"
         ref="cell">
@@ -114,7 +109,29 @@ export default {
             if (this.renderType !== 'expand') { return; }
             this.expandOpen = !this.expandOpen;
             this.$emit('on-toggle-expand');
-        }
+        },
+        flexTableCol() {
+            return 'flex-table-col'
+        },
+        flexTableColIcon() {
+            return this.renderType === 'expand' ? 'flex-table-col-icon' : ''
+        },
+        flexTableExpandDisabled() {
+            return (this.renderType === 'expand' && this.row._disableExpand)
+                ? 'flex-table-expand-disabled' : ''
+        },
+        flexTableHidden() {
+            return this.isInvisible ? 'flex-table-hidden' : ''
+        },
+        cellClsName(column, row) {
+            return [
+                this.flexTableCol(),
+                this.flexTableColIcon(),
+                this.flexTableExpandDisabled(),
+                this.flexTableHidden(),
+                this.alignCls(column, row),
+            ]
+        },
     }
 }
 </script>

@@ -95,4 +95,12 @@ export default [
             title: '风格样式',
         },
     },
+    {
+        path: '/addColor',
+        name: 'addColor',
+        component: resolve => require(['./features/addColor.vue'], resolve),
+        meta: {
+            title: '初始渲染/勾选渲染',
+        },
+    },
 ];
