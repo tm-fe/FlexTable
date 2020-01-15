@@ -96,9 +96,9 @@ export default [
         },
     },
     {
-        path: '/test',
-        name: 'test',
-        component: resolve => require(['./features/test.vue'], resolve),
+        path: '/addColor',
+        name: 'addColor',
+        component: resolve => require(['./features/addColor.vue'], resolve),
         meta: {
             title: '初始渲染/勾选渲染',
         },

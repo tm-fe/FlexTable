@@ -143,7 +143,7 @@ export default {
 | stripe | 行的斑纹显示 | Boolean | true |
 | fixedHead | 全屏固定头部 | Boolean | false |
 | fixedHeadTop | 全屏固定头部离顶部距离 | Number | 0 |
-| selectedColor | 单选或多选模式下,渲染选中行背景色 | string | '' |
+| selectedClass | 单选或多选模式下,渲染选中行样式 | string | '' |
 | rowClassName | 初始化渲染行背景色 | Function | '' |
 
 ### Table events
@@ -184,6 +184,10 @@ export default {
 | 属性 | 说明 | 类型 | 默认值 |
 | ------------ | ------- | ------- | ----------- |
 | cellClassName | 指定任意一个单元格的背景色 | Object | {} |
+
+### 特别说明
+行类名、列类名、单元格类名和选中行类名的权重由它们的定义顺序决定
+定义在后面的权重相对较大
 
 ### Table slot
 
