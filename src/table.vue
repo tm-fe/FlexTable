@@ -3,7 +3,7 @@
     <div
         class="flex-table-layout"
         ref="flexTableLayout"
-        @scroll="onTableScrollX"
+        @scroll="onScroll"
         @mousewheel="handleMousewheel"
         @DOMMouseScroll="handleMousewheel"
     >
@@ -133,9 +133,6 @@
         <div
             class="flex-table-head-fixed"
             ref="flexTableFixedHead"
-            @mouseenter="onFixedHeadOver"
-            @mouseleave="sonFixedHeadLeave"
-            @scroll="onFixedHeadScrollX"
         >
             <div class="flex-table" :style="style">
                 <table-head
@@ -300,6 +297,7 @@ export default {
             footH: 54,
             maxHeight: 0,
             scrollTop: 0,
+            scrollLeft: 0,
             bodyIsScroll: 0,
             shouldEachRenderQueue: false,
             hasFixedLeft: false,
@@ -308,7 +306,6 @@ export default {
             hoverIndex: undefined,
             isRenderDone: true,
             fixedHeadStyle: {},
-            isInFixedHead: false,
             isFixedHead: false,
             colResize: {
                 onColResizing: false,
@@ -431,6 +428,13 @@ export default {
         },
         showScrollBar() {
             this.resize();
+        },
+        scrollLeft(left) {
+            this.$refs.flexTableLayout.scrollLeft = left;
+            const flexTableFixedHead = this.$refs.flexTableFixedHead;
+            if (flexTableFixedHead) {
+                flexTableFixedHead.scrollLeft = left;
+            }
         }
     },
     updated() {},
@@ -443,6 +447,10 @@ export default {
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
     methods:{
+        onScroll(event) {
+            // 兼容拖动滚动条
+            this.scrollLeft = event.target.scrollLeft;
+        },
         syncScroll: throttle(function(event) {
             const { scrollTop } = event.target;
             this.scrollTop = scrollTop;
@@ -461,6 +469,19 @@ export default {
                     event.preventDefault();
                     this.scrollTop += Math.ceil(normalized.pixelY);
                     this.scrollTop = Math.max(this.scrollTop, 0);
+                }
+            }
+            if (Math.abs(normalized.spinX) > 0) {
+                const bodyWrapper = this.$refs.tableBody.$el;
+                const tableLayout = this.$refs.flexTableLayout;
+                const currentScrollLeft = this.scrollLeft;
+                const noYetScrollToLeft = normalized.pixelX < 0 && currentScrollLeft > 0;
+                const noYetScrollToRight = normalized.pixelX > 0 && bodyWrapper.clientWidth - tableLayout.clientWidth > currentScrollLeft;
+                if (noYetScrollToLeft || noYetScrollToRight) {
+                    event.preventDefault();
+                    this.scrollLeft += Math.ceil(normalized.pixelX);
+                    this.scrollLeft = Math.max(this.scrollLeft, 0);
+                    this.$emit('on-scroll-x', event);
                 }
             }
         },
@@ -627,27 +648,6 @@ export default {
                 this.emitColResize.oldWidth  = colWidth;
                 this.emitColResize.column = this.columns[index];
             }
-        },
-        onTableScrollX(event) {
-            this.bodyIsScroll = event.target.scrollLeft;
-            if (!this.isInFixedHead){
-                if (this.$refs.flexTableFixedHead) {
-                    this.$refs.flexTableFixedHead.scrollLeft = event.target.scrollLeft;
-                }
-                this.$emit('on-scroll-x', event);
-            }
-        },
-        onFixedHeadScrollX(event) {
-            if (this.isInFixedHead) {
-                this.$refs.flexTableLayout.scrollLeft = event.target.scrollLeft;
-                this.$emit('on-scroll-x', event);
-            }
-        },
-        onFixedHeadOver(){
-            this.isInFixedHead = true;
-        },
-        sonFixedHeadLeave(){
-            this.isInFixedHead = false;
         },
         handleScrollYScroll(e) {
             if(!this.scrollYScrolling) { return; }
