@@ -374,7 +374,14 @@
 .checkbox-component{
     &>input{
         &:disabled + label{
-            opacity: 0.1 !important;
+            cursor: not-allowed;
+
+            & .input-box{
+                background-color: #e8e8e8;
+            }
+        }
+        &[type="checkbox"]:disabled{
+            cursor: not-allowed;
         }
     }
 }
