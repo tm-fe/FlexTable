@@ -133,6 +133,8 @@
         <div
             class="flex-table-head-fixed"
             ref="flexTableFixedHead"
+            @mousewheel="handleMousewheel"
+            @DOMMouseScroll="handleMousewheel"
         >
             <div class="flex-table" :style="style">
                 <table-head
