@@ -95,11 +95,17 @@ export default {
             console.log(event);
         },
         arraySpanMethod({ row, column, rowIndex, columnIndex }) {
-            if (rowIndex % 2 === 0) {
-                if (columnIndex === 0) {
-                    return [1, 2];
-                } else if (columnIndex === 1) {
-                    return [0, 3];
+            if (columnIndex === 0) {
+                if (rowIndex % 2 === 0) {
+                    return {
+                        rowspan: 1,
+                        colspan: 2
+                    };
+                } else {
+                    return {
+                        rowspan: 0,
+                        colspan: 0
+                    };
                 }
             }
         }

@@ -145,6 +145,7 @@ export default {
 | fixedHeadTop | 全屏固定头部离顶部距离 | Number | 0 |
 | selectedClass | 单选或多选模式下,渲染选中行样式 | string | '' |
 | rowClassName | 初始化渲染行背景色 | Function | '' |
+| span-method | 合并列（合并行暂未实现） | Function | 方法的参数是一个对象，里面包含当前行row、当前列column、当前行号rowIndex、当前列号columnIndex四个属性。该函数可以返回一个包含两个元素的数组，第一个元素代表rowspan，第二个元素代表colspan。 也可以返回一个键名为rowspan和colspan的对象。具体见 demo |
 
 ### Table events
 
