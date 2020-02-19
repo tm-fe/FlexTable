@@ -1,11 +1,12 @@
 <template>
     <div class="flex-table-row" :class="{'flex-table-hover': isHover}" :style="{ 'height': height }" @mouseenter="mouseenter">
         <table-td
-            v-for="(column, i) in columns"
+            v-for="(column, i) in filterSpanColumns"
             :key="column.key + '_'+ i + '_' + rowIndex"
             :column="column"
             :index="i"
-            :cal-width="calWidth"
+            :calWidth="calWidth"
+            :width="filteredWidth[i]"
             :row="row"
             :rowIndex="rowIndex"
             :onlyFixed="onlyFixed"
@@ -50,6 +51,9 @@ export default {
         selectedClass: {
             type: String,
             default: ''
+        },
+        spanMethod: {
+            type: Function
         }
     },
     mounted() {
@@ -71,6 +75,58 @@ export default {
         isHover() {
             return this.hoverIndex === this.rowIndex;
         },
+        colspanArr() {
+            if (this.spanMethod) {
+                const { row, columns, rowIndex, columnIndex } = this;
+                const arraySpan = columns.map((column, columnIndex) => {
+                    // { rowspan, colspan } || [rowspan, colspan]
+                    const result = this.spanMethod({ row, column, rowIndex, columnIndex });
+                    if (result instanceof Array) {
+                        return result;
+                    }
+                    if (result === undefined) {
+                        return [1, 1];
+                    }
+                    return [result.rowspan, result.colspan];
+                });
+                return arraySpan.map(arr => arr[1]);
+            }
+            return [];
+        },
+        filterSpanColumns() {
+            const columns = [];
+            if (this.colspanArr.length) {
+                this.colspanArr.reduce((sum, colspanNum) => {
+                    const col = this.columns[sum];
+                    if (col) {
+                        columns.push(col);
+                    }
+                    colspanNum = colspanNum || 1;
+                    return sum + colspanNum;
+                }, 0);
+                return columns;
+            }
+            return this.columns;
+        },
+        filteredWidth() {
+            const aWidth = [];
+            if (this.colspanArr.length) {
+                this.colspanArr.reduce((sum, colspanNum) => {
+                    let width = 0;
+                    colspanNum = colspanNum || 1;
+                    for (;colspanNum >= 1;colspanNum--) {
+                        const col = this.columns[sum++];
+                        if (col) {
+                            width += this.calWidth[col.key];
+                        }
+                    }
+                    aWidth.push(width);
+                    return sum;
+                }, 0);
+                return aWidth;
+            }
+            return this.columns.map(col => this.calWidth[col.key]);
+        }
     },
     methods: {
         toggleSelect(index) {
@@ -101,7 +157,7 @@ export default {
                 this.selectedCls(this.row),
                 this.rowClsName(this.rowIndex),
             ]
-        },
+        }
     }
 }
 </script>

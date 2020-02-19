@@ -2,7 +2,6 @@ export default {
     props: {
         calWidth: {
             type: Object,
-            required: true,
         },
     },
     computed: {
@@ -16,7 +15,7 @@ export default {
     },
     methods: {
         setCellStyle(column) {
-            const sWidth = this.calWidth[column.key];
+            const sWidth = this.width || this.calWidth[column.key];
             const oStyle = {};
             if (sWidth) {
                 oStyle.width = `${sWidth}px`;

@@ -17,6 +17,7 @@
                     :rowHeight="rowHeight[index]"
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
+                    :spanMethod="spanMethod"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
@@ -79,6 +80,9 @@ export default {
             type: String,
             default: '',
         },
+        spanMethod: {
+            type: Function
+        }
     },
     computed: {
         style() {

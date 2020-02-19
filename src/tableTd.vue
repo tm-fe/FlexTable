@@ -66,6 +66,10 @@ export default {
         onlyFixed: {
             type: String,
             default: ''
+        },
+        width: {
+            type: Number,
+            default: 0
         }
     },
     data(){

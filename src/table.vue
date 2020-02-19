@@ -31,6 +31,7 @@
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
                 :selectedClass="selectedClass"
+                :spanMethod="spanMethod"
                 @scroll.native.passive="syncScroll"
                 @on-toggle-select="toggleSelect"
             ></table-body>
@@ -71,6 +72,7 @@
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
                 :selectedClass="selectedClass"
+                :spanMethod="spanMethod"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
@@ -110,6 +112,7 @@
                     :scrollTop="scrollTop"
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
+                    :spanMethod="spanMethod"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
 
@@ -285,6 +288,9 @@ export default {
                 return '';
             },
         },
+        spanMethod: {
+            type: Function,
+        }
     },
     data(){
         return {
@@ -483,7 +489,7 @@ export default {
                     event.preventDefault();
                     this.scrollLeft += Math.ceil(normalized.pixelX);
                     this.scrollLeft = Math.max(this.scrollLeft, 0);
-                    this.$emit('on-scroll-x', event);
+                    this.$emit('on-scroll-x', this.scrollLeft);
                 }
             }
         },
