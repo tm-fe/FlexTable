@@ -106,6 +106,9 @@ export default {
     data(){
         return {};
     },
+    updated() {
+        this.$el.scrollTop = this.scrollTop;
+    },
     methods: {
         toggleSelect(index) {
             this.$emit('on-toggle-select', index);
