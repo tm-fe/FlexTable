@@ -5,6 +5,28 @@
         :style="style"
         @mouseleave="mouseleave"
         >
+        <template v-for="item in rowSpanList">
+            <div
+                class="flex-table-tr flex-table-span"
+                :style="item.style">
+                <table-tr
+                    row-span
+                    :col-index="item.colIndex"
+                    :key="item.rowIndex"
+                    :row="item.row"
+                    :rowIndex="item.rowIndex"
+                    :columns="columns"
+                    :cal-width="calWidth"
+                    :onlyFixed="onlyFixed"
+                    :rowHeight="item.height"
+                    :hoverIndex="hoverIndex"
+                    :selectedClass="selectedClass"
+                    @on-toggle-select="toggleSelect"
+                    @on-toggle-expand="toggleExpand"
+                ></table-tr>
+            </div>
+        </template>
+
         <div class="flex-table-tr" v-if="data.length">
             <template v-for="(row, index) in data">
                 <table-tr
@@ -101,10 +123,15 @@ export default {
     watch: {
         scrollTop(scrollTop) {
             this.$el.scrollTop = scrollTop;
+        },
+        data() {
+            this.updateRowList();
         }
     },
     data(){
-        return {};
+        return {
+            rowSpanList: []
+        };
     },
     updated() {
         this.$el.scrollTop = this.scrollTop;
@@ -121,7 +148,64 @@ export default {
         },
         mouseleave() {
             this.owner.updateHoverIndex();
+        },
+        getRowSpan(){
+            const list = [];
+            this.data.forEach((row, rowIndex) => {
+                this.columns.forEach((col, colIndex) => {
+                    if (col.rowSpan) {
+                        const num = col.rowSpan({
+                            rowIndex,
+                            colIndex,
+                            row
+                        });
+
+                        if (num > 0) {
+                            const left = this.calRowWidth(0, colIndex - 1);
+                            const top = this.calColHeight(0, rowIndex - 1);
+                            const height = this.calColHeight(rowIndex, rowIndex + num - 1);
+                            const width = this.calWidth[col.key];
+                            list.push(
+                                {
+                                    colIndex,
+                                    rowIndex,
+                                    row,
+                                    height,
+                                    style: `width:${width}px;left:${left}px;top:${top}px;`
+                                }
+                            );
+                        }
+                    }
+                });
+            });
+            this.rowSpanList = list;
+            return list;
+        },
+        calRowWidth(start, end) {
+            let width = 0;
+            for(let i = start; i <= end; i++) {
+                let key = this.columns[i].key;
+                width += this.calWidth[key];
+            }
+            return width >= 0? width : 0;
+        },
+        calColHeight(start, end) {
+            let height = 0;
+            for(let i = start; i <= end; i++) {
+                height += this.rowHeight[i];
+            }
+            return height >= 0? height : 0;
+        },
+        updateRowList() {
+            this.$nextTick(() => {
+                setTimeout(() => {
+                    this.getRowSpan();
+                }, 10);
+            });
         }
+    },
+    mounted() {
+        this.updateRowList();
     }
 }
 </script>

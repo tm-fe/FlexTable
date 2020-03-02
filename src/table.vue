@@ -27,6 +27,7 @@
                 :columns="tableColumns"
                 :data="dataList"
                 :maxHeight="maxHeight"
+                :rowHeight="rowHeight"
                 :no-data="noData"
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"

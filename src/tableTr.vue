@@ -2,6 +2,7 @@
     <div class="flex-table-row" :class="{'flex-table-hover': isHover}" :style="{ 'height': height }" @mouseenter="mouseenter">
         <table-td
             v-for="(column, i) in columns"
+            v-if="!rowSpan || (rowSpan && i=== colIndex)"
             :key="column.key + '_'+ i + '_' + rowIndex"
             :column="column"
             :index="i"
@@ -50,6 +51,14 @@ export default {
         selectedClass: {
             type: String,
             default: ''
+        },
+        rowSpan: {
+            type: Boolean,
+            default: false
+        },
+        colIndex: {
+            type: Number,
+            default: 0
         }
     },
     mounted() {
@@ -62,7 +71,7 @@ export default {
     },
     computed: {
         height() {
-            if (this.onlyFixed && this.rowHeight) {
+            if ((this.onlyFixed || this.rowSpan) && this.rowHeight) {
                 return `${this.rowHeight}px`;
             } else {
                 return 'auto';
