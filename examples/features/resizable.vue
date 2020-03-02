@@ -2,25 +2,24 @@
     <div>
         <h3>调整宽度</h3>
         <p>拖动调整宽度 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/resizable.vue">source code</a></p>
-        
-        <flex-table
-            resizable
-            :loading="loading" 
-            :columns="columns" 
-            :data="list"
-            :sum="sum"
-            :height="height"
-            :minWidth="40"
-            :maxWidth="300"
-            @on-sort-change="onSortChange"
-        ></flex-table>
+
+        <flex-table resizable
+                    :loading="loading"
+                    :columns="columns"
+                    :data="list"
+                    :sum="sum"
+                    :height="height"
+                    :minWidth="40"
+                    :maxWidth="300"
+                    @on-col-width-resize="onResizeWidth"
+                    @on-sort-change="onSortChange"></flex-table>
     </div>
 </template>
 <script>
 // import flexTable from '../../index.js';
 
 const aTestList = [];
-for(let i=0;i<20;i++){
+for (let i = 0; i < 20; i++) {
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -34,7 +33,7 @@ export default {
     // components:{
     //     flexTable
     // },
-    data(){
+    data() {
         return {
             columns: [
                 {
@@ -51,8 +50,8 @@ export default {
                     title: 'Age',
                     key: 'age',
                     sortable: true,
-                    render(h, params){
-                        return h('span', 'age: '+ params.row.age)
+                    render(h, params) {
+                        return h('span', 'age: ' + params.row.age)
                     }
                 },
                 {
@@ -68,7 +67,7 @@ export default {
             ],
             loading: false,
             list: aTestList,
-            sum:{
+            sum: {
                 name: 'Jim Green',
                 age: 24,
                 address: 'London',
@@ -81,6 +80,12 @@ export default {
         onSortChange(obj) {
             console.log(obj);
         },
+        onResizeWidth(newWidth, oldWidth, column, event) {
+            console.log(`newWidth--${newWidth}`);
+            console.log(`oldWidth--${oldWidth}`);
+            console.log(`column--${JSON.stringify(column)}`);
+            console.log(event);
+        }
     }
 }
 </script>

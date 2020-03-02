@@ -16,6 +16,7 @@
                     :onlyFixed="onlyFixed"
                     :rowHeight="rowHeight[index]"
                     :hoverIndex="hoverIndex"
+                    :selectedClass="selectedClass"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
@@ -73,7 +74,11 @@ export default {
         hoverIndex: {
             type: Number | undefined,
             required: true
-        }
+        },
+        selectedClass: {
+            type: String,
+            default: '',
+        },
     },
     computed: {
         style() {
@@ -100,6 +105,9 @@ export default {
     },
     data(){
         return {};
+    },
+    updated() {
+        this.$el.scrollTop = this.scrollTop;
     },
     methods: {
         toggleSelect(index) {

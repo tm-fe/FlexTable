@@ -9,6 +9,7 @@
             :row="row"
             :rowIndex="rowIndex"
             :onlyFixed="onlyFixed"
+            :class="tdClassName(column, row)"
             @on-toggle-select="toggleSelect"
             @on-toggle-expand="toggleExpand"
         ></table-td>
@@ -45,6 +46,10 @@ export default {
         },
         hoverIndex: {
             type: Number | undefined
+        },
+        selectedClass: {
+            type: String,
+            default: ''
         }
     },
     mounted() {
@@ -84,7 +89,19 @@ export default {
         },
         mouseenter() {
             this.owner.updateHoverIndex(this.rowIndex);
-        }
+        },
+        rowClsName(_index) {
+            return this.$parent.$parent.rowClassName(this.row, _index);
+        },
+        selectedCls(row) {
+            return row._isChecked ? this.selectedClass : ''
+        },
+        tdClassName() {
+            return [
+                this.selectedCls(this.row),
+                this.rowClsName(this.rowIndex),
+            ]
+        },
     }
 }
 </script>

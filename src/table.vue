@@ -1,8 +1,9 @@
 <template>
-    <div :class="wrapClasses">
+    <div :class="wrapClasses" ref="tableWrap">
     <div
         class="flex-table-layout"
-        @scroll="onTableScrollX"
+        ref="flexTableLayout"
+        @scroll="onScroll"
         @mousewheel="handleMousewheel"
         @DOMMouseScroll="handleMousewheel"
     >
@@ -16,6 +17,7 @@
                 @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
+                :style="fixedHead ? 'visibility: hidden;' : ''"
             ></table-head>
             <!-- /flex-table-head -->
 
@@ -28,6 +30,7 @@
                 :no-data="noData"
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
+                :selectedClass="selectedClass"
                 @scroll.native.passive="syncScroll"
                 @on-toggle-select="toggleSelect"
             ></table-body>
@@ -41,10 +44,9 @@
                 :sum="sum"
             ></table-foot>
             <!-- /flex-table-foot -->
-
         </div>
 
-        <div class="flex-table-fixed-left" v-if="hasFixedLeft" :style="{'width': fixedLeftWidth + 'px'}">
+        <div :class="['flex-table-fixed-left', bodyIsScroll > 0 ? 'is-scroll' : '']" v-if="hasFixedLeft" :style="{'width': fixedLeftWidth + 'px'}">
             <table-head
                 :cal-width="calWidth"
                 :columns="tableColumns"
@@ -52,6 +54,7 @@
                 :data="dataList"
                 :resizable="resizable"
                 :rowHeight="rowHeight.header"
+                :is-render-done="isRenderDone"
                 @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
@@ -67,6 +70,7 @@
                 :rowHeight="rowHeight"
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
+                :selectedClass="selectedClass"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
@@ -80,7 +84,7 @@
             ></table-foot>
         </div>
 
-        <div class="flex-table-fixed-right-wrap" v-if="hasFixedRight" :style="{'width': fixedRightWidth + 'px'}">
+        <div :class="['flex-table-fixed-right-wrap']" v-if="hasFixedRight" :style="{'width': fixedRightWidth + 'px'}">
             <div class="flex-table-fixed-right">
                 <table-head
                     :cal-width="calWidth"
@@ -89,6 +93,7 @@
                     :data="dataList"
                     :resizable="resizable"
                     :rowHeight="rowHeight.header"
+                    :is-render-done="isRenderDone"
                     @on-select-all="selectAll"
                     @on-sort-change="onSortChange"
                     @on-col-resize="onColResizeStart"
@@ -104,6 +109,7 @@
                     :rowHeight="rowHeight"
                     :scrollTop="scrollTop"
                     :hoverIndex="hoverIndex"
+                    :selectedClass="selectedClass"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
 
@@ -123,6 +129,43 @@
             <Spinner fix size="large"></Spinner>
         </slot>
     </div>
+    <div :class="getFixedHeadClass" :style="fixedHeadStyle" v-if="fixedHead">
+        <div
+            class="flex-table-head-fixed"
+            ref="flexTableFixedHead"
+            @mousewheel="handleMousewheel"
+            @DOMMouseScroll="handleMousewheel"
+        >
+            <div class="flex-table" :style="style">
+                <table-head
+                    ref="tableHeader"
+                    :cal-width="calWidth"
+                    :columns="tableColumns"
+                    :data="dataList"
+                    :resizable="resizable"
+                    @on-select-all="selectAll"
+                    @on-sort-change="onSortChange"
+                    @on-col-resize="onColResizeStart"
+                ></table-head>
+                <!-- /flex-table-head -->
+            </div>
+            <div :class="['flex-table-fixed-left', bodyIsScroll > 0 ? 'is-scroll' : '']" v-if="hasFixedLeft" :style="{'width': fixedLeftWidth + 'px'}">
+                <table-head
+                    :cal-width="calWidth"
+                    :columns="tableColumns"
+                    onlyFixed="left"
+                    :data="dataList"
+                    :resizable="resizable"
+                    :rowHeight="rowHeight.header"
+                    :is-render-done="isRenderDone"
+                    @on-select-all="selectAll"
+                    @on-sort-change="onSortChange"
+                    @on-col-resize="onColResizeStart"
+                ></table-head>
+            </div>
+        </div>
+    </div>
+    <!-- /flex-table-fixed-head -->
     <tableScrollBar
         v-if="showScrollBar"
         :body-h="bodyH"
@@ -205,6 +248,14 @@ export default {
             type: String,
             default: 'light'
         },
+        border: {
+            type: Boolean,
+            default: true
+        },
+        stripe: {
+            type: Boolean,
+            default: true
+        },
         asyncRender: {
             type: Number,
             default: 0,
@@ -215,7 +266,25 @@ export default {
         },
         maxWidth: {
             type: Number,
-        }
+        },
+        fixedHead: {
+            type: Boolean,
+            default: false
+        },
+        fixedHeadTop: {
+            type: Number,
+            default: 0
+        },
+        selectedClass: {
+            type: String,
+            default: '',
+        },
+        rowClassName: {
+            type: Function,
+            default: () => {
+                return '';
+            },
+        },
     },
     data(){
         return {
@@ -230,11 +299,16 @@ export default {
             footH: 54,
             maxHeight: 0,
             scrollTop: 0,
+            scrollLeft: 0,
+            bodyIsScroll: 0,
             shouldEachRenderQueue: false,
             hasFixedLeft: false,
             hasFixedRight: false,
             scrollYScrolling: false,
             hoverIndex: undefined,
+            isRenderDone: true,
+            fixedHeadStyle: {},
+            isFixedHead: false,
             colResize: {
                 onColResizing: false,
                 originX: 0, // 记录拖动起点
@@ -243,6 +317,12 @@ export default {
                 minX: 0, // 可拖动调整最小值
                 maxX: Infinity, // 可拖动调整最大值
             },
+            emitColResize: {
+                newWidth: 0,
+                oldWidth: 0,
+                column: {},
+                event: null
+            }
         }
     },
     computed: {
@@ -258,6 +338,12 @@ export default {
             }
             if (this.showScrollBar) {
                 arr.push('has-scroll-bar')
+            }
+            if (!this.border) {
+                arr.push(`no-boder`)
+            }
+            if (!this.stripe) {
+                arr.push(`no-stripe`)
             }
             return arr;
         },
@@ -279,11 +365,18 @@ export default {
         },
         showScrollBar: function() {
             return this.bodyH > this.maxHeight;
+        },
+        getFixedHeadClass: function() {
+            if (this.isFixedHead) {
+                return 'flex-table-head-fixed-layout is-fixed';
+            }
+            return 'flex-table-head-fixed-layout';
         }
     },
     mounted(){
         this.doLayout();
         window.addEventListener('resize',this.doLayout);
+        window.addEventListener('scroll',this.winScroll, false);
         if (this.resizable) {
             window.addEventListener('mouseup', this.onColResizeEnd);
             this.$el.addEventListener('mousemove', this.onColResizeMove);
@@ -337,6 +430,13 @@ export default {
         },
         showScrollBar() {
             this.resize();
+        },
+        scrollLeft(left) {
+            this.$refs.flexTableLayout.scrollLeft = left;
+            const flexTableFixedHead = this.$refs.flexTableFixedHead;
+            if (flexTableFixedHead) {
+                flexTableFixedHead.scrollLeft = left;
+            }
         }
     },
     updated() {},
@@ -344,17 +444,22 @@ export default {
         this.shouldEachRenderQueue = false;
         this._queueId = null;
         window.removeEventListener('resize',this.doLayout);
+        window.removeEventListener('scroll',this.winScroll, false);
         window.removeEventListener('mouseup', this.onColResizeEnd);
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
     methods:{
+        onScroll(event) {
+            // 兼容拖动滚动条
+            this.scrollLeft = event.target.scrollLeft;
+        },
         syncScroll: throttle(function(event) {
             const { scrollTop } = event.target;
             this.scrollTop = scrollTop;
         }, 20),
         updateHoverIndex: debounce(function(index) {
             this.hoverIndex = index;
-        }, 50),
+        }, 100),
         handleMousewheel(event) {
             const normalized = normalizeWheel(event);
             if (Math.abs(normalized.spinY) > 0) {
@@ -366,6 +471,19 @@ export default {
                     event.preventDefault();
                     this.scrollTop += Math.ceil(normalized.pixelY);
                     this.scrollTop = Math.max(this.scrollTop, 0);
+                }
+            }
+            if (Math.abs(normalized.spinX) > 0) {
+                const bodyWrapper = this.$refs.tableBody.$el;
+                const tableLayout = this.$refs.flexTableLayout;
+                const currentScrollLeft = this.scrollLeft;
+                const noYetScrollToLeft = normalized.pixelX < 0 && currentScrollLeft > 0;
+                const noYetScrollToRight = normalized.pixelX > 0 && bodyWrapper.clientWidth - tableLayout.clientWidth > currentScrollLeft;
+                if (noYetScrollToLeft || noYetScrollToRight) {
+                    event.preventDefault();
+                    this.scrollLeft += Math.ceil(normalized.pixelX);
+                    this.scrollLeft = Math.max(this.scrollLeft, 0);
+                    this.$emit('on-scroll-x', event);
                 }
             }
         },
@@ -384,6 +502,7 @@ export default {
             this.rowHeight = { header: 0, footer: 0 };
             this.dataList = [];
             if (this.asyncRender > 0) {
+                this.isRenderDone = false;
                 this.data.slice(0, this.asyncRender).forEach((item, index) => {
                     this.copyItem(item, index)
                 });
@@ -391,6 +510,7 @@ export default {
                     this.shouldEachRenderQueue = true;
                     this.eachQueue(this.data, this.asyncRender, this._queueId);
                 } else {
+                    this.isRenderDone = true;
                     this.$emit("on-render-done");
                 }
             } else {
@@ -407,6 +527,14 @@ export default {
             newItem._disableExpand = !!newItem._disableExpand;
             this.$set(this.rowHeight, index, 0);
             this.dataList.push(newItem);
+            // 出现页面滚动条时，重新计算宽度
+            this.$nextTick(() => {
+                const scrollBarWidth = this.showScrollBar ? 16 : 0;
+                const nTableWidth = this.$el.offsetWidth - 2 - scrollBarWidth;
+                if (this.fixedHeadStyle.width !== nTableWidth + 'px'){
+                    this.fixedHeadStyle.width = nTableWidth + 'px';
+                }
+            })
         },
         eachQueue(arr, i, queueId) {
             if (!this.shouldEachRenderQueue) { return; }
@@ -422,6 +550,7 @@ export default {
             }).then(() => {
                 if (arr.length <= i) {
                     this.doLayout();
+                    this.isRenderDone = true;
                     this.$emit("on-render-done");
                     this.shouldEachRenderQueue = false;
                 } else {
@@ -490,6 +619,16 @@ export default {
                 colResize.currentX = 0;
                 colResize.resizeIndex = -1;
                 this.doLayout();
+                this.emitColResize.newWidth = finalX;
+                this.emitColResize.event = e;
+
+                // 列宽拖拽结束后，回调返回
+                this.$emit('on-col-width-resize', 
+                            this.emitColResize.newWidth, 
+                            this.emitColResize.oldWidth, 
+                            this.emitColResize.column, 
+                            this.emitColResize.event
+                )
             }
         },
         onColResizeStart(e, index) {
@@ -508,10 +647,9 @@ export default {
                 if (maxWidth !== undefined) {
                     colResize.maxX = maxWidth - colWidth;
                 }
+                this.emitColResize.oldWidth  = colWidth;
+                this.emitColResize.column = this.columns[index];
             }
-        },
-        onTableScrollX(event) {
-            this.$emit('on-scroll-x', event);
         },
         handleScrollYScroll(e) {
             if(!this.scrollYScrolling) { return; }
@@ -532,7 +670,9 @@ export default {
                 if (!this.height) { return; }
                 const $refs = this.$refs;
                 const $tableFoot = $refs.tableFoot;
-                const $tableBodyTr = $refs.tableBody.$el.querySelector('.flex-table-tr');
+                const $tableBody = $refs.tableBody;
+                if (!$tableBody) { reutrn; }
+                const $tableBodyTr = $tableBody.$el.querySelector('.flex-table-tr');
                 const headerH = $refs.tableHeader.$el.offsetHeight;
                 const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
                 const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
@@ -557,11 +697,42 @@ export default {
             }
             return currentWidth;
         },
+        getTableOffset() {
+            const element = this.$el;
+            let actualLeft = element.offsetLeft;
+            let actualTop = element.offsetTop;
+            let current = element.offsetParent;
+            while (current !== null){
+                actualLeft += current.offsetLeft;
+                actualTop += current.offsetTop;
+                current = current.offsetParent;
+            }
+            return {
+                left: actualLeft,
+                top: actualTop
+            }
+        },
+        winScroll() {
+            const sTop = document.body.scrollTop + document.documentElement.scrollTop;
+            const tableOffset = this.getTableOffset();
+            if (sTop > tableOffset.top) {
+                this.isFixedHead = true;
+                this.fixedHeadStyle.left = tableOffset.left + (this.border ? 1 : 0) + 'px';
+                this.fixedHeadStyle.position = 'fixed';
+                this.fixedHeadStyle.top = this.fixedHeadTop + 'px';
+            } else {
+                this.isFixedHead = false;
+                this.fixedHeadStyle.position = 'absolute';
+                this.fixedHeadStyle.left = 0;
+                this.fixedHeadStyle.top = 0;
+            }
+        },
         resize(){
             requestAnimationFrame(() => {
                 // wrapper 宽度
                 const scrollBarWidth = this.showScrollBar ? 16 : 0;
                 const nTableWidth = this.$el.offsetWidth - 2 - scrollBarWidth;
+                this.fixedHeadStyle.width = nTableWidth + 'px';
 
                 const oWidth = {};
                 let defineTotalWidth = 0; //定义的宽度总和

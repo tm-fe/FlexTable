@@ -3,6 +3,7 @@ import {
     // destroyVM,
     // triggerEvent,
     waitImmediate,
+    wait
 } from '@/util';
 import { expect } from 'chai';
 import Vue from 'vue';
@@ -112,7 +113,7 @@ describe('Flex-Table', () => {
         // 检测 fiexed header
         it('check fixed-header base', async () => {
             vm.$data.height = 250;
-            await waitImmediate();
+            await wait(20);
             let bCheck = false;
             const elemBody = vm.$el.querySelector('.flex-table-body');
 

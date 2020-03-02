@@ -8,6 +8,8 @@
         :columns="columns" 
         :data="list"
         :sum="sum"
+        :fixed-head="true"
+        :async-render="10"
         @on-selection-change="onSelectionChange"
         @on-selection-cancel="onSelectionCancel"
         @on-all-cancel="onAllCancel"
@@ -19,11 +21,12 @@
 
 
 const aTestList = [];
-for(let i=0;i<10;i++){
+for(let i=0;i<80;i++){
     const oTestData = {
         name: 'John Brown',
         age: 18,
         address: 'New York No. 1 Lake Park',
+        real_address: 'New York No. 1 Lake Park',
         date: '2016-10-03',
     };
     aTestList.push(oTestData);
@@ -45,10 +48,12 @@ export default {
                 {
                     title: 'Name',
                     key: 'name',
+                    width: 150
                 },
                 {
                     title: 'Age',
                     key: 'age',
+                    width: 150,
                     render(h, params){
                         return h('span', 'age: '+ params.row.age)
                     }
@@ -56,10 +61,17 @@ export default {
                 {
                     title: 'Address',
                     key: 'address',
+                    width: 250,
+                },
+                {
+                    title: 'Real Address',
+                    key: 'real_address',
+                    width: 250,
                 },
                 {
                     title: 'Date',
                     key: 'date',
+                    width: 250
                 },
             ],
             loading: false,
