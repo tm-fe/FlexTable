@@ -672,7 +672,7 @@ export default {
                 const $refs = this.$refs;
                 const $tableFoot = $refs.tableFoot;
                 const $tableBody = $refs.tableBody;
-                if (!$tableBody) { reutrn; }
+                if (!$tableBody) { return; }
                 const $tableBodyTr = $tableBody.$el.querySelector('.flex-table-tr');
                 const headerH = $refs.tableHeader.$el.offsetHeight;
                 const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
