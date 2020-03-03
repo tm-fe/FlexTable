@@ -32,6 +32,7 @@
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
                 :selectedClass="selectedClass"
+                :spanMethod="spanMethod"
                 @scroll.native.passive="syncScroll"
                 @on-toggle-select="toggleSelect"
             ></table-body>
@@ -72,6 +73,7 @@
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
                 :selectedClass="selectedClass"
+                :spanMethod="spanMethod"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
@@ -111,6 +113,7 @@
                     :scrollTop="scrollTop"
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
+                    :spanMethod="spanMethod"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
 
@@ -286,6 +289,9 @@ export default {
                 return '';
             },
         },
+        spanMethod: {
+            type: Function,
+        }
     },
     data(){
         return {

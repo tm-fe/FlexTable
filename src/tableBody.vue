@@ -11,7 +11,7 @@
                 :style="item.style">
                 <table-tr
                     row-span
-                    :col-index="item.colIndex"
+                    :column-index="item.columnIndex"
                     :key="item.rowIndex"
                     :row="item.row"
                     :rowIndex="item.rowIndex"
@@ -21,6 +21,7 @@
                     :rowHeight="item.height"
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
+                    :spanMethod="spanMethod"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
@@ -39,6 +40,7 @@
                     :rowHeight="rowHeight[index]"
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
+                    :spanMethod="spanMethod"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
@@ -101,6 +103,9 @@ export default {
             type: String,
             default: '',
         },
+        spanMethod: {
+            type: Function
+        }
     },
     computed: {
         style() {
@@ -151,30 +156,33 @@ export default {
         },
         getRowSpan(){
             const list = [];
-            this.data.forEach((row, rowIndex) => {
-                this.columns.forEach((col, colIndex) => {
-                    if (col.rowSpan) {
-                        const num = col.rowSpan({
-                            rowIndex,
-                            colIndex,
-                            row
-                        });
+            if (!this.spanMethod) {
+                return list;
+            }
 
-                        if (num > 0) {
-                            const left = this.calRowWidth(0, colIndex - 1);
-                            const top = this.calColHeight(0, rowIndex - 1);
-                            const height = this.calColHeight(rowIndex, rowIndex + num - 1);
-                            const width = this.calWidth[col.key];
-                            list.push(
-                                {
-                                    colIndex,
-                                    rowIndex,
-                                    row,
-                                    height,
-                                    style: `width:${width}px;left:${left}px;top:${top}px;`
-                                }
-                            );
-                        }
+            this.data.forEach((row, rowIndex) => {
+                this.columns.forEach((column, columnIndex) => {
+                    const setting = this.spanMethod({
+                        row,
+                        column,
+                        rowIndex,
+                        columnIndex
+                    });
+
+                    if (setting.rowspan > 1) {
+                        const left = this.calRowWidth(0, columnIndex - 1);
+                        const top = this.calColHeight(0, rowIndex - 1);
+                        const height = this.calColHeight(rowIndex, rowIndex + setting.rowspan - 1);
+                        const width = this.calWidth[column.key];
+                        list.push(
+                            {
+                                columnIndex,
+                                rowIndex,
+                                row,
+                                height,
+                                style: `width:${width}px;left:${left}px;top:${top}px;`
+                            }
+                        );
                     }
                 });
             });

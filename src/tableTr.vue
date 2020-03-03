@@ -2,7 +2,7 @@
     <div class="flex-table-row" :class="{'flex-table-hover': isHover}" :style="{ 'height': height }" @mouseenter="mouseenter">
         <table-td
             v-for="(column, i) in columns"
-            v-if="!rowSpan || (rowSpan && i=== colIndex)"
+            v-if="!rowSpan || (rowSpan && i=== columnIndex)"
             :key="column.key + '_'+ i + '_' + rowIndex"
             :column="column"
             :index="i"
@@ -56,7 +56,7 @@ export default {
             type: Boolean,
             default: false
         },
-        colIndex: {
+        columnIndex: {
             type: Number,
             default: 0
         }

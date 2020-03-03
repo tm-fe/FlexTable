@@ -1,7 +1,7 @@
 <template>
 <div>
-    <h3>基础用法</h3>
-    <p>表格的简单用法 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/index.vue">source code</a></p>
+    <h3>合并行</h3>
+    <p>span <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/span.vue">source code</a></p>
     
     <flex-table
         resizable
@@ -11,6 +11,7 @@
         :sum="sum"
         :minWidth="80"
         :maxWidth="600"
+        :span-method="spanMethod"
         @on-scroll-x="onTableScroll"
     ></flex-table>
 </div>
@@ -50,30 +51,12 @@ export default {
                     width: 140,
                     render(h, params){
                         return h('span', 'age: '+ params.row.age)
-                    },
-                    rowSpan(params) {
-                        if (!params.rowIndex) {
-                            return 5;
-                        }
-
-                        return 0;
                     }
                 },
                 {
                     title: 'Address',
                     key: 'address',
-                    width: 240,
-                    rowSpan(params) {
-                        if (params.rowIndex===1) {
-                            return 2;
-                        }
-
-                        if (params.rowIndex === 2) {
-                            return 0;
-                        }
-
-                        return 1;
-                    }
+                    width: 240
                 },
                 {
                     title: 'Sex',
@@ -110,6 +93,42 @@ export default {
     methods: {
         onTableScroll(event) {
             console.log(event.target.scrollLeft);
+        },
+        spanMethod(param) {
+            if (param.column.key === 'age') {
+                if (!param.rowIndex) {
+                    return {
+                        rowspan: 5,
+                        colspan: 1
+                    };
+                }
+
+                return {
+                    rowspan: 0,
+                    colspan: 1
+                };
+            }
+
+            if (param.column.key === 'address') {
+                if (param.rowIndex===1) {
+                    return {
+                        rowspan: 2,
+                        colspan: 1
+                    };
+                }
+
+                if (param.rowIndex === 2) {
+                    return {
+                        rowspan: 0,
+                        colspan: 1
+                    };
+                }
+            }
+
+            return {
+                rowspan: 1,
+                colspan: 1
+            };
         }
     }
 }
