@@ -103,4 +103,12 @@ export default [
             title: '初始渲染/勾选渲染',
         },
     },
+    {
+        path: '/span',
+        name: 'span',
+        component: resolve => require(['./features/span.vue'], resolve),
+        meta: {
+            title: '合并',
+        },
+    },
 ];
