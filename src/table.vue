@@ -455,6 +455,12 @@ export default {
         window.removeEventListener('mouseup', this.onColResizeEnd);
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
+    beforeCreate() {
+        this.doLayout = debounce(function() {
+            this.resize();
+            this.calHeight();
+        }, 50, {leading: true});
+    },
     methods:{
         onScroll(event) {
             // 兼容拖动滚动条
@@ -494,10 +500,6 @@ export default {
                 }
             }
         },
-        doLayout: debounce(function() {
-            this.resize();
-            this.calHeight();
-        }, 50, {leading: true}),
         computedFixedLeft: function() {
             return this.tableColumns.some(item => item.fixed === 'left');
         },
