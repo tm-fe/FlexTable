@@ -456,9 +456,10 @@ export default {
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
     beforeCreate() {
+        const self = this;
         this.doLayout = debounce(function() {
-            this.resize();
-            this.calHeight();
+            self.resize();
+            self.calHeight();
         }, 50, {leading: true});
     },
     methods:{
