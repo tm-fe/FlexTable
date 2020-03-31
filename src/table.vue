@@ -3,7 +3,7 @@
     <div
         class="flex-table-layout"
         ref="flexTableLayout"
-        @scroll="onTableScrollX"
+        @scroll="onScroll"
         @mousewheel="handleMousewheel"
         @DOMMouseScroll="handleMousewheel"
     >
@@ -27,10 +27,12 @@
                 :columns="tableColumns"
                 :data="dataList"
                 :maxHeight="maxHeight"
+                :rowHeight="rowHeight"
                 :no-data="noData"
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
                 :selectedClass="selectedClass"
+                :spanMethod="spanMethod"
                 @scroll.native.passive="syncScroll"
                 @on-toggle-select="toggleSelect"
             ></table-body>
@@ -71,6 +73,7 @@
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
                 :selectedClass="selectedClass"
+                :spanMethod="spanMethod"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
@@ -110,6 +113,7 @@
                     :scrollTop="scrollTop"
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
+                    :spanMethod="spanMethod"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
 
@@ -133,9 +137,8 @@
         <div
             class="flex-table-head-fixed"
             ref="flexTableFixedHead"
-            @mouseenter="onFixedHeadOver"
-            @mouseleave="sonFixedHeadLeave"
-            @scroll="onFixedHeadScrollX"
+            @mousewheel="handleMousewheel"
+            @DOMMouseScroll="handleMousewheel"
         >
             <div class="flex-table" :style="style">
                 <table-head
@@ -286,6 +289,9 @@ export default {
                 return '';
             },
         },
+        spanMethod: {
+            type: Function,
+        }
     },
     data(){
         return {
@@ -300,6 +306,7 @@ export default {
             footH: 54,
             maxHeight: 0,
             scrollTop: 0,
+            scrollLeft: 0,
             bodyIsScroll: 0,
             shouldEachRenderQueue: false,
             hasFixedLeft: false,
@@ -308,7 +315,6 @@ export default {
             hoverIndex: undefined,
             isRenderDone: true,
             fixedHeadStyle: {},
-            isInFixedHead: false,
             isFixedHead: false,
             colResize: {
                 onColResizing: false,
@@ -431,6 +437,13 @@ export default {
         },
         showScrollBar() {
             this.resize();
+        },
+        scrollLeft(left) {
+            this.$refs.flexTableLayout.scrollLeft = left;
+            const flexTableFixedHead = this.$refs.flexTableFixedHead;
+            if (flexTableFixedHead) {
+                flexTableFixedHead.scrollLeft = left;
+            }
         }
     },
     updated() {},
@@ -442,7 +455,18 @@ export default {
         window.removeEventListener('mouseup', this.onColResizeEnd);
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
+    beforeCreate() {
+        const self = this;
+        this.doLayout = debounce(function() {
+            self.resize();
+            self.calHeight();
+        }, 50, {leading: true});
+    },
     methods:{
+        onScroll(event) {
+            // 兼容拖动滚动条
+            this.scrollLeft = event.target.scrollLeft;
+        },
         syncScroll: throttle(function(event) {
             const { scrollTop } = event.target;
             this.scrollTop = scrollTop;
@@ -463,11 +487,20 @@ export default {
                     this.scrollTop = Math.max(this.scrollTop, 0);
                 }
             }
+            if (Math.abs(normalized.spinX) > 0) {
+                const bodyWrapper = this.$refs.tableBody.$el;
+                const tableLayout = this.$refs.flexTableLayout;
+                const currentScrollLeft = this.scrollLeft;
+                const noYetScrollToLeft = normalized.pixelX < 0 && currentScrollLeft > 0;
+                const noYetScrollToRight = normalized.pixelX > 0 && bodyWrapper.clientWidth - tableLayout.clientWidth > currentScrollLeft;
+                if (noYetScrollToLeft || noYetScrollToRight) {
+                    event.preventDefault();
+                    this.scrollLeft += Math.ceil(normalized.pixelX);
+                    this.scrollLeft = Math.max(this.scrollLeft, 0);
+                    this.$emit('on-scroll-x', event);
+                }
+            }
         },
-        doLayout: debounce(function() {
-            this.resize();
-            this.calHeight();
-        }, 50, {leading: true}),
         computedFixedLeft: function() {
             return this.tableColumns.some(item => item.fixed === 'left');
         },
@@ -516,14 +549,14 @@ export default {
         eachQueue(arr, i, queueId) {
             if (!this.shouldEachRenderQueue) { return; }
             return new Promise((resolve, reject) => {
-                requestAnimationFrame(() => {
+                setTimeout(() => {
                     if (this._queueId !== queueId) {
                         reject();
                     } else {
                         this.copyItem(arr[i], i++);
                         resolve();
                     }
-                });
+                }, 0);
             }).then(() => {
                 if (arr.length <= i) {
                     this.doLayout();
@@ -628,27 +661,6 @@ export default {
                 this.emitColResize.column = this.columns[index];
             }
         },
-        onTableScrollX(event) {
-            this.bodyIsScroll = event.target.scrollLeft;
-            if (!this.isInFixedHead){
-                if (this.$refs.flexTableFixedHead) {
-                    this.$refs.flexTableFixedHead.scrollLeft = event.target.scrollLeft;
-                }
-                this.$emit('on-scroll-x', event);
-            }
-        },
-        onFixedHeadScrollX(event) {
-            if (this.isInFixedHead) {
-                this.$refs.flexTableLayout.scrollLeft = event.target.scrollLeft;
-                this.$emit('on-scroll-x', event);
-            }
-        },
-        onFixedHeadOver(){
-            this.isInFixedHead = true;
-        },
-        sonFixedHeadLeave(){
-            this.isInFixedHead = false;
-        },
         handleScrollYScroll(e) {
             if(!this.scrollYScrolling) { return; }
             const scrollTop = e.target.scrollTop;
@@ -669,7 +681,7 @@ export default {
                 const $refs = this.$refs;
                 const $tableFoot = $refs.tableFoot;
                 const $tableBody = $refs.tableBody;
-                if (!$tableBody) { reutrn; }
+                if (!$tableBody) { return; }
                 const $tableBodyTr = $tableBody.$el.querySelector('.flex-table-tr');
                 const headerH = $refs.tableHeader.$el.offsetHeight;
                 const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;

@@ -127,7 +127,19 @@
         box-sizing: border-box;
     }
     &-body{
+        position: relative;
         .@{fb}-tr{
+            &.@{fb}-span {
+                position: absolute;
+                z-index: 1;
+                left: 0;
+                top: 0;
+
+                .@{fb}-col{
+                    border-right: 1px solid #e9eaec;
+                }
+            }
+
             >.@{fb}-row{
                 &:nth-child(odd){
                     background: #f9f9f9;
@@ -374,7 +386,14 @@
 .checkbox-component{
     &>input{
         &:disabled + label{
-            opacity: 0.1 !important;
+            cursor: not-allowed;
+
+            & .input-box{
+                background-color: #e8e8e8;
+            }
+        }
+        &[type="checkbox"]:disabled{
+            cursor: not-allowed;
         }
     }
 }
