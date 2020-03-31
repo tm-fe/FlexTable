@@ -539,14 +539,14 @@ export default {
         eachQueue(arr, i, queueId) {
             if (!this.shouldEachRenderQueue) { return; }
             return new Promise((resolve, reject) => {
-                requestAnimationFrame(() => {
+                setTimeout(() => {
                     if (this._queueId !== queueId) {
                         reject();
                     } else {
                         this.copyItem(arr[i], i++);
                         resolve();
                     }
-                });
+                }, 0);
             }).then(() => {
                 if (arr.length <= i) {
                     this.doLayout();
