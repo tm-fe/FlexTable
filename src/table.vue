@@ -27,10 +27,12 @@
                 :columns="tableColumns"
                 :data="dataList"
                 :maxHeight="maxHeight"
+                :rowHeight="rowHeight"
                 :no-data="noData"
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
                 :selectedClass="selectedClass"
+                :spanMethod="spanMethod"
                 @scroll.native.passive="syncScroll"
                 @on-toggle-select="toggleSelect"
             ></table-body>
@@ -71,6 +73,7 @@
                 :scrollTop="scrollTop"
                 :hoverIndex="hoverIndex"
                 :selectedClass="selectedClass"
+                :spanMethod="spanMethod"
                 @on-toggle-select="toggleSelect"
             ></table-body>
 
@@ -110,6 +113,7 @@
                     :scrollTop="scrollTop"
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
+                    :spanMethod="spanMethod"
                     @on-toggle-select="toggleSelect"
                 ></table-body>
 
@@ -285,6 +289,9 @@ export default {
                 return '';
             },
         },
+        spanMethod: {
+            type: Function,
+        }
     },
     data(){
         return {
@@ -448,6 +455,13 @@ export default {
         window.removeEventListener('mouseup', this.onColResizeEnd);
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
     },
+    beforeCreate() {
+        const self = this;
+        this.doLayout = debounce(function() {
+            self.resize();
+            self.calHeight();
+        }, 50, {leading: true});
+    },
     methods:{
         onScroll(event) {
             // 兼容拖动滚动条
@@ -487,10 +501,6 @@ export default {
                 }
             }
         },
-        doLayout: debounce(function() {
-            this.resize();
-            this.calHeight();
-        }, 50, {leading: true}),
         computedFixedLeft: function() {
             return this.tableColumns.some(item => item.fixed === 'left');
         },
