@@ -66,6 +66,16 @@ export default {
         onlyFixed: {
             type: String,
             default: ''
+        },
+        rowSpan: {
+            type: Boolean,
+            default: false
+        },
+        rowSpanColumns: {
+            type: Array,
+            default: function() {
+                return [];
+            }
         }
     },
     data(){
@@ -80,8 +90,16 @@ export default {
         }
     },
     computed: {
-        isHidden() { // 固定层的非固定列无需渲染
-            return this.onlyFixed && (this.column.fixed !== this.onlyFixed);
+        isHidden() {
+            let hasSpan = false;
+
+            // 如果不是合并行的div 
+            if (!this.rowSpan) {
+                hasSpan = this.checkIsInRowSpan();
+            }
+            
+            // 固定层的非固定列和需要合并行的列  无需渲染
+            return (this.onlyFixed && (this.column.fixed !== this.onlyFixed)) || hasSpan;
         },
         isInvisible() { // 非固定层的固定列应不可见
             return this.column.fixed && !this.onlyFixed;
@@ -102,6 +120,22 @@ export default {
         }
     },
     methods: {
+        /**
+         * 检测是否在合并的行里面
+         */
+        checkIsInRowSpan() {
+            const columnKey = this.column.key;
+            const rowIndex = this.rowIndex;
+            let flag = false;
+            this.rowSpanColumns.forEach((text) => {
+                const splitRes = text.split('||');
+                // 如果key匹配上, 范围符合
+                if (splitRes[0] === columnKey && rowIndex >= splitRes[1] && rowIndex <= splitRes[2]) {
+                    flag = true;
+                }
+            });
+            return flag;
+        },
         toggleSelect() {
             this.$emit('on-toggle-select', this.rowIndex);
         },

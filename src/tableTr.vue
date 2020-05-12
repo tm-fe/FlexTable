@@ -8,6 +8,8 @@
             :index="i"
             :cal-width="calWidth"
             :row="row"
+            :row-span="rowSpan"
+            :rowSpanColumns="rowSpanColumns"
             :rowIndex="rowIndex"
             :onlyFixed="onlyFixed"
             :class="tdClassName(column, row)"
@@ -59,6 +61,15 @@ export default {
         columnIndex: {
             type: Number,
             default: 0
+        },
+        spanMethod: {
+            type: Function
+        },
+        rowSpanColumns: {
+            type: Array,
+            default: function() {
+                return [];
+            }
         }
     },
     mounted() {
@@ -89,7 +100,8 @@ export default {
             this.$emit('on-toggle-expand', this.rowIndex);
         },
         onRowHeightChange() {
-            if (!this.onlyFixed) {
+            // 如果是fixed 或者是合并行，则不进行 rowHeight的更新
+            if (!this.onlyFixed && !this.rowSpan) {
                 this.owner.onRowHeightChange({
                     rowIndex: this.rowIndex,
                     height: this.$el.offsetHeight,
