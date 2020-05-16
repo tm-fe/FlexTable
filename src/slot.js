@@ -10,12 +10,27 @@ export default {
             default: null,
         },
         owner: Object,
+        type: {
+            type: String,
+            default: 'body',
+        },
     },
     render: (h, ctx) => {
-        return h('div', ctx.props.owner.$scopedSlots[ctx.props.column.key]({
+        const { column } = ctx.props;
+        const { key } = column;
+        const classDefault = `flex-table-slot-${ctx.props.type}`;
+        const className = [
+            classDefault,
+            `${classDefault}-${key}`,
+        ];
+        return h('div', {
+            class: className,
+        }, ctx.props.owner.$scopedSlots[key]({
             row: ctx.props.row,
-            column: ctx.props.column,
+            column,
             index: ctx.props.index,
+            type: ctx.props.type,
+            key,
         }));
     },
 };

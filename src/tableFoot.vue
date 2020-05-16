@@ -13,11 +13,20 @@
             >
                 <template v-if="shouldRender(item)">
                     <Expand
-                        v-if="item.render"
+                        v-if="getRenderType(item) === 'render'"
                         :row="sum"
                         :column="item"
                         :index="index"
                         :render="item.render"></Expand>
+
+                    <TableSlot
+                        v-else-if="getRenderType(item) === 'slot'"
+                        :row="sum"
+                        :column="item"
+                        :index="index"
+                        type="foot"
+                        :owner="owner"></TableSlot>
+
                     <p v-else>{{sum[item.key]}}</p>
                     <p class="foot-label">{{item.title}}</p>
                 </template>
@@ -28,10 +37,11 @@
 <script>
 import Expand from './expand.js';
 import Mixin from './mixin.js';
+import TableSlot from './slot.js';
 
 export default {
     mixins: [ Mixin ],
-    components: { Expand },
+    components: { Expand, TableSlot },
     props: {
         columns: {
             type: Array,
@@ -85,6 +95,17 @@ export default {
         },
         isInvisible(col) { // 非固定层的固定列应不可见
             return col.fixed && !this.onlyFixed;
+        },
+        getRenderType(item) {
+            let renderType = 'normal';
+            // renderType
+            if (item.type === 'slot') {
+                renderType = 'slot';
+            } else if(item.render){
+                renderType = 'render';
+            }
+
+            return renderType;
         }
     }
 }

@@ -4,7 +4,15 @@
         :columns="columns" 
         :data="list"
         :sum="sum"
-    ></flex-table>
+    >
+        <template #age={row}>
+            <p>{{row.age}}</p>
+        </template>
+        <template #[firstColumn]={row,type,key}>
+            <p v-if="type==='foot'">汇总</p>
+            <p v-else>{{row[key]}}</p>
+        </template>
+    </flex-table>
 </template>
 <script>
 // import flexTable from '../../index.js';
@@ -31,10 +39,12 @@ export default {
                     title: 'Name',
                     key: 'name',
                     width: 100,
+                    type: 'slot'
                 },
                 {
                     title: 'Age',
                     key: 'age',
+                    type: 'slot'
                 },
                 {
                     title: 'Address',
@@ -54,7 +64,13 @@ export default {
                 address: 'London',
                 date: '2016-10-01'
             },
+            firstColumn: 'name'
         }
     }
 }
 </script>
+<style>
+.flex-table-foot .flex-table-col:first-child .flex-table-slot-foot + .foot-label {
+    display: none;
+}
+</style>
