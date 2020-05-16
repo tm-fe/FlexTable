@@ -41,6 +41,7 @@
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
                     :spanMethod="spanMethod"
+                    :rowSpanColumns="rowSpanColumns"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
@@ -135,7 +136,8 @@ export default {
     },
     data(){
         return {
-            rowSpanList: []
+            rowSpanList: [],
+            rowSpanColumns: []
         };
     },
     updated() {
@@ -170,9 +172,17 @@ export default {
                     });
 
                     if (setting.rowspan > 1) {
+                        const spanStart = rowIndex; // 开始位置
+                        const spanEnd = rowIndex + setting.rowspan - 1; // 结束位置
+                        // 记录进行合并的行
+                        const spanColunmKey = `${column.key}||${spanStart}||${spanEnd}`;
+                        if(!this.rowSpanColumns.includes(spanColunmKey)) {
+                            this.rowSpanColumns.push(spanColunmKey);
+                        }
+
                         const left = this.calRowWidth(0, columnIndex - 1);
                         const top = this.calColHeight(0, rowIndex - 1);
-                        const height = this.calColHeight(rowIndex, rowIndex + setting.rowspan - 1);
+                        const height = this.calColHeight(spanStart, spanEnd);
                         const width = this.calWidth[column.key];
                         list.push(
                             {
