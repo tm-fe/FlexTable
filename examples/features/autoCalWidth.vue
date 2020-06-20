@@ -1,12 +1,25 @@
 <template>
 <div>
-    <h3>基础用法</h3>
-    <p>表格的简单用法 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/autoCalWidth.vue">source code</a></p>
+    <h3>自动计算宽度-false</h3>
+    <p>自动计算宽度-false <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/autoCalWidth.vue">source code</a></p>
     
     <flex-table
         resizable
         :loading="loading"
-        :columns="columns"
+        :columns="columns1"
+        :data="list"
+        :sum="sum"
+        :minWidth="60"
+        :maxWidth="600"
+        :autoCalWidth="false"
+        @on-scroll-x="onTableScroll"
+    ></flex-table>
+    <p></p>
+
+    <flex-table
+        resizable
+        :loading="loading"
+        :columns="columns2"
         :data="list"
         :sum="sum"
         :minWidth="60"
@@ -20,7 +33,7 @@
 // import flexTable from '../../index.js';
 
 const aTestList = [];
-for(let i=0;i<10;i++){
+for(let i=0;i<5;i++){
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -38,7 +51,7 @@ export default {
     // },
     data(){
         return {
-            columns: [
+            columns1: [
                 {
                     title: 'Name',
                     key: 'name',
@@ -71,6 +84,42 @@ export default {
                     title: 'Date',
                     key: 'date',
                     width: 100
+                },
+            ],
+            columns2: [
+                {
+                    title: 'Name',
+                    key: 'name',
+                    width: 190,
+                    fixed: 'left'
+                },
+                {
+                    title: 'Age',
+                    key: 'age',
+                    width: 170,
+                    render(h, params){
+                        return h('span', 'age: '+ params.row.age)
+                    }
+                },
+                {
+                    title: 'Address',
+                    key: 'address',
+                    width: 270
+                },
+                {
+                    title: 'Sex',
+                    key: 'sex',
+                    width: 120
+                },
+                {
+                    title: 'School',
+                    key: 'school',
+                    width: 185
+                },
+                {
+                    title: 'Date',
+                    key: 'date',
+                    width: 200
                 },
             ],
             loading: false,
