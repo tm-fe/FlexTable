@@ -798,7 +798,7 @@ export default {
                     };
                 } else {
                     this.wrapStyle = {
-                        width: `${nTotalWidth}px`
+                        width: `${Math.min(nTableWidth, nTotalWidth)}px` // 宽度不能超过table的宽度，否则出现双滚动条
                     };
                     this.style = {
                         width: `${nTotalWidth}px`
