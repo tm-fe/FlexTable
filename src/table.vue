@@ -1,5 +1,5 @@
 <template>
-    <div :class="wrapClasses" ref="tableWrap">
+    <div :class="wrapClasses" :style="wrapStyle" ref="tableWrap">
     <div
         class="flex-table-layout"
         ref="flexTableLayout"
@@ -291,6 +291,14 @@ export default {
         },
         spanMethod: {
             type: Function,
+        },
+        /**
+         * 是否自动计算，当全部的column设置width时，加起来的宽度没有达到外层table的宽度
+         * 这个时候会剩余的宽度平均添加每个column
+         */
+        autoCalWidth: {
+            type: Boolean,
+            default: true
         }
     },
     data(){
@@ -299,6 +307,7 @@ export default {
             rowHeight: { header: 0, footer: 0 },
             dataList: [],
             style:{},
+            wrapStyle: {},
             calWidth: {},
             tableColumns: [],
             headerH: 38,
@@ -773,7 +782,7 @@ export default {
                             oWidth[sKey] = autoWidth;
                         }
                     });
-                } else if (nTableWidth > defineTotalWidth) {
+                } else if (nTableWidth > defineTotalWidth && this.autoCalWidth) {
                     let dWidth = (nTableWidth-defineTotalWidth)/this.tableColumns.length;
                     dWidth = dWidth > 0 ? dWidth : 0;
                     this.tableColumns.forEach(item=>{
@@ -783,9 +792,19 @@ export default {
                 }
                 // 计算真实宽度
                 const nTotalWidth = Object.keys(oWidth).reduce((total, key) => (total + oWidth[key]), 0);
-                this.style = {
-                    'min-width': Math.max(nTableWidth, nTotalWidth)+'px'
-                };
+                if (this.autoCalWidth) {
+                    this.style = {
+                        'min-width': Math.max(nTableWidth, nTotalWidth)+'px'
+                    };
+                } else {
+                    this.wrapStyle = {
+                        width: `${nTotalWidth}px`
+                    };
+                    this.style = {
+                        width: `${nTotalWidth}px`
+                    };
+                }
+                
                 this.calWidth = oWidth;
             });
         },

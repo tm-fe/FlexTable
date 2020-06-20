@@ -8,6 +8,14 @@ export default [
         },
     },
     {
+        path: '/autoCalWidth',
+        name: 'autoCalWidth',
+        component: resolve => require(['./features/autoCalWidth.vue'], resolve),
+        meta: {
+            title: '自动计算宽度',
+        },
+    },
+    {
         path: '/fixedHeader',
         name: 'fixedHeader',
         component: resolve => require(['./features/fixedHeader.vue'], resolve),
