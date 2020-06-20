@@ -797,8 +797,10 @@ export default {
                         'min-width': Math.max(nTableWidth, nTotalWidth)+'px'
                     };
                 } else {
+                    // 宽度不能超过table的宽度，否则出现双滚动条
+                    const wrapWidth = nTableWidth < nTotalWidth ? 'auto' : nTotalWidth + 'px';
                     this.wrapStyle = {
-                        width: `${Math.min(nTableWidth, nTotalWidth)}px` // 宽度不能超过table的宽度，否则出现双滚动条
+                        width: `${wrapWidth}` 
                     };
                     this.style = {
                         width: `${nTotalWidth}px`
