@@ -279,6 +279,10 @@ export default {
             type: Number,
             default: 0
         },
+        // 自定义的head fixed判断方法
+        checkFixedHeadTop: {
+            type: Function,
+        },
         selectedClass: {
             type: String,
             default: '',
@@ -734,7 +738,13 @@ export default {
         winScroll() {
             const sTop = document.body.scrollTop + document.documentElement.scrollTop;
             const tableOffset = this.getTableOffset();
-            if (sTop > tableOffset.top) {
+            let startFixedHead = sTop > tableOffset.top; // checkFixedHeadTop
+
+            if (this.checkFixedHeadTop ) {
+                startFixedHead = this.checkFixedHeadTop();
+            }
+
+            if (startFixedHead) {
                 this.isFixedHead = true;
                 this.fixedHeadStyle.left = tableOffset.left + (this.border ? 1 : 0) + 'px';
                 this.fixedHeadStyle.position = 'fixed';

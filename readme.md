@@ -143,6 +143,7 @@ export default {
 | stripe | 行的斑纹显示 | Boolean | true |
 | fixedHead | 全屏固定头部 | Boolean | false |
 | fixedHeadTop | 全屏固定头部离顶部距离 | Number | 0 |
+| checkFixedHeadTop | 全屏固定头部离顶部距离判断（可以自定义） | Function | '' |
 | selectedClass | 单选或多选模式下,渲染选中行样式 | string | '' |
 | rowClassName | 初始化渲染行背景色 | Function | '' |
 | autoCalWidth | 是否自动计算width | Boolean | true, 默认true,false时会严格按照设置的width来展示 |
