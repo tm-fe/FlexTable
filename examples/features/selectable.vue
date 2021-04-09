@@ -13,6 +13,8 @@
         @on-selection-change="onSelectionChange"
         @on-selection-cancel="onSelectionCancel"
         @on-all-cancel="onAllCancel"
+        :fixedHead="false"
+        :virtualScroll="10"
     ></flex-table>
 </div>
 </template>

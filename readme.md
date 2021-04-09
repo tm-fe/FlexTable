@@ -148,6 +148,8 @@ export default {
 | rowClassName | 初始化渲染行背景色 | Function | '' |
 | autoCalWidth | 是否自动计算width | Boolean | true, 默认true,false时会严格按照设置的width来展示 |
 | span-method | 合并行（合并列暂未实现） | Function | 方法的参数是一个对象，里面包含当前行row、当前列column、当前行号rowIndex、当前列号columnIndex四个属性。该函数可以返回一个包含两个元素的数组，第一个元素代表rowspan，第二个元素代表colspan。 也可以返回一个键名为rowspan和colspan的对象。具体见 demo |
+| virtualScroll | 虚拟滚动的展示条数（设置此值即自动开启虚拟滚动功能） | Number |  |
+| virtualHeight | 虚拟滚动的单条数据高度 | Number | 40 |
 
 ### Table events
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex-table-row" :class="{'flex-table-hover': isHover}" :style="{ 'height': height }" @mouseenter="mouseenter">
+    <div class="flex-table-row" :class="{'flex-table-hover': isHover}" :style="{ 'height': height}" @mouseenter="mouseenter">
         <table-td
             v-for="(column, i) in columns"
             v-if="!rowSpan || (rowSpan && i=== columnIndex)"
@@ -81,7 +81,13 @@ export default {
         });
     },
     computed: {
+        isVirtualScroll(){
+            return this.virtualScroll;
+        },
         height() {
+            if(this.isVirtualScroll){
+                return `${this.virtualHeight}px`;
+            }
             if ((this.onlyFixed || this.rowSpan) && this.rowHeight) {
                 return `${this.rowHeight}px`;
             } else {
@@ -108,8 +114,19 @@ export default {
                 })
             }
         },
+        debounce(fn, wait){
+            let timer = null;
+            return function(){
+                if(timer !== null){
+                    clearTimeout(timer);
+                }
+                timer = setTimeout(fn,wait);
+            }
+        },
         mouseenter() {
-            this.owner.updateHoverIndex(this.rowIndex);
+            console.log('mouseenter: ');
+            this.debounce(this.owner.updateHoverIndex(this.rowIndex), 200);
+            
         },
         rowClsName(_index) {
             return this.$parent.$parent.rowClassName(this.row, _index);
@@ -126,3 +143,8 @@ export default {
     }
 }
 </script>
+<style lang="less" scoped>
+.flex-table-hover {
+    background-color: #ebf7ff;
+}
+</style>

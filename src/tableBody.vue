@@ -2,14 +2,15 @@
     <div
         class="flex-table-body"
         :class="{'flex-table-fixed-header': maxHeight}"
-        :style="style"
+        :style="isVirtualScroll ? style : null"
         @mouseleave="mouseleave"
         >
-        <template v-for="item in rowSpanList">
+        <div v-for="(item, index) in rowSpanList" :key="item.id ? item.id : index">
             <div
-                class="flex-table-tr flex-table-span"
-                :style="item.style">
+                :class="`flex-table-tr flex-table-span ${isVirtualScroll ? 'virtualItem' : 'commonItem'}`"
+                :style="[item.style, isVirtualScroll ? `transform: translateY(${item.top}px);` : '', isVirtualScroll ? `height: ${virtualHeight}px` : 'auto']">
                 <table-tr
+                    v-bind="$props"
                     row-span
                     :column-index="item.columnIndex"
                     :key="item.rowIndex"
@@ -18,7 +19,7 @@
                     :columns="columns"
                     :cal-width="calWidth"
                     :onlyFixed="onlyFixed"
-                    :rowHeight="item.height"
+                    :rowHeight="isVirtualScroll ? virtualHeight : item.height"
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
                     :spanMethod="spanMethod"
@@ -26,18 +27,20 @@
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
             </div>
-        </template>
+        </div>
 
-        <div class="flex-table-tr" v-if="data.length">
-            <template v-for="(row, index) in data">
+        <div class="flex-table-tr" v-if="data.length" :style="isVirtualScroll ? scrollerStyle : null">
+            <div v-for="(row, index) in data" :key="row.id ? row.id : index" :class="`${isVirtualScroll ? 'virtualItem' : 'commonItem'}`" 
+                :style="{'transform': isVirtualScroll ? `translateY(${row.top}px)` : 'none', 'height': isVirtualScroll ? `${virtualHeight}px` : 'auto'}">
                 <table-tr
+                    v-bind="$props"
                     :key="index"
                     :row="row"
                     :rowIndex="index"
                     :columns="columns"
                     :cal-width="calWidth"
                     :onlyFixed="onlyFixed"
-                    :rowHeight="rowHeight[index]"
+                    :rowHeight="isVirtualScroll ? virtualHeight : rowHeight[index]"
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
                     :spanMethod="spanMethod"
@@ -51,7 +54,7 @@
                         :index="index"
                         :render="expandRender"></Expand>
                 </div>
-            </template>
+            </div>
         </div>
         <div v-else>
             <div class="flex-table-col flex-table-tip">{{!onlyFixed ? noData : '&nbsp;'}}</div>
@@ -106,11 +109,27 @@ export default {
         },
         spanMethod: {
             type: Function
+        },
+        virtualScroll: {
+            type: Number,
+        },
+        virtualHeight: {
+            type: Number,
+            default: 40,
+        },
+        scrollerStyle: {
+            type: Object
         }
     },
     computed: {
         style() {
+            if(this.virtualHeight){
+                return {'height': this.maxHeight ? `${this.maxHeight}px` : `auto`};
+            }
             return {'max-height': this.maxHeight ? `${this.maxHeight}px` : `auto`};
+        },
+        defaultHeight() {
+            return {'height': `${this.virtualHeight}px`};
         },
         expandRender() {
             let render = noop;
@@ -124,7 +143,10 @@ export default {
                 }
             });
             return render;
-        }
+        },
+        isVirtualScroll(){
+            return !!this.virtualScroll & this.virtualScroll < this.data.length;
+        },
     },
     watch: {
         scrollTop(scrollTop) {
@@ -227,4 +249,30 @@ export default {
     }
 }
 </script>
-
+<style lang="less" scoped>
+.virtualItem:nth-child(odd) {
+    background: #f9f9f9;
+}
+.commonItem:nth-child(odd) {
+    background: #f9f9f9;
+}
+.no-stripe{
+   .virtualItem:nth-child(odd) {
+        background: #fff;
+    }
+    .commonItem:nth-child(odd) {
+        background: #fff;
+    } 
+}
+.virtualItem{
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    width: 100%;
+}
+.commonItem{
+    &:last-child{
+        border-bottom: 1px solid #EEEEEE;
+    }
+}
+</style>

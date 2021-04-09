@@ -11,7 +11,14 @@
                 :style="setCellStyle(item)"
             >
                 <template v-if="!isHidden(item)">
-                    <template v-if="item.type === 'selection'"><Checkbox :checked="isSelectAll" :disabled="!data.length || !isRenderDone" @input="selectAll"></Checkbox></template>
+                    <template v-if="item.type === 'selection'">
+                        <!-- <Checkbox :checked="isSelectAll" :disabled="!data.length || !isRenderDone" @input="selectAll"></Checkbox> -->
+                        <Checkbox
+                            v-model="isChecked"
+                            :disabled="!data.length || !isRenderDone"
+                            @input="selectAll"
+                        ></Checkbox>
+                    </template>
                     <template v-else>
                         <Expand
                             v-if="item.renderHeader"
@@ -43,6 +50,12 @@ export default {
         data: {
             type: Array
         },
+        allData: {
+            type: Array,
+            default() {
+                return [];
+            },
+        },
         columns: {
             type: Array
         },
@@ -65,29 +78,33 @@ export default {
             headRow: this.columns.map(item => {
                 item._sort = item.sortType || 'normal'; // 可选值 'desc','asc','normal'
                 return item;
-            })
+            }),
+            isChecked: false, // 是否全选
         }
     },
     computed: {
-        isSelectAll () {
-            let isSelectAll = true;
-            if (!this.data.length) isSelectAll = false;
-            if (!this.data.find(item => !item._disabled)) isSelectAll = false;
-            for (let i = 0; i < this.data.length; i++) {
-                if (!this.data[i]._isChecked && !this.data[i]._isDisabled) {
-                    isSelectAll = false;
-                    break;
-                }
-            }
-            return isSelectAll;
-        },
+        // isSelectAll () {
+        //     let isSelectAll = true;
+        //     if (!this.data.length) isSelectAll = false;
+        //     if (!this.data.find(item => !item._disabled)) isSelectAll = false;
+        //     for (let i = 0; i < this.data.length; i++) {
+        //         if (!this.data[i]._isChecked && !this.data[i]._isDisabled) {
+        //             isSelectAll = false;
+        //             break;
+        //         }
+        //     }
+        //     return isSelectAll;
+        // },
         height() {
             if (this.onlyFixed && this.rowHeight) {
                 return `${this.rowHeight}px`;
             } else {
                 return 'auto';
             }
-        }
+        },
+        isVirtualScroll() {
+            return this.virtualScroll && this.virtualScroll < this.data.length;
+        },
     },
     watch: {
         columns: function(val) {
@@ -109,9 +126,8 @@ export default {
         isColResizable(col) {
             return this.resizable && col.resizable !== false;
         },
-        selectAll() {
-            const status = !this.isSelectAll;
-            this.$emit('on-select-all', status);
+        selectAll(status) {
+            this.$emit('on-select-all', this.isChecked);
         },
         onColResize(e, index) {
             this.$emit("on-col-resize", e, index);
@@ -148,7 +164,11 @@ export default {
         },
         isInvisible(col) { // 非固定层的固定列应不可见
             return col.fixed && !this.onlyFixed;
-        }
+        },
+        handleChangeStatus(status){
+            // 控制是否全选
+            this.isChecked = status;
+        },
     }
 }
 </script>

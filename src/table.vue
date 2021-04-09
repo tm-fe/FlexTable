@@ -9,10 +9,12 @@
     >
         <div class="flex-table" :style="style">
             <table-head
+                v-bind="$props"
                 ref="tableHeader"
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 :data="dataList"
+                :allData="prefixData"
                 :resizable="resizable"
                 @on-select-all="selectAll"
                 @on-sort-change="onSortChange"
@@ -22,6 +24,7 @@
             <!-- /flex-table-head -->
 
             <table-body
+                v-bind="$props"
                 ref="tableBody"
                 :cal-width="calWidth"
                 :columns="tableColumns"
@@ -33,6 +36,7 @@
                 :hoverIndex="hoverIndex"
                 :selectedClass="selectedClass"
                 :spanMethod="spanMethod"
+                :scrollerStyle="scrollerStyle"
                 @scroll.native.passive="syncScroll"
                 @on-toggle-select="toggleSelect"
             ></table-body>
@@ -50,10 +54,13 @@
 
         <div :class="['flex-table-fixed-left', bodyIsScroll > 0 ? 'is-scroll' : '']" v-if="hasFixedLeft" :style="{'width': fixedLeftWidth + 'px'}">
             <table-head
+                v-bind="$props"
+                ref="tableHeader"
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 onlyFixed="left"
                 :data="dataList"
+                :allData="data"
                 :resizable="resizable"
                 :rowHeight="rowHeight.header"
                 :is-render-done="isRenderDone"
@@ -63,7 +70,8 @@
             ></table-head>
 
             <table-body
-                ref="fixedLeftBody"
+                v-bind="$props"
+                ref="tableBody"
                 onlyFixed="left"
                 :cal-width="calWidth"
                 :columns="tableColumns"
@@ -90,10 +98,13 @@
         <div :class="['flex-table-fixed-right-wrap']" v-if="hasFixedRight" :style="{'width': fixedRightWidth + 'px'}">
             <div class="flex-table-fixed-right">
                 <table-head
+                    v-bind="$props"
+                    ref="tableHeader"
                     :cal-width="calWidth"
                     :columns="tableColumns"
                     onlyFixed="right"
                     :data="dataList"
+                    :allData="data"
                     :resizable="resizable"
                     :rowHeight="rowHeight.header"
                     :is-render-done="isRenderDone"
@@ -103,6 +114,7 @@
                 ></table-head>
 
                 <table-body
+                    v-bind="$props"
                     ref="fixedRightBody"
                     onlyFixed="right"
                     :cal-width="calWidth"
@@ -155,6 +167,7 @@
             </div>
             <div :class="['flex-table-fixed-left', bodyIsScroll > 0 ? 'is-scroll' : '']" v-if="hasFixedLeft" :style="{'width': fixedLeftWidth + 'px'}">
                 <table-head
+                    ref="tableHeader"
                     :cal-width="calWidth"
                     :columns="tableColumns"
                     onlyFixed="left"
@@ -303,7 +316,18 @@ export default {
         autoCalWidth: {
             type: Boolean,
             default: true
-        }
+        },
+        /**
+         * virtualScroll 开启虚拟滚动，并设置数据条数
+         * virtualHeight 虚拟滚动时每一条数据的高度
+         */
+        virtualScroll: {
+            type: Number,
+        },
+        virtualHeight: {
+            type: Number,
+            default: 40,
+        },
     },
     data(){
         return {
@@ -317,7 +341,6 @@ export default {
             headerH: 38,
             bodyH: 0,
             footH: 54,
-            maxHeight: 0,
             scrollTop: 0,
             scrollLeft: 0,
             bodyIsScroll: 0,
@@ -342,7 +365,16 @@ export default {
                 oldWidth: 0,
                 column: {},
                 event: null
-            }
+            },
+            // 虚拟滚动变量
+            tableHeight: 0,
+            startIndex: 0,
+            prevStartIndex: -1,
+            isSameDataRef: false,
+            requestId: null,
+            selected: [],
+            prefixData: [],
+            isSelectAll: false,
         }
     },
     computed: {
@@ -383,7 +415,10 @@ export default {
                 return width;
             }, 0);
         },
-        showScrollBar: function() {
+        showScrollBar: function () {
+            if (this.isVirtualScroll) {
+                return this.totalHeight > this.maxHeight;
+            }
             return this.bodyH > this.maxHeight;
         },
         getFixedHeadClass: function() {
@@ -391,7 +426,47 @@ export default {
                 return 'flex-table-head-fixed-layout is-fixed';
             }
             return 'flex-table-head-fixed-layout';
-        }
+        },
+        // 虚拟滚动变量
+        itemHeight() {
+            return this.virtualHeight;
+        },
+        tableBody() {
+            return this.$refs.tableBody;
+        },
+        totalSize() {
+            return this.data.length;
+        },
+        poolSize() {
+            return 1 + Math.ceil(this.maxHeight / this.itemHeight);
+        },
+        wrapperHeight() {
+            return this.tableBody.$el.clientHeight;
+        },
+        maxIndex() {
+            return this.totalSize - this.poolSize < 0
+                ? 0
+                : this.totalSize - this.poolSize;
+        },
+        totalHeight() {
+            return this.totalSize * this.itemHeight;
+        },
+        scrollerStyle() {
+            const { totalHeight } = this;
+            return {
+                position: 'relative',
+                width: 'auto',
+                height: totalHeight + 'px',
+                maxHeight: totalHeight + 'px',
+                overflow: 'hidden',
+            };
+        },
+        maxHeight() {
+            return this.virtualScroll * this.itemHeight;
+        },
+        isVirtualScroll() {
+            return this.virtualScroll;
+        },
     },
     mounted(){
         this.doLayout();
@@ -404,12 +479,30 @@ export default {
     },
     watch: {
         data: {
-            handler: function() {
-                this.initData();
-                this.doLayout();
+            handler: function () {
+                if (this.isVirtualScroll) {
+                    this.doLayout();
+                    setTimeout(() => {
+                        this.updateTable(true);
+                    }, 0);
+                    setTimeout(() => {
+                        this.reSetItemHeight();
+                    }, 100);
+                } else {
+                    this.doLayout();
+                    this.initData();
+                }
             },
             deep: true,
             immediate: true,
+        },
+        dataList: {
+            handler(value) {
+                if (this.isVirtualScroll) {
+                    this.isSameDataRef = value === this.data;
+                }
+            },
+            deep: true,
         },
         height: function(val){
             this.calHeight();
@@ -448,8 +541,11 @@ export default {
         sum: function() {
             this.calHeight();
         },
-        showScrollBar() {
-            this.resize();
+        showScrollBar: function () {
+            if (this.isVirtualScroll) {
+                return this.totalHeight > this.maxHeight;
+            }
+            return this.bodyH > this.maxHeight;
         },
         scrollLeft(left) {
             this.$refs.flexTableLayout.scrollLeft = left;
@@ -480,9 +576,16 @@ export default {
             // 兼容拖动滚动条
             this.scrollLeft = event.target.scrollLeft;
         },
-        syncScroll: throttle(function(event) {
+        syncScroll: throttle(function (event) {
             const { scrollTop } = event.target;
             this.scrollTop = scrollTop;
+            if (this.isVirtualScroll) {
+                this.requestId = requestAnimationFrame(() => {
+                    this.$nextTick(() => {
+                        this.updateTable();
+                    });
+                });
+            }
         }, 20),
         updateHoverIndex: debounce(function(index) {
             this.hoverIndex = index;
@@ -537,9 +640,11 @@ export default {
                     this.$emit("on-render-done");
                 }
             } else {
-                this.data.forEach((item, index) => {
-                    this.copyItem(item, index)
-                });
+                if (!this.isVirtualScroll) {
+                    this.data.forEach((item, index) => {
+                        this.copyItem(item, index);
+                    });
+                }
             }
         },
         copyItem(item, index) {
@@ -583,20 +688,52 @@ export default {
         },
         toggleSelect(index) {
             const row = this.dataList[index];
-            if (!row._isDisabled) { // disabled 状态禁止更改 check 状态
-                row._isChecked = !row._isChecked;
+            let selection;
+            if (!this.prefixData.length) {
+                this.prefixData = this.data;
             }
-
-            const selection = this.getSelection();
+            if (!row._isDisabled) {
+                // disabled 状态禁止更改 check 状态
+                row._isChecked = !row._isChecked;
+                if (this.isVirtualScroll) {
+                    const selectIndex = row.index - 1;
+                    // const tableData
+                    this.prefixData[selectIndex]['_isChecked'] = !this.prefixData[selectIndex]['_isChecked'];
+                } else {
+                    row._isChecked = !row._isChecked;
+                    this.$set(this.dataList[index], '_isChecked', !row._isChecked)
+                }
+            }
+            // 控制tableHeader是否处于全选状态
+            let isCheckedAll;
+            if (this.isVirtualScroll) {
+                isCheckedAll = this.prefixData.every(
+                    (item) => item._isChecked
+                );
+                selection = this.prefixData.filter(item => item['_isChecked'] === true);
+            } else {
+                isCheckedAll = this.dataList.every(
+                    (item) => item._isChecked
+                );
+                selection = this.getSelection();
+            }
+            this.$refs.tableHeader.handleChangeStatus(isCheckedAll);
             const curRow = JSON.parse(JSON.stringify(row));
-            if(!row._isChecked){
+            if (!row._isChecked) {
                 this.$emit('on-selection-cancel', curRow);
+                this.isSelectAll = false;
             }
             this.$emit('on-selection-change', selection, curRow);
         },
         getSelection() {
             const selection = [];
-            this.dataList.forEach(item => {
+            let data = [];
+            if (this.isVirtualScroll) {
+                data = this.data;
+            } else {
+                data = this.dataList;
+            }
+            data.forEach((item) => {
                 if (item._isChecked) {
                     selection.push(item);
                 }
@@ -604,16 +741,39 @@ export default {
             return JSON.parse(JSON.stringify(selection));
         },
         selectAll(status) {
-            const cancelSelection = this.getSelection();
-            this.dataList.forEach(item => {
-                if (!item._isDisabled) { // disabled 状态禁止更改 check 状态
-                    item._isChecked = status;
-                }
-            });
-            const selection = this.getSelection();
-            if(status){
+            this.isSelectAll = status;
+            let selection;
+            let cancelSelection;
+            if (this.isVirtualScroll) {
+                const prefixData = JSON.parse(JSON.stringify(this.data));
+                this.dataList.forEach((item) => {
+                    if (!item._isDisabled) {
+                        // disabled 状态禁止更改 check 状态
+                        item._isChecked = status;
+                    }
+                });
+                prefixData.forEach((item) => {
+                    if (!item._isDisabled) {
+                        // disabled 状态禁止更改 check 状态
+                        item._isChecked = status;
+                    }
+                });
+                selection = prefixData;
+                cancelSelection = prefixData;
+                this.prefixData = prefixData;
+            } else {
+                this.dataList.forEach((item) => {
+                    if (!item._isDisabled) {
+                        // disabled 状态禁止更改 check 状态
+                        item._isChecked = status;
+                    }
+                });
+                selection = this.getSelection();
+                cancelSelection = this.getSelection();
+            }
+            if (status) {
                 this.$emit('on-selection-change', selection);
-            }else{
+            } else {
                 this.$emit('on-all-cancel', cancelSelection);
             }
         },
@@ -690,19 +850,27 @@ export default {
         },
         calHeight() {
             requestAnimationFrame(() => {
-                if (!this.height) { return; }
+                if (!this.tableHeight) {
+                    return;
+                }
                 const $refs = this.$refs;
                 const $tableFoot = $refs.tableFoot;
                 const $tableBody = $refs.tableBody;
-                if (!$tableBody) { return; }
-                const $tableBodyTr = $tableBody.$el.querySelector('.flex-table-tr');
+                if (!$tableBody) {
+                    return;
+                }
+                const $tableBodyTr = $tableBody.$el.querySelector(
+                    '.flex-table-tr'
+                );
                 const headerH = $refs.tableHeader.$el.offsetHeight;
                 const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
                 const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
                 this.headerH = headerH;
                 this.footH = footH;
                 this.bodyH = bodyH;
-                this.maxHeight = this.height - headerH - footH;
+                if (!this.isVirtualScroll) {
+                    this.maxHeight = this.tableHeight - headerH - footH;
+                }
             });
         },
         getMinWidth(col) {
@@ -821,8 +989,105 @@ export default {
             });
         },
         onRowHeightChange(row) {
-            this.$set(this.rowHeight, row.rowIndex, row.height);
-        }
+            if (!this.isVirtualScroll) {
+                this.$set(this.rowHeight, row.rowIndex, row.height);
+            }
+        },
+        reSetItemHeight() {
+            // 这里给 height 赋值是为了出现滚动条
+            if (this.isVirtualScroll) {
+                if (this.height) {
+                    this.tableHeight = this.height;
+                } else {
+                    this.tableHeight = this.maxHeight;
+                }
+                this.calHeight();
+            }
+        },
+        updateTable(isDataChange) {
+            const { data, maxIndex, itemHeight, poolSize } = this;
+
+            const currentIndex = Math.floor(
+                this.$refs.tableBody.scrollTop / itemHeight
+            );
+            let startIndex = Math.min(maxIndex, currentIndex);
+
+            // 当前列表的索引发生实际变化或者源数据有增减时才进行更新
+            const shouldUpdate =
+                this.prevStartIndex !== startIndex || isDataChange;
+
+            if (!shouldUpdate) return;
+
+            // 获取滚动方向和差值，优化滚动性能和复用DOM
+            const direction = startIndex - this.prevStartIndex || 0;
+            const endIndex = startIndex + poolSize;
+            this.updateScrollData(startIndex, endIndex, direction);
+            this.prevStartIndex = startIndex;
+            this.requestId && cancelAnimationFrame(this.requestId);
+        },
+        updateScrollData(startIndex, endIndex, direction) {
+            const {
+                data,
+                itemHeight,
+                dataList,
+                isSameDataRef,
+                isSelectAll,
+            } = this;
+            if (!dataList.length || !isSameDataRef) {
+                // reset flag
+                this.isSameDataRef = true;
+                let prefixData = JSON.parse(
+                    JSON.stringify(this.prefixData)
+                ).slice(startIndex, endIndex);
+                for (const item of this.data) {
+                    item._isChecked = false;
+                }
+                const newData = data
+                    .slice(startIndex, endIndex)
+                    .map((item, index) => ({
+                        item,
+                        top: startIndex * itemHeight,
+                        pos: startIndex++,
+                        index: startIndex,
+                        _isChecked: false,
+                    }));
+                
+                if (!prefixData.length) {
+                    prefixData = newData;
+                }
+                newData.forEach((news, index) => {
+                    Object.keys(news.item).forEach((key, newIndex) => {
+                        if(prefixData[index]){
+                            const isCheck = prefixData[index]['_isChecked'] ? prefixData[index]['_isChecked'] : false;
+                            news[key] = news.item[key];
+                            news['_isChecked'] = isSelectAll ? true : isCheck; // 若为全选，每次滚动加载数据时勾上
+                        }
+                        
+                    });
+                });
+                return (this.dataList = newData);
+            }
+            const newIndexes = new Array(endIndex - startIndex)
+                .fill(startIndex)
+                .map((i, d) => i + d);
+            const diffIndexes = dataList.reduce((acc, cur, idx) => {
+                if (!newIndexes.includes(cur.pos)) {
+                    acc[acc.length] = idx;
+                }
+                return acc;
+            }, []);
+            let newIndex =
+                direction > 0
+                    ? endIndex - diffIndexes.length /* down */
+                    : startIndex; /* up */
+            diffIndexes.forEach((index) => {
+                const item = dataList[index];
+                item.data = data[newIndex]; /* update data by new index */
+                item.top = (newIndex ? newIndex : index) * itemHeight;
+                item.pos = newIndex ? newIndex++ : index++;
+            });
+            return data;
+        },
     }
 }
 </script>
