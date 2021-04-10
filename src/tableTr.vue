@@ -124,7 +124,6 @@ export default {
             }
         },
         mouseenter() {
-            console.log('mouseenter: ');
             this.debounce(this.owner.updateHoverIndex(this.rowIndex), 200);
             
         },

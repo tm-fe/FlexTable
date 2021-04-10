@@ -12,6 +12,8 @@
         :minWidth="80"
         :maxWidth="600"
         @on-scroll-x="onTableScroll"
+        :virtualScroll="10"
+        :virtualHeight="37"
     ></flex-table>
 </div>
 </template>
@@ -19,9 +21,9 @@
 // import flexTable from '../../index.js';
 
 const aTestList = [];
-for(let i=0;i<10;i++){
+for(let i=0;i<10000;i++){
     const oTestData = {
-        name: 'John Brown',
+        name: 'John Brown' + i,
         age: 18,
         sex: '男',
         school: 'high school',

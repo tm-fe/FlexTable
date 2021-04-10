@@ -870,6 +870,8 @@ export default {
                 this.bodyH = bodyH;
                 if (!this.isVirtualScroll) {
                     this.maxHeight = this.tableHeight - headerH - footH;
+                } else {
+                    this.bodyH = this.totalHeight;
                 }
             });
         },
