@@ -1,13 +1,13 @@
 <template>
     <div
         class="flex-table-body"
-        :class="{'flex-table-fixed-header': maxHeight}"
+        :class="{ 'flex-table-fixed-header': maxHeight }"
         :style="isVirtualScroll ? style : null"
         @mouseleave="mouseleave"
-        >
+    >
         <div v-for="(item, index) in rowSpanList" :key="item.id ? item.id : index">
             <div
-                :class="`flex-table-tr flex-table-span ${isVirtualScroll ? 'virtualItem' : 'commonItem'}`"
+                :class="`flex-table-tr flex-table-span ${isVirtualScroll ? 'virtualItem' : 'commonItem bgColor'}`"
                 :style="[item.style, isVirtualScroll ? `transform: translateY(${item.top}px);` : '', isVirtualScroll ? `height: ${virtualHeight}px` : 'auto']">
                 <table-tr
                     v-bind="$props"
@@ -30,7 +30,7 @@
         </div>
 
         <div class="flex-table-tr" v-if="data.length" :style="isVirtualScroll ? scrollerStyle : null">
-            <div v-for="(row, index) in data" :key="row.id ? row.id : index" :class="`${isVirtualScroll ? 'virtualItem' : 'commonItem'}`" 
+            <div v-for="(row, index) in data" :key="row.id ? row.id : index" :class="`${isVirtualScroll ? 'virtualItem' : 'commonItem bgColor'}`" 
                 :style="{'transform': isVirtualScroll ? `translateY(${row.top}px)` : 'none', 'height': isVirtualScroll ? `${virtualHeight}px` : 'auto'}">
                 <table-tr
                     v-bind="$props"
@@ -56,8 +56,11 @@
                 </div>
             </div>
         </div>
+
         <div v-else>
-            <div class="flex-table-col flex-table-tip">{{!onlyFixed ? noData : '&nbsp;'}}</div>
+            <div class="flex-table-col flex-table-tip">
+                {{ !onlyFixed ? noData : '&nbsp;' }}
+            </div>
         </div>
     </div>
 </template>
@@ -68,28 +71,28 @@ import Expand from './expand.js';
 const noop = function () {};
 export default {
     name: 'TableBody',
-    components:{
+    components: {
         tableTr,
-        Expand
+        Expand,
     },
     mixins: [Mixin],
     props: {
         data: {
-            type: Array
+            type: Array,
         },
         columns: {
-            type: Array
+            type: Array,
         },
         maxHeight: {
-            type: Number
+            type: Number,
         },
         onlyFixed: {
             type: String,
-            default: ''
+            default: '',
         },
         noData: {
             type: String,
-            default: 'No Data'
+            default: 'No Data',
         },
         rowHeight: {
             type: Object,
@@ -97,18 +100,18 @@ export default {
         },
         scrollTop: {
             type: Number,
-            default: 0
+            default: 0,
         },
         hoverIndex: {
             type: Number | undefined,
-            required: true
+            required: true,
         },
         selectedClass: {
             type: String,
             default: '',
         },
         spanMethod: {
-            type: Function
+            type: Function,
         },
         virtualScroll: {
             type: Number,
@@ -118,25 +121,30 @@ export default {
             default: 40,
         },
         scrollerStyle: {
-            type: Object
-        }
+            type: Object,
+        },
     },
     computed: {
         style() {
-            if(this.virtualHeight){
-                return {'height': this.maxHeight ? `${this.maxHeight}px` : `auto`};
+            if (this.virtualHeight) {
+                return {
+                    height: this.maxHeight ? `${this.maxHeight}px` : `auto`,
+                };
             }
-            return {'max-height': this.maxHeight ? `${this.maxHeight}px` : `auto`};
+            return {
+                'max-height': this.maxHeight ? `${this.maxHeight}px` : `auto`,
+            };
         },
         defaultHeight() {
-            return {'height': `${this.virtualHeight}px`};
+            return { height: `${this.virtualHeight}px` };
         },
         expandRender() {
             let render = noop;
             if (this.owner.$scopedSlots.expand) {
-                return render = (h, params) => h('div', this.owner.$scopedSlots.expand(params));
+                return (render = (h, params) =>
+                    h('div', this.owner.$scopedSlots.expand(params)));
             }
-            this.columns.some(obj => {
+            this.columns.some((obj) => {
                 if (obj.type === 'expand') {
                     render = obj.render;
                     return true;
@@ -144,8 +152,10 @@ export default {
             });
             return render;
         },
-        isVirtualScroll(){
-            return !!this.virtualScroll & this.virtualScroll < this.data.length;
+        isVirtualScroll() {
+            return (
+                !!this.virtualScroll & (this.virtualScroll < this.data.length)
+            );
         },
     },
     watch: {
@@ -154,12 +164,12 @@ export default {
         },
         data() {
             this.updateRowList();
-        }
+        },
     },
-    data(){
+    data() {
         return {
             rowSpanList: [],
-            rowSpanColumns: []
+            rowSpanColumns: [],
         };
     },
     updated() {
@@ -178,7 +188,7 @@ export default {
         mouseleave() {
             this.owner.updateHoverIndex();
         },
-        getRowSpan(){
+        getRowSpan() {
             const list = [];
             if (!this.spanMethod) {
                 return list;
@@ -190,7 +200,7 @@ export default {
                         row,
                         column,
                         rowIndex,
-                        columnIndex
+                        columnIndex,
                     });
 
                     if (setting.rowspan > 1) {
@@ -198,7 +208,7 @@ export default {
                         const spanEnd = rowIndex + setting.rowspan - 1; // 结束位置
                         // 记录进行合并的行
                         const spanColunmKey = `${column.key}||${spanStart}||${spanEnd}`;
-                        if(!this.rowSpanColumns.includes(spanColunmKey)) {
+                        if (!this.rowSpanColumns.includes(spanColunmKey)) {
                             this.rowSpanColumns.push(spanColunmKey);
                         }
 
@@ -206,15 +216,13 @@ export default {
                         const top = this.calColHeight(0, rowIndex - 1);
                         const height = this.calColHeight(spanStart, spanEnd);
                         const width = this.calWidth[column.key];
-                        list.push(
-                            {
-                                columnIndex,
-                                rowIndex,
-                                row,
-                                height,
-                                style: `width:${width}px;left:${left}px;top:${top}px;`
-                            }
-                        );
+                        list.push({
+                            columnIndex,
+                            rowIndex,
+                            row,
+                            height,
+                            style: `width:${width}px;left:${left}px;top:${top}px;`,
+                        });
                     }
                 });
             });
@@ -223,18 +231,18 @@ export default {
         },
         calRowWidth(start, end) {
             let width = 0;
-            for(let i = start; i <= end; i++) {
+            for (let i = start; i <= end; i++) {
                 let key = this.columns[i].key;
                 width += this.calWidth[key];
             }
-            return width >= 0? width : 0;
+            return width >= 0 ? width : 0;
         },
         calColHeight(start, end) {
             let height = 0;
-            for(let i = start; i <= end; i++) {
+            for (let i = start; i <= end; i++) {
                 height += this.rowHeight[i];
             }
-            return height >= 0? height : 0;
+            return height >= 0 ? height : 0;
         },
         updateRowList() {
             this.$nextTick(() => {
@@ -242,37 +250,42 @@ export default {
                     this.getRowSpan();
                 }, 10);
             });
-        }
+        },
     },
     mounted() {
         this.updateRowList();
-    }
-}
+    },
+};
 </script>
 <style lang="less" scoped>
-.virtualItem:nth-child(odd) {
-    background: #f9f9f9;
+// .virtualItem:nth-child(odd) {
+//     background: #f9f9f9;
+// }
+// .commonItem:nth-child(odd) {
+//     background: #f9f9f9;
+// }
+.bgColor {
+    &:nth-child(odd) {
+        background: #f9f9f9;
+    }
 }
-.commonItem:nth-child(odd) {
-    background: #f9f9f9;
-}
-.no-stripe{
-   .virtualItem:nth-child(odd) {
+.no-stripe {
+    .virtualItem:nth-child(odd) {
         background: #fff;
     }
     .commonItem:nth-child(odd) {
         background: #fff;
-    } 
+    }
 }
-.virtualItem{
+.virtualItem {
     overflow: hidden;
     position: absolute;
     left: 0;
     width: 100%;
 }
-.commonItem{
-    &:last-child{
-        border-bottom: 1px solid #EEEEEE;
+.commonItem {
+    &:last-child {
+        border-bottom: 1px solid #eeeeee;
     }
 }
 </style>

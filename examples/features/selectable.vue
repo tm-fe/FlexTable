@@ -14,8 +14,6 @@
         @on-selection-cancel="onSelectionCancel"
         @on-all-cancel="onAllCancel"
         :fixedHead="false"
-        :virtualScroll="10"
-        :virtualHeight="37"
     ></flex-table>
 </div>
 </template>
@@ -24,13 +22,15 @@
 
 
 const aTestList = [];
-for(let i=0;i<8000;i++){
+for(let i=0;i<80;i++){
     const oTestData = {
+        id: i,
         name: 'John Brown',
         age: 18,
         address: 'New York No. 1 Lake Park',
         real_address: 'New York No. 1 Lake Park',
         date: '2016-10-03',
+        _isChecked: true
     };
     aTestList.push(oTestData);
 }

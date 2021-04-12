@@ -6,8 +6,8 @@
                 :key="item.key + '_' + index"
                 :class="{
                     'flex-table-col': true,
-                    'flex-table-hidden': isInvisible(item)
-                    }"
+                    'flex-table-hidden': isInvisible(item),
+                }"
                 :style="setCellStyle(item)"
             >
                 <template v-if="!isHidden(item)">
@@ -24,13 +24,30 @@
                             v-if="item.renderHeader"
                             :column="item"
                             :index="index"
-                            :render="item.renderHeader"></Expand>
-                        <span v-else>{{item.title}}</span>
+                            :render="item.renderHeader"
+                        ></Expand>
+                        <span v-else>{{ item.title }}</span>
                         <span class="flex-table-sort" v-if="item.sortable">
-                            <i @click="handleSort(index, 'asc')" :class="{'on': getColumns(index)._sort === 'asc'}" class="flex-table-arrow-dropup"></i>
-                            <i @click="handleSort(index, 'desc')" :class="{'on': getColumns(index)._sort === 'desc'}" class="flex-table-arrow-dropdown"></i>
+                            <i
+                                @click="handleSort(index, 'asc')"
+                                :class="{
+                                    on: getColumns(index)._sort === 'asc',
+                                }"
+                                class="flex-table-arrow-dropup"
+                            ></i>
+                            <i
+                                @click="handleSort(index, 'desc')"
+                                :class="{
+                                    on: getColumns(index)._sort === 'desc',
+                                }"
+                                class="flex-table-arrow-dropdown"
+                            ></i>
                         </span>
-                        <div v-if="isColResizable(item)" @mousedown="onColResize($event, index)" class="flex-table-col-resize j-col-resize"></div>
+                        <div
+                            v-if="isColResizable(item)"
+                            @mousedown="onColResize($event, index)"
+                            class="flex-table-col-resize j-col-resize"
+                        ></div>
                     </template>
                 </template>
             </div>
@@ -48,7 +65,7 @@ export default {
     mixins: [Mixin],
     props: {
         data: {
-            type: Array
+            type: Array,
         },
         allData: {
             type: Array,
@@ -57,7 +74,7 @@ export default {
             },
         },
         columns: {
-            type: Array
+            type: Array,
         },
         onlyFixed: {
             type: String,
@@ -71,30 +88,25 @@ export default {
         isRenderDone: {
             type: Boolean,
             default: true,
-        }
+        },
+        virtualScroll: {
+            type: Number,
+        },
+        virtualHeight: {
+            type: Number,
+            default: 40,
+        },
     },
     data() {
         return {
-            headRow: this.columns.map(item => {
+            headRow: this.columns.map((item) => {
                 item._sort = item.sortType || 'normal'; // 可选值 'desc','asc','normal'
                 return item;
             }),
             isChecked: false, // 是否全选
-        }
+        };
     },
     computed: {
-        // isSelectAll () {
-        //     let isSelectAll = true;
-        //     if (!this.data.length) isSelectAll = false;
-        //     if (!this.data.find(item => !item._disabled)) isSelectAll = false;
-        //     for (let i = 0; i < this.data.length; i++) {
-        //         if (!this.data[i]._isChecked && !this.data[i]._isDisabled) {
-        //             isSelectAll = false;
-        //             break;
-        //         }
-        //     }
-        //     return isSelectAll;
-        // },
         height() {
             if (this.onlyFixed && this.rowHeight) {
                 return `${this.rowHeight}px`;
@@ -102,17 +114,32 @@ export default {
                 return 'auto';
             }
         },
-        isVirtualScroll() {
-            return this.virtualScroll && this.virtualScroll < this.data.length;
-        },
     },
     watch: {
-        columns: function(val) {
-            this.headRow = val.map(item => {
+        columns: function (val) {
+            this.headRow = val.map((item) => {
                 item._sort = item.sortType || 'normal';
                 return item;
             });
-        }
+        },
+        data: {
+            handler(val) {
+                if (!this.virtualScroll) {
+                    const isChecked = val.every((item) => item._isChecked);
+                    this.handleChangeStatus(isChecked);
+                }
+            },
+            deep: true,
+        },
+        allData: {
+            handler(val) {
+                if (this.virtualScroll) {
+                    const isChecked = val.every((item) => item._isChecked);
+                    this.handleChangeStatus(isChecked);
+                }
+            },
+            deep: true,
+        },
     },
     mounted() {
         this.onRowHeightChange();
@@ -130,7 +157,7 @@ export default {
             this.$emit('on-select-all', this.isChecked);
         },
         onColResize(e, index) {
-            this.$emit("on-col-resize", e, index);
+            this.$emit('on-col-resize', e, index);
         },
         handleSort(index, type) {
             this.headRow = this.headRow.map((item, i) => {
@@ -160,16 +187,17 @@ export default {
             }
         },
         isHidden(item) {
-            return this.onlyFixed && (item.fixed !== this.onlyFixed);
+            return this.onlyFixed && item.fixed !== this.onlyFixed;
         },
-        isInvisible(col) { // 非固定层的固定列应不可见
+        isInvisible(col) {
+            // 非固定层的固定列应不可见
             return col.fixed && !this.onlyFixed;
         },
-        handleChangeStatus(status){
+        handleChangeStatus(status) {
             // 控制是否全选
             this.isChecked = status;
         },
-    }
-}
+    },
+};
 </script>
 
