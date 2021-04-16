@@ -124,9 +124,10 @@ export default {
         },
         data: {
             handler(val) {
-                if (!this.virtualScroll) {
-                    const isChecked = val.every((item) => item._isChecked);
-                    this.handleChangeStatus(isChecked);
+                const isChecked = val.every((item) => item._isChecked);
+                this.handleChangeStatus(isChecked);
+                if(!val.length){
+                    this.handleChangeStatus(false);
                 }
             },
             deep: true,
@@ -134,7 +135,7 @@ export default {
         allData: {
             handler(val) {
                 if (this.virtualScroll) {
-                    const isChecked = val.every((item) => item._isChecked);
+                    const isChecked = val.length && val.every((item) => item._isChecked);
                     this.handleChangeStatus(isChecked);
                 }
             },

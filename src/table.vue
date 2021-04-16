@@ -690,18 +690,15 @@ export default {
             const row = this.dataList[index];
             let selection;
             if (!this.prefixData.length) {
-                this.prefixData = this.data;
+                this.prefixData = JSON.parse(JSON.stringify(this.data));
             }
             if (!row._isDisabled) {
                 // disabled 状态禁止更改 check 状态
-                row._isChecked = !row._isChecked;
                 if (this.isVirtualScroll) {
                     const selectIndex = row.index - 1;
-                    // const tableData
-                    this.prefixData[selectIndex]['_isChecked'] = !this.prefixData[selectIndex]['_isChecked'];
+                    this.prefixData[selectIndex]['_isChecked'] = !this.prefixData[selectIndex]['_isChecked']
                 } else {
                     row._isChecked = !row._isChecked;
-                    this.$set(this.dataList[index], '_isChecked', !row._isChecked)
                 }
             }
             // 控制tableHeader是否处于全选状态
@@ -717,6 +714,7 @@ export default {
                 );
                 selection = this.getSelection();
             }
+            this.isSelectAll = isCheckedAll;
             this.$refs.tableHeader.handleChangeStatus(isCheckedAll);
             const curRow = JSON.parse(JSON.stringify(row));
             if (!row._isChecked) {
@@ -1035,15 +1033,20 @@ export default {
                 isSameDataRef,
                 isSelectAll,
             } = this;
+            if(!data.length){
+                this.isSelectAll = false;
+                this.prefixData = [];
+            } else {
+                this.prefixData = Object.assign([], data, this.prefixData)
+            }
+
             if (!dataList.length || !isSameDataRef) {
+
                 // reset flag
                 this.isSameDataRef = true;
                 let prefixData = JSON.parse(
                     JSON.stringify(this.prefixData)
                 ).slice(startIndex, endIndex);
-                for (const item of this.data) {
-                    item._isChecked = false;
-                }
                 const newData = data
                     .slice(startIndex, endIndex)
                     .map((item, index) => ({
@@ -1060,35 +1063,17 @@ export default {
                 newData.forEach((news, index) => {
                     Object.keys(news.item).forEach((key, newIndex) => {
                         if(prefixData[index]){
-                            const isCheck = prefixData[index]['_isChecked'] ? prefixData[index]['_isChecked'] : false;
+                            const prefixDataId = prefixData[index].item ? prefixData[index].item.id : prefixData[index].id;
+                            // 这里加多了一层判断逻辑，处理删除表格数据时，数据项对应不上的问题
+                            const isCheck = prefixData[index] && data.some(item => item.id === prefixDataId) ? prefixData[index]['_isChecked'] : false;
                             news[key] = news.item[key];
                             news['_isChecked'] = isSelectAll ? true : isCheck; // 若为全选，每次滚动加载数据时勾上
                         }
-                        
                     });
                 });
+                
                 return (this.dataList = newData);
             }
-            const newIndexes = new Array(endIndex - startIndex)
-                .fill(startIndex)
-                .map((i, d) => i + d);
-            const diffIndexes = dataList.reduce((acc, cur, idx) => {
-                if (!newIndexes.includes(cur.pos)) {
-                    acc[acc.length] = idx;
-                }
-                return acc;
-            }, []);
-            let newIndex =
-                direction > 0
-                    ? endIndex - diffIndexes.length /* down */
-                    : startIndex; /* up */
-            diffIndexes.forEach((index) => {
-                const item = dataList[index];
-                item.data = data[newIndex]; /* update data by new index */
-                item.top = (newIndex ? newIndex : index) * itemHeight;
-                item.pos = newIndex ? newIndex++ : index++;
-            });
-            return data;
         },
     }
 }
