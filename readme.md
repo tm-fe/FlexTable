@@ -149,7 +149,7 @@ export default {
 | autoCalWidth | 是否自动计算width | Boolean | true, 默认true,false时会严格按照设置的width来展示 |
 | span-method | 合并行（合并列暂未实现） | Function | 方法的参数是一个对象，里面包含当前行row、当前列column、当前行号rowIndex、当前列号columnIndex四个属性。该函数可以返回一个包含两个元素的数组，第一个元素代表rowspan，第二个元素代表colspan。 也可以返回一个键名为rowspan和colspan的对象。具体见 demo |
 | virtualScroll | 虚拟滚动的展示条数（设置此值即自动开启虚拟滚动功能） | Number |  |
-| virtualHeight | 虚拟滚动的单条数据高度 | Number | 40 |
+| virtualHeight | 虚拟滚动的单条数据高度（开启虚拟滚动时必填，否则表格会有间隙错位）| Number | 40 |
 
 ### Table events
 
@@ -203,6 +203,15 @@ export default {
 ## asyncRender
 
 **异步渲染功能，适用于数据量特别大，改善首次渲染慢的情况。asyncRender 值为 mounted 之前首次渲染的行数，剩余行数会在 mounted 之后以 RAF 的方式逐行渲染，因此如果没有设置表格最大高度 height, 可能会造成页面抖动和 reflow, 建议设置 table height prop。 此外， 当表格数据 data 属性变化时，也会造成整表重新渲染，而失去 vue diff 的优势， 可以在首次异步渲染完成后的 on-render-done 事件中，将 asyncRender 的值改为 pageSize 相同的值，这样可以避免整表重新渲染。**
+
+## virtualScroll
+
+虚拟滚动功能注意点：
+
+- 1. 只支持每条数据高度一致的情况，不支持展开行以及任何会改变单元格高度的方式；
+- 2. 不支持分组表头；
+- 3. 当表格有固定列的情况，虚拟滚动可能会有延迟
+- 4. 必须给源数据每一项加上唯一id。必须确定且唯一。假如用随机数，会导致每次的id都不一致，vue会误以为是有是数据更新，无法复用。详见Vue的dIff算法。
 
 ## Test
 ```bash
