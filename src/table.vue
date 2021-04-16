@@ -479,8 +479,9 @@ export default {
     },
     watch: {
         data: {
-            handler: function () {
+            handler: function (val) {
                 if (this.isVirtualScroll) {
+                    this.prefixData = val;
                     this.doLayout();
                     setTimeout(() => {
                         this.updateTable(true);
@@ -691,12 +692,12 @@ export default {
             let selection;
             if (!this.prefixData.length) {
                 this.prefixData = JSON.parse(JSON.stringify(this.data));
-            }
+            } 
             if (!row._isDisabled) {
                 // disabled 状态禁止更改 check 状态
                 if (this.isVirtualScroll) {
                     const selectIndex = row.index - 1;
-                    this.prefixData[selectIndex]['_isChecked'] = !this.prefixData[selectIndex]['_isChecked']
+                    this.$set(this.prefixData[selectIndex], '_isChecked', !this.prefixData[selectIndex]['_isChecked'])
                 } else {
                     row._isChecked = !row._isChecked;
                 }
@@ -714,6 +715,7 @@ export default {
                 );
                 selection = this.getSelection();
             }
+
             this.isSelectAll = isCheckedAll;
             this.$refs.tableHeader.handleChangeStatus(isCheckedAll);
             const curRow = JSON.parse(JSON.stringify(row));
