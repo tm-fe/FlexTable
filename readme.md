@@ -32,8 +32,6 @@ To view demo examples locally clone the repo and run `yarn install && yarn dev` 
 
 ![flextable](https://user-images.githubusercontent.com/6723674/57348072-4db8ef80-7187-11e9-98eb-2b613073f266.gif)
 
-![image](https://github.com/stzhongjie/FlexTable/blob/master/src/img/demo.gif)
-
 ## Feature
 
 - [x] 支持最大高度，超过 fixed header
