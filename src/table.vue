@@ -23,6 +23,15 @@
             ></table-head>
             <!-- /flex-table-head -->
 
+            <table-sum
+                v-if="headSum"
+                ref="tableSum"
+                :cal-width="calWidth"
+                :columns="tableColumns"
+                :headSum="headSum"
+            ></table-sum>
+            <!-- /flex-table-headSum -->
+
             <table-body
                 v-bind="$props"
                 ref="tableBody"
@@ -69,6 +78,15 @@
                 @on-col-resize="onColResizeStart"
             ></table-head>
 
+            <table-sum
+                v-if="headSum"
+                ref="tableSum"
+                :cal-width="calWidth"
+                :columns="tableColumns"
+                :headSum="headSum"
+            ></table-sum>
+            <!-- /flex-table-headSum -->
+
             <table-body
                 v-bind="$props"
                 ref="tableBody"
@@ -112,6 +130,15 @@
                     @on-sort-change="onSortChange"
                     @on-col-resize="onColResizeStart"
                 ></table-head>
+
+                <table-sum
+                    v-if="headSum"
+                    ref="tableSum"
+                    :cal-width="calWidth"
+                    :columns="tableColumns"
+                    :headSum="headSum"
+                ></table-sum>
+                <!-- /flex-table-headSum -->
 
                 <table-body
                     v-bind="$props"
@@ -206,6 +233,7 @@
 import tableHead from './tableHead.vue';
 import tableBody from './tableBody.vue';
 import tableFoot from './tableFoot.vue';
+import tableSum from './tableSum.vue';
 import tableScrollBar from './tableScrollBar.vue';
 import Spinner from './Spinner.vue';
 import debounce from "lodash.debounce";
@@ -225,6 +253,7 @@ export default {
         tableFoot,
         tableScrollBar,
         Spinner,
+        tableSum,
     },
     props: {
         data: {
@@ -234,6 +263,9 @@ export default {
             }
         },
         sum: {
+            type: [Object, Boolean],
+        },
+        headSum: {
             type: [Object, Boolean],
         },
         columns: {
@@ -542,6 +574,9 @@ export default {
         sum: function() {
             this.calHeight();
         },
+        headSum: function() {
+            this.calHeight();
+        },
         showScrollBar: function () {
             if (this.isVirtualScroll) {
                 return this.totalHeight > this.maxHeight;
@@ -717,7 +752,7 @@ export default {
             }
 
             this.isSelectAll = isCheckedAll;
-            this.$refs.tableHeader.handleChangeStatus(isCheckedAll);
+            this.$refs.tableHeader && this.$refs.tableHeader.handleChangeStatus(isCheckedAll);
             const curRow = JSON.parse(JSON.stringify(row));
             if (!row._isChecked) {
                 this.$emit('on-selection-cancel', curRow);

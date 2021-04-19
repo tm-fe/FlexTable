@@ -8,14 +8,24 @@
         :loading="loading"
         :columns="columns"
         :data="list"
-        :sum="sum"
+        :headSum="headSum"
         :minWidth="80"
         :maxWidth="600"
         @on-scroll-x="onTableScroll"
-    ></flex-table>
+    >
+        <template slot-scope="{ row }" slot="name">
+            <div v-if="row.type">
+                slotSum
+            </div>
+            <div v-if="!row.type">
+                {{row.name}}
+            </div>
+        </template>
+    </flex-table>
 </div>
 </template>
 <script>
+// :sum="sum"
 // import flexTable from '../../index.js';
 
 const aTestList = [];
@@ -42,7 +52,8 @@ export default {
                 {
                     title: 'Name',
                     key: 'name',
-                    width: 240
+                    width: 240,
+                    type: 'slot',
                 },
                 {
                     title: 'Age',
@@ -86,6 +97,13 @@ export default {
                 address: 'London',
                 date: '2016-10-01',
             },
+            headSum:{
+                type: 'headSum',
+                name: 'I m Head Sum',
+                age: 24,
+                address: 'London',
+                date: '2016-10-01',
+            }
         }
     },
     mounted() {},
