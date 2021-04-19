@@ -8,7 +8,9 @@
         :loading="loading"
         :columns="columns"
         :data="list"
+        :sum="headSum"
         :headSum="headSum"
+        :height="300"
         :minWidth="80"
         :maxWidth="600"
         @on-scroll-x="onTableScroll"
@@ -25,11 +27,10 @@
 </div>
 </template>
 <script>
-// :sum="sum"
 // import flexTable from '../../index.js';
 
 const aTestList = [];
-for(let i=0;i<10;i++){
+for(let i=0;i<20;i++){
     const oTestData = {
         name: 'John Brown' + i,
         age: 18,
@@ -54,6 +55,7 @@ export default {
                     key: 'name',
                     width: 240,
                     type: 'slot',
+                    fixed: 'left',
                 },
                 {
                     title: 'Age',
@@ -61,7 +63,8 @@ export default {
                     width: 140,
                     render(h, params){
                         return h('span', 'age: '+ params.row.age)
-                    }
+                    },
+                    fixed: 'left',
                 },
                 {
                     title: 'Address',

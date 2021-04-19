@@ -46,7 +46,7 @@ export default {
                     type: 'selection',
                     width: 20,
                     align: 'center',
-                    fixed: 'left'
+                    // fixed: 'left'
                 },
                 {
                     title: 'Name',

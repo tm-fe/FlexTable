@@ -5,7 +5,6 @@
             <div 
                 :class="{
                     'flex-table-col': true,
-                    'flex-table-hidden': isInvisible(item)
                     }" 
                 v-for="(item, index) in columns"
                 :key="index"
@@ -112,10 +111,12 @@ export default {
 <style lang="less" scoped>
 .flex-table-headSum{
     border-top: 1px solid #e9eaec;
+    border-right: 1px solid #e9eaec;
+    border-bottom: 1px solid #e9eaec;
     text-align: left;
     box-sizing: border-box;
     p {
-    margin: 0;
+        margin: 0;
     }
 }
 </style>

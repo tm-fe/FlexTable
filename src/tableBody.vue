@@ -1,8 +1,9 @@
 <template>
+<!-- :style="isVirtualScroll ? style : null" -->
     <div
         class="flex-table-body"
         :class="{ 'flex-table-fixed-header': maxHeight }"
-        :style="isVirtualScroll ? style : null"
+        :style="style"
         @mouseleave="mouseleave"
     >
         <div v-for="(item, index) in rowSpanList" :key="item.id ? item.id : index">
@@ -83,6 +84,12 @@ export default {
         columns: {
             type: Array,
         },
+        headSum: {
+            type: [Object, Boolean],
+        },
+        height: {
+            type: Number,
+        },
         maxHeight: {
             type: Number,
         },
@@ -126,13 +133,15 @@ export default {
     },
     computed: {
         style() {
-            if (this.virtualHeight) {
+            const tableSumHeight = this.$parent.$refs.tableSum ? this.$parent.$refs.tableSum.$el.offsetHeight : 0;
+            if (this.virtualScroll) {
                 return {
-                    height: this.maxHeight ? `${this.maxHeight}px` : `auto`,
+                    height: this.maxHeight ? `${this.maxHeight + tableSumHeight}px` : `auto`,
                 };
             }
+
             return {
-                'max-height': this.maxHeight ? `${this.maxHeight}px` : `auto`,
+                'max-height': this.maxHeight ? `${this.maxHeight - tableSumHeight}px` : `auto`,
             };
         },
         defaultHeight() {

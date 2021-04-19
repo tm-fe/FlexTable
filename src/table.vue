@@ -77,7 +77,6 @@
                 @on-sort-change="onSortChange"
                 @on-col-resize="onColResizeStart"
             ></table-head>
-
             <table-sum
                 v-if="headSum"
                 ref="tableSum"
@@ -371,6 +370,7 @@ export default {
             calWidth: {},
             tableColumns: [],
             headerH: 38,
+            maxHeight: 0,
             bodyH: 0,
             footH: 54,
             scrollTop: 0,
@@ -451,7 +451,7 @@ export default {
             if (this.isVirtualScroll) {
                 return this.totalHeight > this.maxHeight;
             }
-            return this.bodyH > this.maxHeight;
+            return this.bodyH > this.height;
         },
         getFixedHeadClass: function() {
             if (this.isFixedHead) {
@@ -493,14 +493,18 @@ export default {
                 overflow: 'hidden',
             };
         },
-        maxHeight() {
-            return this.virtualScroll * this.itemHeight;
-        },
+        // maxHeight() {
+        //     return this.virtualScroll * this.itemHeight;
+        // },
         isVirtualScroll() {
             return this.virtualScroll;
         },
     },
     mounted(){
+        if(this.isVirtualScroll){
+            this.maxHeight = this.virtualScroll * this.itemHeight;
+        }
+        
         this.doLayout();
         window.addEventListener('resize',this.doLayout);
         window.addEventListener('scroll',this.winScroll, false);
@@ -537,8 +541,14 @@ export default {
             },
             deep: true,
         },
-        height: function(val){
-            this.calHeight();
+        // height: function(val){
+        //     this.calHeight();
+        // },
+        height: {
+            handler(value) {
+                this.calHeight();
+            },
+            deep: true,
         },
         columns: {
             handler: function(arr) {
@@ -578,10 +588,11 @@ export default {
             this.calHeight();
         },
         showScrollBar: function () {
-            if (this.isVirtualScroll) {
-                return this.totalHeight > this.maxHeight;
-            }
-            return this.bodyH > this.maxHeight;
+            // if (this.isVirtualScroll) {
+            //     return this.totalHeight > this.maxHeight;
+            // }
+            // return this.bodyH > this.maxHeight;
+            this.resize();
         },
         scrollLeft(left) {
             this.$refs.flexTableLayout.scrollLeft = left;
@@ -885,7 +896,7 @@ export default {
         },
         calHeight() {
             requestAnimationFrame(() => {
-                if (!this.tableHeight) {
+                if (this.isVirtualScroll && !this.tableHeight) {
                     return;
                 }
                 const $refs = this.$refs;
@@ -904,7 +915,8 @@ export default {
                 this.footH = footH;
                 this.bodyH = bodyH;
                 if (!this.isVirtualScroll) {
-                    this.maxHeight = this.tableHeight - headerH - footH;
+                    // this.maxHeight = this.tableHeight - headerH - footH;
+                    this.maxHeight = this.height - headerH - footH;
                 } else {
                     this.bodyH = this.totalHeight;
                 }
