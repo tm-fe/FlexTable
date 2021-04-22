@@ -6,7 +6,7 @@
         :style="style"
         @mouseleave="mouseleave"
     >
-        <div v-for="(item, index) in rowSpanList" :key="item.id ? item.id : index">
+        <!-- <div v-for="(item, index) in rowSpanList" :key="item.id ? item.id : index">
             <div
                 :class="`flex-table-tr flex-table-span ${isVirtualScroll ? 'virtualItem' : 'commonItem bgColor'}`"
                 :style="[item.style, isVirtualScroll ? `transform: translateY(${item.top}px);` : '', isVirtualScroll ? `height: ${virtualHeight}px` : 'auto']">
@@ -28,7 +28,29 @@
                     @on-toggle-expand="toggleExpand"
                 ></table-tr>
             </div>
-        </div>
+        </div> -->
+        <template v-for="item in rowSpanList">
+            <div
+                :class="`flex-table-tr flex-table-span ${isVirtualScroll ? 'virtualItem' : 'commonItem bgColor'}`"
+                :style="item.style">
+                <table-tr
+                    row-span
+                    :column-index="item.columnIndex"
+                    :key="item.rowIndex"
+                    :row="item.row"
+                    :rowIndex="item.rowIndex"
+                    :columns="columns"
+                    :cal-width="calWidth"
+                    :onlyFixed="onlyFixed"
+                    :rowHeight="item.height"
+                    :hoverIndex="hoverIndex"
+                    :selectedClass="selectedClass"
+                    :spanMethod="spanMethod"
+                    @on-toggle-select="toggleSelect"
+                    @on-toggle-expand="toggleExpand"
+                ></table-tr>
+            </div>
+        </template>
 
         <div class="flex-table-tr" v-if="data.length" :style="isVirtualScroll ? scrollerStyle : null">
             <div v-for="(row, index) in data" :key="row.id ? row.id : index" :class="`${isVirtualScroll ? 'virtualItem' : 'commonItem bgColor'}`" 
@@ -211,7 +233,6 @@ export default {
                         rowIndex,
                         columnIndex,
                     });
-
                     if (setting.rowspan > 1) {
                         const spanStart = rowIndex; // 开始位置
                         const spanEnd = rowIndex + setting.rowspan - 1; // 结束位置
@@ -235,6 +256,8 @@ export default {
                     }
                 });
             });
+
+
             this.rowSpanList = list;
             return list;
         },
@@ -267,12 +290,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-// .virtualItem:nth-child(odd) {
-//     background: #f9f9f9;
-// }
-// .commonItem:nth-child(odd) {
-//     background: #f9f9f9;
-// }
 .bgColor {
     &:nth-child(odd) {
         background: #f9f9f9;
@@ -286,15 +303,18 @@ export default {
         background: #fff;
     }
 }
+.virtualItem, .commonItem{
+    .flex-table-row{
+        border-bottom: 1px solid #e9eaec;
+    }
+}
 .virtualItem {
     overflow: hidden;
     position: absolute;
     left: 0;
     width: 100%;
 }
-.commonItem {
-    &:last-child {
-        border-bottom: 1px solid #eeeeee;
-    }
+.flex-table-body .flex-table-tr > .flex-table-row{
+    border-bottom: 0 !important;
 }
 </style>

@@ -5,7 +5,6 @@
     background-color: #fff;
     // border-bottom: 1px solid #dddee1;
     position: relative;
-
     &-wrap{
         position: relative;
         border: 1px solid #dddee1;
@@ -398,6 +397,20 @@
     }
 }
 
-.flex-table-scroll-y{
-    width: 18px;
+* {
+    /*滚动条整体样式*/
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #999;
+        opacity: 0.8;
+        border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+        border-radius: 5px;
+    }
 }
