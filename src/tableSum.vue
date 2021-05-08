@@ -2,10 +2,10 @@
 <template>
     <div class="flex-table-headSum" :style="{ height: height }">
         <div class="flex-table-row">
-            <div 
+            <div
                 :class="{
                     'flex-table-col': true,
-                    }" 
+                    }"
                 v-for="(item, index) in columns"
                 :key="index"
                 :style="setCellStyle(item)"
@@ -111,7 +111,6 @@ export default {
 <style lang="less" scoped>
 .flex-table-headSum{
     border-top: 1px solid #e9eaec;
-    border-right: 1px solid #e9eaec;
     border-bottom: 1px solid #e9eaec;
     text-align: left;
     box-sizing: border-box;
