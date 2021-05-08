@@ -6,7 +6,7 @@
     <flex-table
         :loading="loading" 
         :columns="columns" 
-        :data="list"
+        :data="aTestList"
         :sum="sum"
         :fixed-head="true"
         :async-render="10"
@@ -22,18 +22,18 @@
 
 
 const aTestList = [];
-for(let i=0;i<80;i++){
-    const oTestData = {
-        id: i,
-        name: 'John Brown',
-        age: 18,
-        address: 'New York No. 1 Lake Park',
-        real_address: 'New York No. 1 Lake Park',
-        date: '2016-10-03',
-        _isChecked: true
-    };
-    aTestList.push(oTestData);
-}
+// for(let i=0;i<20;i++){
+//     const oTestData = {
+//         id: i,
+//         name: 'John Brown',
+//         age: 18,
+//         address: 'New York No. 1 Lake Park',
+//         real_address: 'New York No. 1 Lake Park',
+//         date: '2016-10-03',
+//         _isChecked: true
+//     };
+//     aTestList.push(oTestData);
+// }
 
 export default {
     // components:{
@@ -41,6 +41,7 @@ export default {
     // },
     data(){
         return {
+            aTestList: [],
             columns: [
                 {
                     type: 'selection',
@@ -87,7 +88,24 @@ export default {
             },
         }
     },
-    mounted() {},
+    mounted() {
+        this.aTestList = [{
+            id: 1,
+            name: 'John Brown1',
+            _disabled: false,
+            _isChecked: true
+        },{
+            id: 2,
+            name: 'John Brown2',
+            _disabled: false,
+            _isChecked: true
+        },{
+            id: 3,
+            name: 'John Brown3',
+            _disabled: false,
+            _isChecked: true
+        }]
+    },
     methods: {
         onSelectionChange(selection, row) {
             console.log('onSelectionChange', selection, row);

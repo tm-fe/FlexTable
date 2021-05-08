@@ -50,7 +50,7 @@ export default {
                     sortable: true,
                     render(h, params){
                         return h('span', 'age: '+ params.row.age)
-                    }
+                    },
                 },
                 {
                     title: 'Height',

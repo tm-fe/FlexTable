@@ -1,34 +1,10 @@
 <template>
-<!-- :style="isVirtualScroll ? style : null" -->
     <div
         class="flex-table-body"
         :class="{ 'flex-table-fixed-header': maxHeight }"
         :style="style"
         @mouseleave="mouseleave"
     >
-        <!-- <div v-for="(item, index) in rowSpanList" :key="item.id ? item.id : index">
-            <div
-                :class="`flex-table-tr flex-table-span ${isVirtualScroll ? 'virtualItem' : 'commonItem bgColor'}`"
-                :style="[item.style, isVirtualScroll ? `transform: translateY(${item.top}px);` : '', isVirtualScroll ? `height: ${virtualHeight}px` : 'auto']">
-                <table-tr
-                    v-bind="$props"
-                    row-span
-                    :column-index="item.columnIndex"
-                    :key="item.rowIndex"
-                    :row="item.row"
-                    :rowIndex="item.rowIndex"
-                    :columns="columns"
-                    :cal-width="calWidth"
-                    :onlyFixed="onlyFixed"
-                    :rowHeight="isVirtualScroll ? virtualHeight : item.height"
-                    :hoverIndex="hoverIndex"
-                    :selectedClass="selectedClass"
-                    :spanMethod="spanMethod"
-                    @on-toggle-select="toggleSelect"
-                    @on-toggle-expand="toggleExpand"
-                ></table-tr>
-            </div>
-        </div> -->
         <template v-for="item in rowSpanList">
             <div
                 :class="`flex-table-tr flex-table-span ${isVirtualScroll ? 'virtualItem' : 'commonItem bgColor'}`"
