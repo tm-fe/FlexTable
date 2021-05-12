@@ -92,7 +92,7 @@ export default {
         this.aTestList = [{
             id: 1,
             name: 'John Brown1',
-            _disabled: false,
+            _disabled: true,
             _isChecked: true
         },{
             id: 2,

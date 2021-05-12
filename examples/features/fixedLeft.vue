@@ -8,7 +8,7 @@
             :columns="columns" 
             :data="list"
             :sum="sum"
-            :height="300"
+            :fixed-head="true"
             @on-sort-change="onSortChange"
         ></flex-table>
     </div>
@@ -17,13 +17,15 @@
 // import flexTable from '../../index.js';
 
 const aTestList = [];
-for(let i=0;i<100;i++){
+for(let i=0;i<1;i++){
     const oTestData = {
         name: 'John Brown',
         age: 18,
         hegith: '178',
         address: 'New York No. 1 Lake Park',
         date: '2016-10-03',
+        _disabled: false,
+        _isChecked: true
     };
     aTestList.push(oTestData);
 }
@@ -36,21 +38,17 @@ export default {
         return {
             columns: [
                 {
+                    type: 'selection',
+                    width: 20,
+                    align: 'center',
+                    fixed: 'left'
+                },
+                {
                     title: 'Name',
                     key: 'name',
                     width: 100,
                     fixed: 'left',
                     sortable: true,
-                },
-                {
-                    title: 'Age',
-                    key: 'age',
-                    fixed: 'right',
-                    width: 150,
-                    sortable: true,
-                    render(h, params){
-                        return h('span', 'age: '+ params.row.age)
-                    },
                 },
                 {
                     title: 'Height',

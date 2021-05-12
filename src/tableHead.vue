@@ -15,7 +15,7 @@
                         <!-- <Checkbox :checked="isSelectAll" :disabled="!data.length || !isRenderDone" @input="selectAll"></Checkbox> -->
                         <Checkbox
                             v-model="isChecked"
-                            :disabled="!data.length || !isRenderDone"
+                            :disabled="!data.length || !isRenderDone || isAllDisabled"
                             @input="selectAll"
                         ></Checkbox>
                     </template>
@@ -114,6 +114,9 @@ export default {
                 return 'auto';
             }
         },
+        isAllDisabled() {
+            return this.data.length && this.data.every(item => item._disabled);
+        }
     },
     watch: {
         columns: function (val) {

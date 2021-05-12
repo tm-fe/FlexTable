@@ -382,7 +382,7 @@ export default {
             scrollYScrolling: false,
             hoverIndex: undefined,
             isRenderDone: true,
-            fixedHeadStyle: {},
+            fixedHeadStyle: {'overflow-x': 'hidden'},
             isFixedHead: false,
             colResize: {
                 onColResizing: false,
@@ -1127,3 +1127,8 @@ export default {
     }
 }
 </script>
+<style lang="less" scoped>
+.flex-table-head-fixed{
+    overflow-x: hidden;
+}
+</style>

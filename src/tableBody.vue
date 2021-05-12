@@ -140,6 +140,7 @@ export default {
 
             return {
                 'max-height': this.maxHeight ? `${this.maxHeight - tableSumHeight}px` : `auto`,
+                'z-index': !this.data.length ? '999' : '0'
             };
         },
         defaultHeight() {
