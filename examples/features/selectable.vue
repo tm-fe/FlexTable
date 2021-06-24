@@ -9,6 +9,8 @@
         :data="aTestList"
         :sum="sum"
         :fixed-head="true"
+        :multiple="false"
+        :selectedData="selectedData"
         :async-render="10"
         @on-selection-change="onSelectionChange"
         @on-selection-cancel="onSelectionCancel"
@@ -86,13 +88,14 @@ export default {
                 address: 'London',
                 date: '2016-10-01',
             },
+            selectedData: [1],
         }
     },
     mounted() {
         this.aTestList = [{
             id: 1,
             name: 'John Brown1',
-            _disabled: true,
+            _disabled: false,
             _isChecked: true
         },{
             id: 2,
@@ -115,7 +118,7 @@ export default {
         },
         onAllCancel(cancelSelection) {
             console.log('onAllCancel', cancelSelection);
-        },
+        }
     }
 }
 </script>

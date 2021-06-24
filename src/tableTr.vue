@@ -1,6 +1,7 @@
 <template>
     <div class="flex-table-row" :class="{'flex-table-hover': isHover}" :style="{ 'height': height}" @mouseenter="mouseenter">
         <table-td
+            v-bind="$props"
             v-for="(column, i) in columns"
             v-if="!rowSpan || (rowSpan && i=== columnIndex)"
             :key="column.key + '_'+ i + '_' + rowIndex"
@@ -70,7 +71,11 @@ export default {
             default: function() {
                 return [];
             }
-        }
+        },
+        multiple: {
+            type: Boolean,
+            default: true,
+        },
     },
     mounted() {
         this.onRowHeightChange();

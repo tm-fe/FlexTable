@@ -11,8 +11,7 @@
                 :style="setCellStyle(item)"
             >
                 <template v-if="!isHidden(item)">
-                    <template v-if="item.type === 'selection'">
-                        <!-- <Checkbox :checked="isSelectAll" :disabled="!data.length || !isRenderDone" @input="selectAll"></Checkbox> -->
+                    <template v-if="item.type === 'selection' && multiple">
                         <Checkbox
                             v-model="isChecked"
                             :disabled="!data.length || !isRenderDone || isAllDisabled"
@@ -95,6 +94,10 @@ export default {
         virtualHeight: {
             type: Number,
             default: 40,
+        },
+        multiple: {
+            type: Boolean,
+            default: true,
         },
     },
     data() {

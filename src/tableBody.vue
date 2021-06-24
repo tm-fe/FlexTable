@@ -128,6 +128,10 @@ export default {
         scrollerStyle: {
             type: Object,
         },
+        multiple: {
+            type: Boolean,
+            default: true,
+        },
     },
     computed: {
         style() {
