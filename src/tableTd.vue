@@ -199,6 +199,10 @@ export default {
 /deep/ .input-box{
     position: relative;
     border: 1px solid #ccc !important;
+    box-shadow: none !important;
+}
+/deep/ .radio-component>input:checked+label>.input-box{
+    border: 1px solid #3475ff  !important;
 }
 /deep/ .input-box-circle {
     width: 8px !important;
@@ -208,7 +212,7 @@ export default {
     margin-top: -4px !important;
     left: 50%;
     margin-left: -4px !important;
-    background: #666 !important;
+    background: #3475ff !important;
 }
 </style>
 

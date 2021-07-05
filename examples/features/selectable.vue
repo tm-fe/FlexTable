@@ -1,27 +1,32 @@
 <template>
-<div>
-    <h3>多选</h3>
-    <p>选择行 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/selectable.vue">source code</a></p>
-    
-    <flex-table
-        :loading="loading" 
-        :columns="columns" 
-        :data="aTestList"
-        :sum="sum"
-        :fixed-head="true"
-        :multiple="false"
-        :selectedData="selectedData"
-        :async-render="10"
-        @on-selection-change="onSelectionChange"
-        @on-selection-cancel="onSelectionCancel"
-        @on-all-cancel="onAllCancel"
-        :fixedHead="false"
-    ></flex-table>
-</div>
+    <div>
+        <h3>多选</h3>
+        <p>
+            选择行
+            <a
+                href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/selectable.vue"
+                >source code</a
+            >
+        </p>
+
+        <flex-table
+            :loading="loading"
+            :columns="columns"
+            :data="aTestList"
+            :sum="sum"
+            :fixed-head="true"
+            :multiple="false"
+            :selectedData="selectedData"
+            :async-render="10"
+            @on-selection-change="onSelectionChange"
+            @on-selection-cancel="onSelectionCancel"
+            @on-all-cancel="onAllCancel"
+            :fixedHead="false"
+        ></flex-table>
+    </div>
 </template>
 <script>
 // import flexTable from '../../index.js';
-
 
 const aTestList = [];
 // for(let i=0;i<20;i++){
@@ -41,7 +46,7 @@ export default {
     // components:{
     //     flexTable
     // },
-    data(){
+    data() {
         return {
             aTestList: [],
             columns: [
@@ -49,20 +54,20 @@ export default {
                     type: 'selection',
                     width: 20,
                     align: 'center',
-                    fixed: 'left'
+                    fixed: 'left',
                 },
                 {
                     title: 'Name',
                     key: 'name',
-                    width: 150
+                    width: 150,
                 },
                 {
                     title: 'Age',
                     key: 'age',
                     width: 150,
-                    render(h, params){
-                        return h('span', 'age: '+ params.row.age)
-                    }
+                    render(h, params) {
+                        return h('span', 'age: ' + params.row.age);
+                    },
                 },
                 {
                     title: 'Address',
@@ -77,19 +82,19 @@ export default {
                 {
                     title: 'Date',
                     key: 'date',
-                    width: 250
+                    width: 250,
                 },
             ],
             loading: false,
             list: aTestList,
-            sum:{
+            sum: {
                 name: 'Jim Green',
                 age: 24,
                 address: 'London',
                 date: '2016-10-01',
             },
             selectedData: [1],
-        }
+        };
     },
     mounted() {
         this.aTestList = [{
@@ -108,6 +113,7 @@ export default {
             _disabled: false,
             _isChecked: true
         }]
+        
     },
     methods: {
         onSelectionChange(selection, row) {
@@ -118,7 +124,7 @@ export default {
         },
         onAllCancel(cancelSelection) {
             console.log('onAllCancel', cancelSelection);
-        }
-    }
-}
+        },
+    },
+};
 </script>

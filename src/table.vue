@@ -840,7 +840,7 @@ export default {
                 selection = [];
                 const data = JSON.parse(JSON.stringify(this.dataList));
                 for (const item of data) {
-                    this.$set(item, '_isChecked', item.name === row.name);
+                    this.$set(item, '_isChecked', item.id === row.id);
                 }
                 this.dataList = Object.assign([], this.dataList, data);
                 selection.push(row);
