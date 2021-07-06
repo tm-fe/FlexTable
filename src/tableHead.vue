@@ -11,12 +11,16 @@
                 :style="setCellStyle(item)"
             >
                 <template v-if="!isHidden(item)">
-                    <template v-if="item.type === 'selection' && multiple">
+                    <template v-if="item.type === 'selection' && multiple && $slots['batchCheck']">
+                        <slot name="batchCheck"/>
+                    </template>
+                    <template v-if="item.type === 'selection' && multiple && !$slots['batchCheck']">
                         <Checkbox
                             v-model="isChecked"
                             :disabled="!data.length || !isRenderDone || isAllDisabled"
                             @input="selectAll"
                         ></Checkbox>
+                        <slot name="batchCheck"/>
                     </template>
                     <template v-else>
                         <Expand

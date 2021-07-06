@@ -20,7 +20,11 @@
                     @on-sort-change="onSortChange"
                     @on-col-resize="onColResizeStart"
                     :style="fixedHead ? 'visibility: hidden;' : ''"
-                ></table-head>
+                >
+                    <template #batchCheck>
+                        <slot name="batchCheck" />
+                    </template>
+                </table-head>
                 <!-- /flex-table-head -->
 
                 <table-sum
@@ -83,7 +87,11 @@
                     @on-select-all="selectAll"
                     @on-sort-change="onSortChange"
                     @on-col-resize="onColResizeStart"
-                ></table-head>
+                >
+                    <template #batchCheck>
+                        <slot name="batchCheck" />
+                    </template>
+                </table-head>
                 <table-sum
                     v-if="headSum"
                     ref="tableSum"
