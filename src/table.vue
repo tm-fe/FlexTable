@@ -147,7 +147,11 @@
                         @on-select-all="selectAll"
                         @on-sort-change="onSortChange"
                         @on-col-resize="onColResizeStart"
-                    ></table-head>
+                    >
+                        <template #batchCheck>
+                            <slot name="batchCheck" />
+                        </template>
+                    </table-head>
 
                     <table-sum
                         v-if="headSum"
@@ -215,7 +219,11 @@
                         @on-select-all="selectAll"
                         @on-sort-change="onSortChange"
                         @on-col-resize="onColResizeStart"
-                    ></table-head>
+                    >
+                        <template #batchCheck>
+                            <slot name="batchCheck" />
+                        </template>
+                    </table-head>
                     <!-- /flex-table-head -->
                 </div>
                 <div
@@ -238,7 +246,11 @@
                         @on-select-all="selectAll"
                         @on-sort-change="onSortChange"
                         @on-col-resize="onColResizeStart"
-                    ></table-head>
+                    >
+                        <template #batchCheck>
+                            <slot name="batchCheck" />
+                        </template>
+                    </table-head>
                 </div>
             </div>
         </div>

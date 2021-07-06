@@ -22,7 +22,7 @@
             @on-selection-change="onSelectionChange"
             @on-selection-cancel="onSelectionCancel"
             @on-all-cancel="onAllCancel"
-            :fixedHead="false"
+            :fixedHead="true"
         >   
             <template v-slot:batchCheck>
                 <div>demo</div>
