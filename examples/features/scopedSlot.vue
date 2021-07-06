@@ -8,6 +8,7 @@
         :loading="loading" 
         :columns="columns" 
         :data="list"
+        uniqueKey="name"
         :sum="sum">
         <template slot-scope="{ row, index }" slot="operation">
             <button style="margin-right: 5px" @click="show(index)">View</button>

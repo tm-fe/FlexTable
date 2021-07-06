@@ -29,7 +29,7 @@
         </template>
 
         <div class="flex-table-tr" v-if="data.length" :style="isVirtualScroll ? scrollerStyle : null">
-            <div v-for="(row, index) in data" :key="row.id ? row.id : index" :class="`${isVirtualScroll ? 'virtualItem' : 'commonItem bgColor'}`" 
+            <div v-for="(row, index) in data" :key="row[uniqueKey] || row.id || index" :class="`${isVirtualScroll ? 'virtualItem' : 'commonItem bgColor'}`" 
                 :style="{'transform': isVirtualScroll ? `translateY(${row.top}px)` : 'none', 'height': isVirtualScroll ? `${virtualHeight}px` : 'auto'}">
                 <table-tr
                     v-bind="$props"
@@ -84,6 +84,10 @@ export default {
         },
         headSum: {
             type: [Object, Boolean],
+        },
+        uniqueKey: {
+            type: String,
+            default: 'id',
         },
         height: {
             type: Number,

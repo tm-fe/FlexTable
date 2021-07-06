@@ -18,12 +18,15 @@
             :multiple="true"
             :selectedData="selectedData"
             :async-render="10"
+            uniqueKey="name"
             @on-selection-change="onSelectionChange"
             @on-selection-cancel="onSelectionCancel"
             @on-all-cancel="onAllCancel"
             :fixedHead="false"
         >   
-            <template v-slot:batchCheck><div>demo</div></template>
+            <template v-slot:batchCheck>
+                <div>demo</div>
+            </template>
         </flex-table>
     </div>
 </template>

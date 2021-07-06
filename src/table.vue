@@ -301,6 +301,10 @@ export default {
         headSum: {
             type: [Object, Boolean],
         },
+        uniqueKey: {
+            type: String,
+            default: 'id',
+        },
         columns: {
             type: Array,
             default() {
