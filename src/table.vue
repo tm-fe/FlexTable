@@ -211,6 +211,7 @@
             >
                 <div class="flex-table" :style="style">
                     <table-head
+                        v-bind="$props"
                         ref="tableHeader"
                         :cal-width="calWidth"
                         :columns="tableColumns"
@@ -235,6 +236,7 @@
                     :style="{ width: fixedLeftWidth + 'px' }"
                 >
                     <table-head
+                        v-bind="$props"
                         ref="tableHeader"
                         :cal-width="calWidth"
                         :columns="tableColumns"
@@ -864,7 +866,8 @@ export default {
                 selection = [];
                 const data = JSON.parse(JSON.stringify(this.dataList));
                 for (const item of data) {
-                    this.$set(item, '_isChecked', item.id === row.id);
+                    console.log('item: ', item);
+                    this.$set(item, '_isChecked', item[this.uniqueKey] === row.id);
                 }
                 this.dataList = Object.assign([], this.dataList, data);
                 selection.push(row);

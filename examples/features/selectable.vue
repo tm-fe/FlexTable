@@ -15,18 +15,14 @@
             :data="aTestList"
             :sum="sum"
             :fixed-head="true"
-            :multiple="true"
+            :multiple="false"
             :selectedData="selectedData"
             :async-render="10"
-            uniqueKey="name"
             @on-selection-change="onSelectionChange"
             @on-selection-cancel="onSelectionCancel"
             @on-all-cancel="onAllCancel"
             :fixedHead="true"
         >   
-            <template v-slot:batchCheck>
-                <div>demo</div>
-            </template>
         </flex-table>
     </div>
 </template>
