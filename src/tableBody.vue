@@ -5,8 +5,9 @@
         :style="style"
         @mouseleave="mouseleave"
     >
-        <template v-for="item in rowSpanList">
+        <template v-for="(item, index) in rowSpanList">
             <div
+                :key="index"
                 :class="`flex-table-tr flex-table-span ${isVirtualScroll ? 'virtualItem' : 'commonItem bgColor'}`"
                 :style="item.style">
                 <table-tr
@@ -58,7 +59,7 @@
 
         <div v-else>
             <div class="flex-table-col flex-table-tip">
-                {{ !onlyFixed ? noData : '&nbsp;' }}
+                {{ (!onlyFixed && !loading) ? noData : '&nbsp;' }}
             </div>
         </div>
     </div>
@@ -135,6 +136,10 @@ export default {
         multiple: {
             type: Boolean,
             default: true,
+        },
+        loading: {
+            type: Boolean,
+            default: false,
         },
     },
     computed: {

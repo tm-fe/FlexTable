@@ -50,8 +50,25 @@ export default {
                     key: 'date',
                 },
             ],
-            loading: true,
-            list: aTestList,
+            loading: false,
+            list: [],
+        }
+    },
+    mounted() {
+        this.loading = true;
+        this.getList()
+            .then(list => {
+                this.list = list;
+                this.loading = false;
+            });
+    },
+    methods: {
+        getList() {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve(aTestList);
+                }, 2000);
+            });
         }
     }
 }
