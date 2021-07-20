@@ -133,11 +133,11 @@ export default {
         },
         data: {
             handler(val) {
-                const isChecked = val.length && val.filter(item => !item._disabled).every(item => item._isChecked);
-                this.handleChangeStatus(isChecked);
-                if(!val.length){
-                    this.handleChangeStatus(false);
+                let isChecked = false;
+                if (!this.isAllDisabled) {
+                    isChecked = val.filter(item => !item._disabled).every(item => item._isChecked);
                 }
+                this.handleChangeStatus(isChecked);
             },
             deep: true,
         },
@@ -205,6 +205,7 @@ export default {
         },
         handleChangeStatus(status) {
             // 控制是否全选
+            console.log('handleChangeStatus', status);
             this.isChecked = status;
         },
     },
