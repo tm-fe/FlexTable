@@ -15,7 +15,7 @@
                         <div class="headCheckBox">
                         <Checkbox
                             v-model="isChecked"
-                            :disabled="!data.length || !isRenderDone || isAllDisabled"
+                            :disabled="isAllDisabled"
                             @input="selectAll"
                         ></Checkbox>
                         <slot v-if="$slots['batchCheck']" name="batchCheck"/>
@@ -121,7 +121,7 @@ export default {
             }
         },
         isAllDisabled() {
-            return this.data.length && this.data.every(item => item._disabled);
+            return  !this.isRenderDone || !this.data.length || this.data.every(item => item._disabled);
         }
     },
     watch: {
