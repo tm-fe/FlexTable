@@ -205,7 +205,6 @@ export default {
         },
         handleChangeStatus(status) {
             // 控制是否全选
-            console.log('handleChangeStatus', status);
             this.isChecked = status;
         },
     },
