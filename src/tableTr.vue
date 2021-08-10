@@ -113,9 +113,10 @@ export default {
         onRowHeightChange() {
             // 如果是fixed 或者是合并行，则不进行 rowHeight的更新
             if (!this.onlyFixed && !this.rowSpan) {
+                let { height } = this.$el.getBoundingClientRect();
                 this.owner.onRowHeightChange({
                     rowIndex: this.rowIndex,
-                    height: this.$el.offsetHeight,
+                    height,
                 })
             }
         },
