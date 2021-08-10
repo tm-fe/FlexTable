@@ -866,7 +866,6 @@ export default {
                 selection = [];
                 const data = JSON.parse(JSON.stringify(this.dataList));
                 for (const item of data) {
-                    console.log('item: ', item);
                     this.$set(item, '_isChecked', item[this.uniqueKey] === row.id);
                 }
                 this.dataList = Object.assign([], this.dataList, data);
