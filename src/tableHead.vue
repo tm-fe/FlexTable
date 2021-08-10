@@ -190,9 +190,10 @@ export default {
         },
         onRowHeightChange() {
             if (!this.onlyFixed) {
+                let { height } = this.$el.getBoundingClientRect();
                 this.owner.onRowHeightChange({
                     rowIndex: 'header',
-                    height: this.$el.offsetHeight,
+                    height,
                 });
             }
         },
