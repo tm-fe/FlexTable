@@ -163,6 +163,9 @@ export default {
             this.$emit('on-toggle-select', this.rowIndex);
         },
         onToggleExpand() {
+            if (this.renderType !== 'expand') {
+                return;
+            }
             this.expandOpen = !this.expandOpen;
             this.$emit('on-toggle-expand');
         },
