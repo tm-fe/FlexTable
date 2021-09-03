@@ -14,6 +14,7 @@
         :minWidth="80"
         :maxWidth="600"
         @on-scroll-x="onTableScroll"
+        @on-row-click="handleRowClick"
     >
         <template slot-scope="{ row }" slot="name">
             <div v-if="row.type">
@@ -113,6 +114,9 @@ export default {
     methods: {
         onTableScroll(event) {
             console.log(event.target.scrollLeft);
+        },
+        handleRowClick(index, row) {
+            console.log(index, row);
         }
     }
 }
