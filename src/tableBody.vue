@@ -47,6 +47,7 @@
                     :rowSpanColumns="rowSpanColumns"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
+                    @click.native="handleRowClick(index, row)"
                 ></table-tr>
                 <div class="flex-table-expanded" v-if="row._expanded" :key="'expand_'+index">
                     <Expand
@@ -205,6 +206,9 @@ export default {
             if (!row._disableExpand) {
                 this.data[index]._expanded = !this.data[index]._expanded;
             }
+        },
+        handleRowClick(index, row) {
+            this.$emit('on-row-click', index, row);
         },
         mouseleave() {
             this.owner.updateHoverIndex();

@@ -52,6 +52,7 @@
                     :scrollerStyle="scrollerStyle"
                     @scroll.native.passive="syncScroll"
                     @on-toggle-select="toggleSelect"
+                    @on-row-click="handleRowClick"
                 ></table-body>
                 <!-- /flex-table-body -->
 
@@ -115,6 +116,7 @@
                     :selectedClass="selectedClass"
                     :spanMethod="spanMethod"
                     @on-toggle-select="toggleSelect"
+                    @on-row-click="handleRowClick"
                 ></table-body>
 
                 <table-foot
@@ -176,6 +178,7 @@
                         :selectedClass="selectedClass"
                         :spanMethod="spanMethod"
                         @on-toggle-select="toggleSelect"
+                        @on-row-click="handleRowClick"
                     ></table-body>
 
                     <table-foot
@@ -421,6 +424,10 @@ export default {
             type: Number,
             default: 40,
         },
+        enableRowCheck: {
+            type: Boolean,
+            default: false,
+        }
     },
     data() {
         return {
@@ -881,6 +888,12 @@ export default {
                 this.isSelectAll = false;
             }
             this.$emit('on-selection-change', selection, curRow);
+        },
+        handleRowClick(index, row) {
+            this.$emit('on-row-click', index, row);
+            if (this.enableRowCheck) {
+                this.toggleSelect(index);
+            }
         },
         getSelection() {
             const selection = [];
