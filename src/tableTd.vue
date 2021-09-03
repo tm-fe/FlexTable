@@ -2,7 +2,7 @@
     <div
         :class="cellClsName(column, row)"
         :style="setCellStyle(column)"
-        @click="onRowClick"
+        @click="onToggleExpand"
         ref="cell"
     >
         <template v-if="!isHidden">
@@ -161,13 +161,6 @@ export default {
         },
         toggleSelect() {
             this.$emit('on-toggle-select', this.rowIndex);
-        },
-        onRowClick() {
-            if (this.renderType === 'expand') {
-                this.toggleSelect();
-            } else {
-                this.$emit('on-row-click');
-            }
         },
         onToggleExpand() {
             this.expandOpen = !this.expandOpen;
