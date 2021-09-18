@@ -1,7 +1,7 @@
 <template>
     <div :class="wrapClasses" :style="wrapStyle" ref="tableWrap">
         <div
-            class="flex-table-layout"
+            :class="['flex-table-layout', scrollLeft === 0 ? 'flex-table-scroll-left' : '']"
             ref="flexTableLayout"
             @scroll="onScroll"
             @mousewheel="handleMousewheel"
