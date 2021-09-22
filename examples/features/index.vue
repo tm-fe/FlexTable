@@ -10,11 +10,11 @@
         :data="list"
         :sum="headSum"
         :headSum="headSum"
-        :height="300"
         :minWidth="80"
         :maxWidth="600"
         @on-scroll-x="onTableScroll"
         @on-row-click="handleRowClick"
+        fixed-x-scroll
     >
         <template slot-scope="{ row }" slot="name">
             <div v-if="row.type">

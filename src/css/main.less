@@ -385,6 +385,15 @@
         opacity: 0.3;
         cursor: not-allowed;
     }
+    &-fixed-scroll {
+        width: 100%;
+        position: fixed;
+        overflow: auto;
+        bottom: 0;
+        &-content {
+            height: 1px;
+        }
+    }
 }
 .has-scroll-bar{
     .@{fb}-fixed-right-wrap{

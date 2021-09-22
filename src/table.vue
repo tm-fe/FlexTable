@@ -200,6 +200,13 @@
             <slot name="loading" v-if="loading">
                 <Spinner fix size="large"></Spinner>
             </slot>
+            <div class="flex-table-fixed-scroll" 
+                v-if="fixedXScroll" 
+                ref="fixedXScroll"
+                @scroll="onScroll"
+            >
+                <div class="flex-table-fixed-scroll-content"></div>
+            </div>
         </div>
         <div
             :class="getFixedHeadClass"
@@ -427,6 +434,17 @@ export default {
         enableRowCheck: {
             type: Boolean,
             default: false,
+        },
+        scrollContainer: {
+            type: [String, Object]
+        },
+        fixedXScroll: {
+            type: Boolean,
+            default: false,
+        },
+        fixedXScrollBottom: {
+            type: [String, Number],
+            default: 0,
         }
     },
     data() {
@@ -581,6 +599,11 @@ export default {
             window.addEventListener('mouseup', this.onColResizeEnd);
             this.$el.addEventListener('mousemove', this.onColResizeMove);
         }
+        if (this.fixedXScroll) {
+            this.$nextTick(() => {
+                this.initFixedScrollListener();
+            });
+        }
     },
     watch: {
         // selectedData: {
@@ -688,6 +711,7 @@ export default {
             if (flexTableFixedHead) {
                 flexTableFixedHead.scrollLeft = left;
             }
+            this.updateFixedScrollLeft(left);
         },
     },
     updated() {},
@@ -698,6 +722,9 @@ export default {
         window.removeEventListener('scroll', this.winScroll, false);
         window.removeEventListener('mouseup', this.onColResizeEnd);
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
+        if (this._scrollContainer) {
+            this._scrollContainer.removeEventListener('scroll', this.containerScrollFn);
+        }
     },
     beforeCreate() {
         const self = this;
@@ -1050,6 +1077,8 @@ export default {
                 } else {
                     this.bodyH = this.totalHeight;
                 }
+
+                this.updateFixedScroll();
             });
         },
         getMinWidth(col) {
@@ -1264,6 +1293,53 @@ export default {
                 return (this.dataList = newData);
             }
         },
+
+        getScrollContainer() {
+            let scrollContainer = document;
+            if (typeof this.scrollContainer === 'string') {
+                scrollContainer = document.querySelector(this.scrollContainer);
+            } else if (this.scrollContainer instanceof Element) {
+                scrollContainer = this.scrollContainer;
+            }
+            return scrollContainer;
+        },
+
+        initFixedScrollListener() {
+            const container = this.getScrollContainer();
+            this._scrollContainer = container
+            this.containerScrollFn = () => {
+                this.updateFixedScroll();
+            }
+            container.addEventListener('scroll', this.containerScrollFn);
+        },
+
+        updateFixedScroll() {
+            if (!this.fixedXScroll) {
+                return;
+            }
+            const fixedXScroll = this.$refs.fixedXScroll;
+            const flexTableLayout = this.$refs.flexTableLayout;
+            const {width,  bottom} = flexTableLayout.getBoundingClientRect();
+            if (bottom < window.innerHeight) {
+                fixedXScroll.style.display = 'none';
+            } else {
+                fixedXScroll.style.display = 'block';
+                const fixedScrollContent = fixedXScroll.querySelector('.flex-table-fixed-scroll-content');
+                fixedXScroll.style.width = `${width}px`;
+                fixedXScroll.style.bottom = `${this.fixedXScrollBottom}px`;
+                fixedScrollContent.style.width = `${flexTableLayout.scrollWidth}px`;                
+            }
+        },
+
+        updateFixedScrollLeft(left) {
+            if (!this.fixedXScroll) {
+                return;
+            }
+            const fixedXScroll = this.$refs.fixedXScroll;
+            if (fixedXScroll) {
+                fixedXScroll.scrollLeft = left;
+            }
+        }
     },
 };
 </script>
