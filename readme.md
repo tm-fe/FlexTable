@@ -153,6 +153,9 @@ export default {
 | uniqueKey | 表格数据的唯一值名称（处理id重复报错问题） | String |  |
 | virtualScroll | 虚拟滚动的展示条数（设置此值即自动开启虚拟滚动功能） | Number |  |
 | virtualHeight | 虚拟滚动的单条数据高度（开启虚拟滚动时必填，否则表格会有间隙错位）| Number | 40 |
+| scrollContainer | 表格所在的滚动容器，默认document，传String会使用document.querySelector查询 | String/Object | document |
+| fixedXScroll | 是否固定横向滚动 | Boolean | false |
+| fixedXScrollBottom | 固定横向滚动的底部位置 | Number/String | 0 |
 
 ### Table events
 
