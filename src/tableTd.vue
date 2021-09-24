@@ -214,5 +214,8 @@ export default {
     margin-left: -4px !important;
     background: #3475ff !important;
 }
+/deep/ .radio-component>input:disabled+label>.input-box{
+    background: #f7f7f7;
+    cursor: not-allowed;
+}
 </style>
-

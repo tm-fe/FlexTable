@@ -895,7 +895,7 @@ export default {
                 selection = this.getSelection();
             }
 
-            if (!this.multiple) {
+            if (!this.multiple && !row._disabled) {
                 // 处理单选逻辑
                 selection = [];
                 const data = JSON.parse(JSON.stringify(this.dataList));
