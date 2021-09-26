@@ -1,7 +1,7 @@
 <template>
     <div :class="wrapClasses" :style="wrapStyle" ref="tableWrap">
         <div
-            :class="['flex-table-layout', scrollLeft === 0 ? 'flex-table-scroll-left' : '']"
+            :class="['flex-table-layout', isScrollLeft ? 'flex-table-scroll-left' : '']"
             ref="flexTableLayout"
             @scroll="onScroll"
             @mousewheel="handleMousewheel"
@@ -541,10 +541,14 @@ export default {
             return this.bodyH > this.height;
         },
         getFixedHeadClass: function () {
+            let classNames = ['flex-table-head-fixed-layout'];
             if (this.isFixedHead) {
-                return 'flex-table-head-fixed-layout is-fixed';
+                classNames.push('is-fixed');
             }
-            return 'flex-table-head-fixed-layout';
+            if (this.isScrollLeft) {
+                classNames.push('flex-table-scroll-left');
+            }
+            return classNames;
         },
         // 虚拟滚动变量
         itemHeight() {
@@ -586,6 +590,9 @@ export default {
         isVirtualScroll() {
             return this.virtualScroll;
         },
+        isScrollLeft() {
+            return this.scrollLeft === 0;
+        }
     },
     mounted() {
         if (this.isVirtualScroll) {
