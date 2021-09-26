@@ -81,7 +81,7 @@ export default {
         this.onRowHeightChange();
     },
     updated() {
-        this.$nextTick(() => {
+        requestAnimationFrame(() => {
             this.onRowHeightChange();
         });
     },
