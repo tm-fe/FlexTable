@@ -260,6 +260,18 @@
         .checkbox-component>input+label>.input-box{
             border-color: #ccc;
         }
+
+        .input-box{
+            box-shadow: none !important;
+        }
+        .checkbox-component>input:checked+label>.input-box {
+            border-color: #0b75ff !important;
+            background-color: #0b75ff !important;
+        }
+        .checkbox-component>input+label>.input-box>.input-box-tick {
+            filter: invert(1);
+        }
+
     }
     &-hidden{
         visibility: hidden;
