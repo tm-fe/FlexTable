@@ -81,9 +81,9 @@ export default {
         this.onRowHeightChange();
     },
     updated() {
-        requestAnimationFrame(() => {
+        // requestAnimationFrame(() => {
             this.onRowHeightChange();
-        });
+        // });
     },
     computed: {
         isVirtualScroll(){

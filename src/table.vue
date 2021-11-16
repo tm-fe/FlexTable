@@ -746,11 +746,11 @@ export default {
             const { scrollTop } = event.target;
             this.scrollTop = scrollTop;
             if (this.isVirtualScroll) {
-                this.requestId = requestAnimationFrame(() => {
+                // this.requestId = requestAnimationFrame(() => {
                     this.$nextTick(() => {
-                        this.updateTable();
+                        this.requestId =  this.updateTable();
                     });
-                });
+                // });
             }
         }, 20),
         updateHoverIndex: debounce(function (index) {
@@ -1053,7 +1053,7 @@ export default {
             this.$emit('on-sort-change', item);
         },
         calHeight() {
-            requestAnimationFrame(() => {
+            // requestAnimationFrame(() => {
                 if (this.isVirtualScroll && !this.tableHeight) {
                     return;
                 }
@@ -1079,7 +1079,7 @@ export default {
                 }
 
                 this.updateFixedScroll();
-            });
+            // });
         },
         getMinWidth(col) {
             return col.minWidth || this.minWidth;
@@ -1135,7 +1135,7 @@ export default {
             }
         },
         resize() {
-            requestAnimationFrame(() => {
+            this.$nextTick(() => {
                 // wrapper 宽度
                 const scrollBarWidth = this.showScrollBar ? 16 : 0;
                 const nTableWidth = this.$el.offsetWidth - 2 - scrollBarWidth;
@@ -1245,7 +1245,6 @@ export default {
             this.requestId && cancelAnimationFrame(this.requestId);
         },
         updateScrollData(startIndex, endIndex, direction) {
-            console.log('updateScrollData: ');
             const { data, itemHeight, dataList, isSameDataRef, isSelectAll } =
                 this;
             if (!data.length) {
@@ -1291,16 +1290,8 @@ export default {
                         }
                     });
                 });
-                this.finishUpdate();
                 return (this.dataList = newData);
             }
-        },
-
-        finishUpdate(){
-            clearTimeout(this.handleFixLeft)
-            this.handleFixLeft = window.setTimeout(() => {
-                this.hasFixedLeft = true;
-            }, 3000);
         },
 
         getScrollContainer() {
