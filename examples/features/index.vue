@@ -8,13 +8,16 @@
         :loading="loading"
         :columns="columns"
         :data="list"
-        :sum="headSum"
-        :headSum="headSum"
+
+
         :minWidth="80"
         :maxWidth="600"
         @on-scroll-x="onTableScroll"
         @on-row-click="handleRowClick"
         fixed-x-scroll
+        :selectedData="[1,2]"
+        :virtualScroll="10"
+        :virtualHeight="37"
     >
         <template slot-scope="{ row }" slot="name">
             <div v-if="row.type">
@@ -31,8 +34,9 @@
 // import flexTable from '../../index.js';
 
 const aTestList = [];
-for(let i=0;i<20;i++){
+for(let i=0;i<2000;i++){
     const oTestData = {
+        id:i,
         name: 'John Brown' + i,
         age: 18,
         sex: '男',

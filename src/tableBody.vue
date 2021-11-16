@@ -297,7 +297,7 @@ export default {
         background: #fff;
     }
 }
-.virtualItem, .commonItem{
+.commonItem{
     .flex-table-row{
         border-bottom: 1px solid #e9eaec;
     }
@@ -309,6 +309,6 @@ export default {
     width: 100%;
 }
 .flex-table-body .flex-table-tr > .flex-table-row{
-    border-bottom: 0 !important;
+    // border-bottom: 0 !important;
 }
 </style>

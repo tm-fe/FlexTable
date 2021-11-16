@@ -114,7 +114,6 @@ export default {
             _disabled: false,
             _isChecked: true
         }]
-        
     },
     methods: {
         onSelectionChange(selection, row) {

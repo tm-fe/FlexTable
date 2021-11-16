@@ -613,21 +613,14 @@ export default {
         }
     },
     watch: {
-        // selectedData: {
-        //     handler(val) {
-        //         if (val.length) {
-        //             const data = JSON.parse(JSON.stringify(this.dataList));
-        //             for (const item of data) {
-        //                 if (val.includes(item.id)) {
-        //                     this.$set(item, '_isChecked', true);
-        //                 }
-        //             }
-        //             this.dataList = Object.assign([], this.dataList, data);
-        //             console.log('item: ', this.dataList);
-        //         }
-        //     },
-        //     deep: true,
-        // },
+        selectedData: {
+            handler(val) {
+                if (val.length) {
+                   this.initData();
+                }
+            },
+            deep: true,
+        },
         data: {
             handler: function (val) {
                 if (this.isVirtualScroll) {
@@ -1246,12 +1239,13 @@ export default {
 
             // 获取滚动方向和差值，优化滚动性能和复用DOM
             const direction = startIndex - this.prevStartIndex || 0;
-            const endIndex = startIndex + poolSize;
+            const endIndex = 4 + startIndex + poolSize;
             this.updateScrollData(startIndex, endIndex, direction);
             this.prevStartIndex = startIndex;
             this.requestId && cancelAnimationFrame(this.requestId);
         },
         updateScrollData(startIndex, endIndex, direction) {
+            console.log('updateScrollData: ');
             const { data, itemHeight, dataList, isSameDataRef, isSelectAll } =
                 this;
             if (!data.length) {
@@ -1297,8 +1291,16 @@ export default {
                         }
                     });
                 });
+                this.finishUpdate();
                 return (this.dataList = newData);
             }
+        },
+
+        finishUpdate(){
+            clearTimeout(this.handleFixLeft)
+            this.handleFixLeft = window.setTimeout(() => {
+                this.hasFixedLeft = true;
+            }, 3000);
         },
 
         getScrollContainer() {
