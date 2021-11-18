@@ -8,7 +8,7 @@
         <template v-for="(item, index) in rowSpanList">
             <div
                 :key="index"
-                :class="`flex-table-tr flex-table-span ${isVirtualScroll ? 'virtualItem' : 'commonItem bgColor'}`"
+                :class="`flex-table-tr flex-table-span ${isVirtualScroll ? 'virtualItem bgColor' : 'commonItem bgColor'}`"
                 :style="item.style">
                 <table-tr
                     row-span
@@ -30,7 +30,7 @@
         </template>
 
         <div class="flex-table-tr" v-if="data.length" :style="isVirtualScroll ? scrollerStyle : null">
-            <div v-for="(row, index) in data" :key="row[uniqueKey] || row.id || index" :class="`${isVirtualScroll ? 'virtualItem' : 'commonItem bgColor'}`" 
+            <div v-for="(row, index) in data" :key="row[uniqueKey] || row.id || index" :class="`${isVirtualScroll ? 'virtualItem bgColor' : 'commonItem bgColor'}`" 
                 :style="{'transform': isVirtualScroll ? `translateY(${row.top}px)` : 'none', 'height': isVirtualScroll ? `${virtualHeight}px` : 'auto'}">
                 <table-tr
                     v-bind="$props"
@@ -307,8 +307,11 @@ export default {
     position: absolute;
     left: 0;
     width: 100%;
+    .flex-table-row{
+        border-bottom: 1px solid #e9eaec;
+    }
 }
 .flex-table-body .flex-table-tr > .flex-table-row{
-    // border-bottom: 0 !important;
+    border-bottom: 0 !important;
 }
 </style>

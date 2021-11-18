@@ -752,7 +752,7 @@ export default {
                     });
                 // });
             }
-        }, 20),
+        }, 0),
         updateHoverIndex: debounce(function (index) {
             this.hoverIndex = index;
         }, 100),

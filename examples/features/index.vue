@@ -1,39 +1,41 @@
 <template>
-<div>
-    <h3>基础用法</h3>
-    <p>表格的简单用法 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/index.vue">source code</a></p>
-    
-    <flex-table
-        resizable
-        :loading="loading"
-        :columns="columns"
-        :data="list"
+    <div>
+        <h3>基础用法</h3>
+        <p>
+            表格的简单用法
+            <a
+                href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/index.vue"
+                >source code</a
+            >
+        </p>
 
+        <flex-table
+            resizable
+            :loading="loading"
+            :columns="columns"
+            :data="list"
+            :minWidth="80"
+            :maxWidth="600"
+            @on-scroll-x="onTableScroll"
+            @on-row-click="handleRowClick"
+            fixed-x-scroll
+            :virtualScroll="10"
+            :virtualHeight="80"
+        >
+            <template slot-scope="{ row }" slot="name">
+                <div v-if="row.type">slotSum</div>
+                <div v-if="!row.type">
+                    {{ row.name }}
+                </div>
+            </template>
 
-        :minWidth="80"
-        :maxWidth="600"
-        @on-scroll-x="onTableScroll"
-        @on-row-click="handleRowClick"
-        fixed-x-scroll
-        :selectedData="[1,2]"
-        :virtualScroll="10"
-        :virtualHeight="37"
-    >
-        <template slot-scope="{ row }" slot="name">
-            <div v-if="row.type">
-                slotSum
-            </div>
-            <div v-if="!row.type">
-                {{row.name}}
-            </div>
-        </template>
-    </flex-table>
-</div>
+        </flex-table>
+    </div>
 </template>
 <script>
 // import flexTable from '../../index.js';
 
-const aTestList = [];
+const aTestList = []
 for(let i=0;i<2000;i++){
     const oTestData = {
         id:i,
@@ -52,7 +54,7 @@ export default {
     // components:{
     //     flexTable
     // },
-    data(){
+    data() {
         return {
             columns: [
                 {
@@ -99,20 +101,20 @@ export default {
             ],
             loading: false,
             list: aTestList,
-            sum:{
+            sum: {
                 name: 'Jim Green',
                 age: 24,
                 address: 'London',
                 date: '2016-10-01',
             },
-            headSum:{
+            headSum: {
                 type: 'headSum',
                 name: 'I m Head Sum',
                 age: 24,
                 address: 'London',
                 date: '2016-10-01',
-            }
-        }
+            },
+        };
     },
     mounted() {},
     methods: {
@@ -121,7 +123,7 @@ export default {
         },
         handleRowClick(index, row) {
             console.log(index, row);
-        }
-    }
-}
+        },
+    },
+};
 </script>

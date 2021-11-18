@@ -76,6 +76,13 @@ export default {
             type: Boolean,
             default: true,
         },
+        virtualScroll: {
+            type: Number,
+        },
+        virtualHeight: {
+            type: Number,
+            default: 40,
+        },
     },
     mounted() {
         this.onRowHeightChange();
