@@ -1296,7 +1296,6 @@ export default {
                         }
                     });
                 });
-                console.log('newData', newData)
                 return (this.dataList = newData);
             }
         },
