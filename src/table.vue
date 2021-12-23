@@ -1328,7 +1328,8 @@ export default {
                 const fixedScrollContent = fixedXScroll.querySelector('.flex-table-fixed-scroll-content');
                 fixedXScroll.style.width = `${width}px`;
                 fixedXScroll.style.bottom = `${this.fixedXScrollBottom}px`;
-                fixedScrollContent.style.width = `${flexTableLayout.scrollWidth}px`;                
+                fixedScrollContent.style.width = `${flexTableLayout.scrollWidth}px`;
+                fixedXScroll.scrollLeft = this.scrollLeft;              
             }
         },
 
