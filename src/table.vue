@@ -564,6 +564,9 @@ export default {
             return 1 + Math.ceil(this.maxHeight / this.itemHeight);
         },
         wrapperHeight() {
+            if (!this.tableBody) {
+                return 0;
+            }
             return this.tableBody.$el.clientHeight;
         },
         maxIndex() {
@@ -757,6 +760,9 @@ export default {
             this.hoverIndex = index;
         }, 100),
         handleMousewheel(event) {
+            if (!this.$refs.tableBody) {
+                return;
+            }
             const normalized = normalizeWheel(event);
             if (Math.abs(normalized.spinY) > 0) {
                 const bodyWrapper = this.$refs.tableBody.$el;
