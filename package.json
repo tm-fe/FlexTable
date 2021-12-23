@@ -1,6 +1,6 @@
 {
   "name": "tm-flextable",
-  "version": "0.5.13",
+  "version": "0.5.14",
   "description": "Using div to implement flexible、high performance table",
   "main": "dist/index.js",
   "typings": "types/index.d.ts",
