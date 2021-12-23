@@ -823,7 +823,7 @@ export default {
         },
         copyItem(item, index) {
             const newItem = JSON.parse(JSON.stringify(item));
-            newItem._isChecked = this.selectedData.length ? this.selectedData.includes(newItem.id) : !!newItem._checked;
+            newItem._isChecked = this.selectedData.length ? this.selectedData.includes(newItem[this.uniqueKey]) : !!newItem._checked;
             newItem._isDisabled = !!newItem._disabled;
             newItem._expanded = newItem.expandStatus || !!newItem._expanded;
             newItem._disableExpand = !!newItem._disableExpand;
@@ -900,7 +900,7 @@ export default {
                 selection = [];
                 const data = JSON.parse(JSON.stringify(this.dataList));
                 for (const item of data) {
-                    this.$set(item, '_isChecked', item[this.uniqueKey] === row.id);
+                    this.$set(item, '_isChecked', this.getId(item) === this.getId(row));
                 }
                 this.dataList = Object.assign([], this.dataList, data);
                 selection.push(row);
@@ -1277,12 +1277,12 @@ export default {
                     Object.keys(news.item).forEach((key, newIndex) => {
                         if (prefixData[index]) {
                             const prefixDataId = prefixData[index].item
-                                ? prefixData[index].item.id
-                                : prefixData[index].id;
+                                ? this.getId(prefixData[index].item)
+                                : this.getId(prefixData[index]);
                             // 这里加多了一层判断逻辑，处理删除表格数据时，数据项对应不上的问题
                             const isCheck =
                                 prefixData[index] &&
-                                data.some((item) => item.id === prefixDataId)
+                                data.some((item) => this.getId(item) === prefixDataId)
                                     ? prefixData[index]['_isChecked']
                                     : false;
                             news[key] = news.item[key];
@@ -1290,6 +1290,7 @@ export default {
                         }
                     });
                 });
+                console.log('newData', newData)
                 return (this.dataList = newData);
             }
         },
@@ -1339,6 +1340,10 @@ export default {
             if (fixedXScroll) {
                 fixedXScroll.scrollLeft = left;
             }
+        },
+
+        getId(item) {
+            return item[this.uniqueKey];
         }
     },
 };
