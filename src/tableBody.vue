@@ -184,7 +184,7 @@ export default {
         scrollTop(scrollTop) {
             this.$el.scrollTop = scrollTop;
         },
-        data() {
+        data(val) {
             this.updateRowList();
         },
     },
@@ -218,7 +218,6 @@ export default {
             if (!this.spanMethod) {
                 return list;
             }
-
             this.data.forEach((row, rowIndex) => {
                 this.columns.forEach((column, columnIndex) => {
                     const setting = this.spanMethod({

@@ -13,12 +13,15 @@
                 <template v-if="!isHidden(item)">
                     <template v-if="item.type === 'selection' && multiple">
                         <div class="headCheckBox">
-                        <Checkbox
-                            v-model="isChecked"
-                            :disabled="isAllDisabled"
-                            @input="selectAll"
-                        ></Checkbox>
-                        <slot v-if="$slots['batchCheck']" name="batchCheck"/>
+                            <Checkbox
+                                v-model="isChecked"
+                                :disabled="isAllDisabled"
+                                @input="selectAll"
+                            ></Checkbox>
+                            <slot
+                                v-if="$slots['batchCheck']"
+                                name="batchCheck"
+                            />
                         </div>
                     </template>
                     <template v-else>
@@ -121,8 +124,12 @@ export default {
             }
         },
         isAllDisabled() {
-            return  !this.isRenderDone || !this.data.length || this.data.every(item => item._disabled);
-        }
+            return (
+                !this.isRenderDone ||
+                !this.data.length ||
+                this.data.every((item) => item._disabled)
+            );
+        },
     },
     watch: {
         columns: function (val) {
@@ -133,18 +140,25 @@ export default {
         },
         data: {
             handler(val) {
-                let isChecked = false;
-                if (!this.isAllDisabled) {
-                    isChecked = val.filter(item => !item._disabled).every(item => item._isChecked);
+                if (!this.isAllDisabled && !this.virtualScroll) {
+                    let isChecked = false;
+
+                    isChecked = val
+                        .filter((item) => !item._disabled)
+                        .every((item) => item._isChecked);
+                    this.handleChangeStatus(isChecked);
                 }
-                this.handleChangeStatus(isChecked);
             },
             deep: true,
         },
         allData: {
             handler(val) {
                 if (this.virtualScroll) {
-                    const isChecked = val.length && val.filter(item => !item._disabled).every((item) => item._isChecked);
+                    const isChecked =
+                        val.length &&
+                        val
+                            .filter((item) => !item._disabled)
+                            .every((item) => item._isChecked);
                     this.handleChangeStatus(isChecked);
                 }
             },
@@ -152,10 +166,12 @@ export default {
         },
     },
     mounted() {
-        this.onRowHeightChange();
+         this.$nextTick(() => {
+            this.onRowHeightChange();
+        });
     },
     updated() {
-        requestAnimationFrame(() => {
+         this.$nextTick(() => {
             this.onRowHeightChange();
         });
     },

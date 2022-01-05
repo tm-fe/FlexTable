@@ -57,12 +57,18 @@ export default {
     data() {
         return {
             columns: [
+                 {
+                    type: 'selection',
+                    width: 20,
+                    align: 'center',
+                    // fixed: 'left',
+                },,
                 {
                     title: 'Name',
                     key: 'name',
                     width: 240,
                     type: 'slot',
-                    fixed: 'left',
+                    // fixed: 'left',
                 },
                 {
                     title: 'Age',
@@ -71,7 +77,7 @@ export default {
                     render(h, params){
                         return h('span', 'age: '+ params.row.age)
                     },
-                    fixed: 'left',
+                    // fixed: 'left',
                 },
                 {
                     title: 'Address',

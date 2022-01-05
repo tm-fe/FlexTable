@@ -1,10 +1,15 @@
 <template>
-    <div class="flex-table-row" :class="{'flex-table-hover': isHover}" :style="{ 'height': height}" @mouseenter="mouseenter">
+    <div
+        class="flex-table-row"
+        :class="{ 'flex-table-hover': isHover }"
+        :style="{ height: height }"
+        @mouseenter="mouseenter"
+    >
         <table-td
             v-bind="$props"
             v-for="(column, i) in columns"
-            v-if="!rowSpan || (rowSpan && i=== columnIndex)"
-            :key="column.key + '_'+ i + '_' + rowIndex"
+            v-if="!rowSpan || (rowSpan && i === columnIndex)"
+            :key="column.key + '_' + i + '_' + rowIndex"
             :column="column"
             :index="i"
             :cal-width="calWidth"
@@ -16,6 +21,7 @@
             :class="tdClassName(column, row)"
             @on-toggle-select="toggleSelect"
             @on-toggle-expand="toggleExpand"
+            @load="handleLoad"
         ></table-td>
     </div>
 </template>
@@ -25,52 +31,52 @@ import Mixin from './mixin.js';
 
 export default {
     name: 'TableTr',
-    components:{
+    components: {
         tableTd,
     },
     mixins: [Mixin],
     props: {
         className: {
-            type: String | Object
+            type: String | Object,
         },
         row: {
-            type: Object
+            type: Object,
         },
         rowIndex: {
-            type: Number
+            type: Number,
         },
         columns: {
-            type: Array
+            type: Array,
         },
         onlyFixed: {
-            type: String
+            type: String,
         },
         rowHeight: {
             type: Number,
         },
         hoverIndex: {
-            type: Number | undefined
+            type: Number | undefined,
         },
         selectedClass: {
             type: String,
-            default: ''
+            default: '',
         },
         rowSpan: {
             type: Boolean,
-            default: false
+            default: false,
         },
         columnIndex: {
             type: Number,
-            default: 0
+            default: 0,
         },
         spanMethod: {
-            type: Function
+            type: Function,
         },
         rowSpanColumns: {
             type: Array,
-            default: function() {
+            default: function () {
                 return [];
-            }
+            },
         },
         multiple: {
             type: Boolean,
@@ -85,26 +91,29 @@ export default {
         },
     },
     mounted() {
-        this.onRowHeightChange();
+        this.$nextTick(() => {
+            this.onRowHeightChange();
+        });
     },
     updated() {
-        // requestAnimationFrame(() => {
+        this.$nextTick(() => {
             this.onRowHeightChange();
-        // });
+        });
     },
     computed: {
-        isVirtualScroll(){
+        isVirtualScroll() {
             return this.virtualScroll;
         },
         height() {
-            if(this.isVirtualScroll){
+            if (this.isVirtualScroll) {
                 return `${this.virtualHeight}px`;
             }
-            if ((this.onlyFixed || this.rowSpan) && this.rowHeight) {
-                return `${this.rowHeight}px`;
-            } else {
-                return 'auto';
-            }
+            // if ((this.onlyFixed || this.rowSpan) && this.rowHeight) {
+            //     return `${this.rowHeight}px`;
+            // } else {
+            //     return 'auto';
+            // }
+            return 'auto';
         },
         isHover() {
             return this.hoverIndex === this.rowIndex;
@@ -119,41 +128,41 @@ export default {
         },
         onRowHeightChange() {
             // 如果是fixed 或者是合并行，则不进行 rowHeight的更新
-            if (!this.onlyFixed && !this.rowSpan) {
+            if (!this.rowSpan) {
                 let { height } = this.$el.getBoundingClientRect();
                 this.owner.onRowHeightChange({
                     rowIndex: this.rowIndex,
                     height,
-                })
+                });
             }
         },
-        debounce(fn, wait){
+        debounce(fn, wait) {
             let timer = null;
-            return function(){
-                if(timer !== null){
+            return function () {
+                if (timer !== null) {
                     clearTimeout(timer);
                 }
-                timer = setTimeout(fn,wait);
-            }
+                timer = setTimeout(fn, wait);
+            };
         },
         mouseenter() {
             this.debounce(this.owner.updateHoverIndex(this.rowIndex), 200);
-            
         },
         rowClsName(_index) {
             return this.$parent.$parent.rowClassName(this.row, _index);
         },
         selectedCls(row) {
-            return row._isChecked ? this.selectedClass : ''
+            return row._isChecked ? this.selectedClass : '';
         },
         tdClassName() {
-            return [
-                this.selectedCls(this.row),
-                this.rowClsName(this.rowIndex),
-            ]
+            return [this.selectedCls(this.row), this.rowClsName(this.rowIndex)];
         },
-    }
-}
+        handleLoad() {
+            console.log('handleLoad: ');
+            this.mouseenter();
+        },
+    },
+};
 </script>
 <style lang="less" scoped>
 .flex-table-hover {

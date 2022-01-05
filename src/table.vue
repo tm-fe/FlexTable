@@ -115,6 +115,7 @@
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
                     :spanMethod="spanMethod"
+                    
                     @on-toggle-select="toggleSelect"
                     @on-row-click="handleRowClick"
                 ></table-body>
@@ -908,7 +909,7 @@ export default {
 
             this.isSelectAll = isCheckedAll;
             this.$refs.tableHeader &&
-                this.$refs.tableHeader.handleChangeStatus(isCheckedAll);
+            this.$refs.tableHeader.handleChangeStatus(isCheckedAll);
             const curRow = JSON.parse(JSON.stringify(row));
             if (!row._isChecked) {
                 this.$emit('on-selection-cancel', curRow);
@@ -956,8 +957,17 @@ export default {
                     }
                 });
                 selection = prefixData;
+                console.log('selection: ', selection);
                 cancelSelection = prefixData;
                 this.prefixData = prefixData;
+                
+                this.updateTable(true)
+
+                // setTimeout(() => {
+                // this.updateTable(true)
+
+                // }, 2000)
+
             } else {
                 this.dataList.forEach((item) => {
                     if (!item._isDisabled) {
@@ -1235,16 +1245,16 @@ export default {
             const shouldUpdate =
                 this.prevStartIndex !== startIndex || isDataChange;
 
-            if (!shouldUpdate) return;
+            // if (!shouldUpdate) return;
 
             // 获取滚动方向和差值，优化滚动性能和复用DOM
             const direction = startIndex - this.prevStartIndex || 0;
-            const endIndex = 4 + startIndex + poolSize;
-            this.updateScrollData(startIndex, endIndex, direction);
+            const endIndex = 2 + startIndex + poolSize;
+            this.updateScrollData(startIndex, endIndex, direction, isDataChange);
             this.prevStartIndex = startIndex;
-            this.requestId && cancelAnimationFrame(this.requestId);
+            // this.requestId && cancelAnimationFrame(this.requestId);
         },
-        updateScrollData(startIndex, endIndex, direction) {
+        updateScrollData(startIndex, endIndex, direction,  isDataChange) {
             const { data, itemHeight, dataList, isSameDataRef, isSelectAll } =
                 this;
             if (!data.length) {
@@ -1252,8 +1262,8 @@ export default {
                 this.prefixData = [];
             } else {
                 this.prefixData = Object.assign([], data, this.prefixData);
+                
             }
-
             if (!dataList.length || !isSameDataRef) {
                 // reset flag
                 this.isSameDataRef = true;
@@ -1273,6 +1283,7 @@ export default {
                 if (!prefixData.length) {
                     prefixData = newData;
                 }
+
                 newData.forEach((news, index) => {
                     Object.keys(news.item).forEach((key, newIndex) => {
                         if (prefixData[index]) {
@@ -1290,7 +1301,14 @@ export default {
                         }
                     });
                 });
-                return (this.dataList = newData);
+                console.log('newData: ',isDataChange, newData);
+                // return (this.dataList = newData);
+                if(isDataChange){
+                    this.dataList = [];
+                }
+                setTimeout(() => {
+                    this.dataList = Object.assign([], newData)
+                }, 0)
             }
         },
 

@@ -10,14 +10,20 @@
             :sum="sum"
             :fixed-head="true"
             @on-sort-change="onSortChange"
-        ></flex-table>
+        >
+        <template slot-scope="{ row, index }" slot="img">
+            <div style="padding: 15px 20px;">
+                <img :src="getImg">
+            </div>
+        </template>
+        </flex-table>
     </div>
 </template>
 <script>
 // import flexTable from '../../index.js';
-
+import imgSrc from './123.png'
 const aTestList = [];
-for(let i=0;i<1;i++){
+for(let i=0;i<10;i++){
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -36,12 +42,21 @@ export default {
     // },
     data(){
         return {
+            getImg: '123',
             columns: [
                 {
                     type: 'selection',
                     width: 20,
                     align: 'center',
                     fixed: 'left'
+                },
+                {
+                    title: 'img',
+                    key: 'img',
+                    width: 100,
+                    fixed: 'left',
+                    sortable: true,
+                    type: 'slot',
                 },
                 {
                     title: 'Name',
@@ -81,6 +96,9 @@ export default {
     },
     mounted() {
         console.timeEnd('fixed')
+        setTimeout(() => {
+            this.getImg = imgSrc
+        }, 1000)
     },
     methods: {
         onSortChange(obj) {
