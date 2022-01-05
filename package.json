@@ -1,6 +1,6 @@
 {
   "name": "tm-flextable",
-  "version": "0.5.13",
+  "version": "0.5.14",
   "description": "Using div to implement flexible、high performance table",
   "main": "dist/index.js",
   "typings": "types/index.d.ts",
@@ -11,7 +11,7 @@
     "test": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "coverage": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "report-coverage": "codecov",
-    "lint": "./node_modules/.bin/eslint ./src",
+    "lint": "eslint --fix ./src",
     "prepare": "npm run dist"
   },
   "files": [

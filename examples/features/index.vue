@@ -16,11 +16,11 @@
             :data="list"
             :minWidth="80"
             :maxWidth="600"
+            uniqueKey="myid"
+            :selectedData="[3, 5, 6]"
             @on-scroll-x="onTableScroll"
             @on-row-click="handleRowClick"
             fixed-x-scroll
-            :virtualScroll="10"
-            :virtualHeight="80"
         >
             <template slot-scope="{ row }" slot="name">
                 <div v-if="row.type">slotSum</div>
@@ -36,9 +36,9 @@
 // import flexTable from '../../index.js';
 
 const aTestList = []
-for(let i=0;i<2000;i++){
+for(let i=0;i<20;i++){
     const oTestData = {
-        id:i,
+        myid:i,
         name: 'John Brown' + i,
         age: 18,
         sex: '男',
@@ -63,6 +63,11 @@ export default {
                     align: 'center',
                     // fixed: 'left',
                 },,
+                {
+                    type: 'selection',
+                    width: 50,
+                    fixed: 'left'
+                },
                 {
                     title: 'Name',
                     key: 'name',
