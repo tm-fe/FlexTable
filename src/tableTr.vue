@@ -1,6 +1,6 @@
 <template>
     <div
-        :ref="`${onlyFixed ? 'tableTd' : ''}`"
+        :ref="`${!onlyFixed ? 'tableTd' : ''}`"
         class="flex-table-row"
         :class="{ 'flex-table-hover': isHover }"
         :style="{ height: height }"
@@ -98,7 +98,6 @@ export default {
             let target = this.$refs.tableTd;
             // 创建观察者对象
             let observer = new ResizeObserver(function (mutations) {
-                console.log('222', mutations, target.clientHeight);
                 selt.$forceUpdate();
             });
             // 配置观察选项:
@@ -125,12 +124,11 @@ export default {
             if (this.isVirtualScroll) {
                 return `${this.virtualHeight}px`;
             }
-            // if ((this.onlyFixed || this.rowSpan) && this.rowHeight) {
-            //     return `${this.rowHeight}px`;
-            // } else {
-            //     return 'auto';
-            // }
-            return 'auto';
+            if ((this.onlyFixed || this.rowSpan) && this.rowHeight) {
+                return `${this.rowHeight}px`;
+            } else {
+                return 'auto';
+            }
         },
         isHover() {
             return this.hoverIndex === this.rowIndex;
@@ -175,7 +173,6 @@ export default {
             return [this.selectedCls(this.row), this.rowClsName(this.rowIndex)];
         },
         handleLoad() {
-            console.log('handleLoad: ');
             this.mouseenter();
         },
     },
