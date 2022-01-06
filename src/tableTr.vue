@@ -1,5 +1,6 @@
 <template>
     <div
+        :ref="`${onlyFixed ? 'tableTd' : ''}`"
         class="flex-table-row"
         :class="{ 'flex-table-hover': isHover }"
         :style="{ height: height }"
@@ -91,6 +92,22 @@ export default {
         },
     },
     mounted() {
+        const selt = this;
+        if (this.$refs.tableTd) {
+            let initHeight = document.body.clientHeight;
+            let target = this.$refs.tableTd;
+            // 创建观察者对象
+            let observer = new ResizeObserver(function (mutations) {
+                console.log('222', mutations, target.clientHeight);
+                selt.$forceUpdate();
+            });
+            // 配置观察选项:
+            let config = {
+                attributes: true,
+            };
+            // 传入目标节点和观察选项
+            observer.observe(target);
+        }
         this.$nextTick(() => {
             this.onRowHeightChange();
         });
