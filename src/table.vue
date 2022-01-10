@@ -1376,7 +1376,7 @@ export default {
 .flex-table-head-fixed {
     overflow-x: hidden;
 }
-.flex-table{
-    width: fit-content;
-}
+// .flex-table{
+//     width: fit-content;
+// }
 </style>

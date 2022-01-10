@@ -2,8 +2,9 @@
     <div>
         <h3>固定列</h3>
         <p>左右固定列 <a href="https://github.com/tm-fe/FlexTable/blob/master/examples/features/fixedLeft.vue">source code</a></p>
-        
+        <div @click="click">show</div>
         <flex-table
+            v-show="show"
             :loading="loading" 
             :columns="columns" 
             :data="list"
@@ -23,7 +24,7 @@
 // import flexTable from '../../index.js';
 import imgSrc from './123.png'
 const aTestList = [];
-for(let i=0;i<10;i++){
+for(let i=0;i<5;i++){
     const oTestData = {
         name: 'John Brown',
         age: 18,
@@ -43,6 +44,7 @@ export default {
     data(){
         return {
             getImg: '123',
+            columnsData: [],
             columns: [
                 {
                     type: 'selection',
@@ -84,7 +86,7 @@ export default {
                 },
             ],
             loading: false,
-            list: aTestList,
+            list: [],
             sum:{
                 name: 'Jim Green',
                 age: 24,
@@ -92,18 +94,23 @@ export default {
                 address: 'London',
                 date: '2016-10-01'
             },
+            show: true,
         }
     },
     mounted() {
         console.timeEnd('fixed')
         setTimeout(() => {
-            this.getImg = imgSrc
-        }, 1000)
+            this.getImg = imgSrc;
+            this.list = aTestList;
+        }, 2000)
     },
     methods: {
         onSortChange(obj) {
             console.log(obj);
         },
+        click(){
+            this.show = !this.show
+        }
     }
 }
 </script>
