@@ -1,7 +1,10 @@
 <template>
     <div :class="wrapClasses" :style="wrapStyle" ref="tableWrap">
         <div
-            :class="['flex-table-layout', isScrollLeft ? 'flex-table-scroll-left' : '']"
+            :class="[
+                'flex-table-layout',
+                isScrollLeft ? 'flex-table-scroll-left' : '',
+            ]"
             ref="flexTableLayout"
             @scroll="onScroll"
             @mousewheel="handleMousewheel"
@@ -53,6 +56,7 @@
                     @scroll.native.passive="syncScroll"
                     @on-toggle-select="toggleSelect"
                     @on-row-click="handleRowClick"
+                    @doLayout="doLayout"
                 ></table-body>
                 <!-- /flex-table-body -->
 
@@ -115,9 +119,9 @@
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
                     :spanMethod="spanMethod"
-                    
                     @on-toggle-select="toggleSelect"
                     @on-row-click="handleRowClick"
+                    @doLayout="doLayout"
                 ></table-body>
 
                 <table-foot
@@ -180,6 +184,7 @@
                         :spanMethod="spanMethod"
                         @on-toggle-select="toggleSelect"
                         @on-row-click="handleRowClick"
+                        @doLayout="doLayout"
                     ></table-body>
 
                     <table-foot
@@ -201,8 +206,9 @@
             <slot name="loading" v-if="loading">
                 <Spinner fix size="large"></Spinner>
             </slot>
-            <div class="flex-table-fixed-scroll" 
-                v-if="fixedXScroll" 
+            <div
+                class="flex-table-fixed-scroll"
+                v-if="fixedXScroll"
                 ref="fixedXScroll"
                 @scroll="onScroll"
             >
@@ -437,7 +443,7 @@ export default {
             default: false,
         },
         scrollContainer: {
-            type: [String, Object]
+            type: [String, Object],
         },
         fixedXScroll: {
             type: Boolean,
@@ -446,7 +452,7 @@ export default {
         fixedXScrollBottom: {
             type: [String, Number],
             default: 0,
-        }
+        },
     },
     data() {
         return {
@@ -596,7 +602,7 @@ export default {
         },
         isScrollLeft() {
             return this.scrollLeft === 0;
-        }
+        },
     },
     mounted() {
         if (this.isVirtualScroll) {
@@ -620,7 +626,7 @@ export default {
         selectedData: {
             handler(val) {
                 if (val.length) {
-                   this.initData();
+                    this.initData();
                 }
             },
             deep: true,
@@ -727,7 +733,10 @@ export default {
         window.removeEventListener('mouseup', this.onColResizeEnd);
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
         if (this._scrollContainer) {
-            this._scrollContainer.removeEventListener('scroll', this.containerScrollFn);
+            this._scrollContainer.removeEventListener(
+                'scroll',
+                this.containerScrollFn
+            );
         }
     },
     beforeCreate() {
@@ -751,9 +760,9 @@ export default {
             this.scrollTop = scrollTop;
             if (this.isVirtualScroll) {
                 // this.requestId = requestAnimationFrame(() => {
-                    this.$nextTick(() => {
-                        this.requestId =  this.updateTable();
-                    });
+                this.$nextTick(() => {
+                    this.requestId = this.updateTable();
+                });
                 // });
             }
         }, 0),
@@ -830,7 +839,9 @@ export default {
         },
         copyItem(item, index) {
             const newItem = JSON.parse(JSON.stringify(item));
-            newItem._isChecked = this.selectedData.length ? this.selectedData.includes(newItem[this.uniqueKey]) : !!newItem._checked;
+            newItem._isChecked = this.selectedData.length
+                ? this.selectedData.includes(newItem[this.uniqueKey])
+                : !!newItem._checked;
             newItem._isDisabled = !!newItem._disabled;
             newItem._expanded = newItem.expandStatus || !!newItem._expanded;
             newItem._disableExpand = !!newItem._disableExpand;
@@ -907,7 +918,11 @@ export default {
                 selection = [];
                 const data = JSON.parse(JSON.stringify(this.dataList));
                 for (const item of data) {
-                    this.$set(item, '_isChecked', this.getId(item) === this.getId(row));
+                    this.$set(
+                        item,
+                        '_isChecked',
+                        this.getId(item) === this.getId(row)
+                    );
                 }
                 this.dataList = Object.assign([], this.dataList, data);
                 selection.push(row);
@@ -915,7 +930,7 @@ export default {
 
             this.isSelectAll = isCheckedAll;
             this.$refs.tableHeader &&
-            this.$refs.tableHeader.handleChangeStatus(isCheckedAll);
+                this.$refs.tableHeader.handleChangeStatus(isCheckedAll);
             const curRow = JSON.parse(JSON.stringify(row));
             if (!row._isChecked) {
                 this.$emit('on-selection-cancel', curRow);
@@ -966,14 +981,13 @@ export default {
                 console.log('selection: ', selection);
                 cancelSelection = prefixData;
                 this.prefixData = prefixData;
-                
-                this.updateTable(true)
+
+                this.updateTable(true);
 
                 // setTimeout(() => {
                 // this.updateTable(true)
 
                 // }, 2000)
-
             } else {
                 this.dataList.forEach((item) => {
                     if (!item._isDisabled) {
@@ -1070,31 +1084,30 @@ export default {
         },
         calHeight() {
             // requestAnimationFrame(() => {
-                if (this.isVirtualScroll && !this.tableHeight) {
-                    return;
-                }
-                const $refs = this.$refs;
-                const $tableFoot = $refs.tableFoot;
-                const $tableBody = $refs.tableBody;
-                if (!$tableBody) {
-                    return;
-                }
-                const $tableBodyTr =
-                    $tableBody.$el.querySelector('.flex-table-tr');
-                const headerH = $refs.tableHeader.$el.offsetHeight;
-                const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
-                const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
-                this.headerH = headerH;
-                this.footH = footH;
-                this.bodyH = bodyH;
-                if (!this.isVirtualScroll) {
-                    // this.maxHeight = this.tableHeight - headerH - footH;
-                    this.maxHeight = this.height - headerH - footH;
-                } else {
-                    this.bodyH = this.totalHeight;
-                }
+            if (this.isVirtualScroll && !this.tableHeight) {
+                return;
+            }
+            const $refs = this.$refs;
+            const $tableFoot = $refs.tableFoot;
+            const $tableBody = $refs.tableBody;
+            if (!$tableBody) {
+                return;
+            }
+            const $tableBodyTr = $tableBody.$el.querySelector('.flex-table-tr');
+            const headerH = $refs.tableHeader.$el.offsetHeight;
+            const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
+            const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
+            this.headerH = headerH;
+            this.footH = footH;
+            this.bodyH = bodyH;
+            if (!this.isVirtualScroll) {
+                // this.maxHeight = this.tableHeight - headerH - footH;
+                this.maxHeight = this.height - headerH - footH;
+            } else {
+                this.bodyH = this.totalHeight;
+            }
 
-                this.updateFixedScroll();
+            this.updateFixedScroll();
             // });
         },
         getMinWidth(col) {
@@ -1256,11 +1269,16 @@ export default {
             // 获取滚动方向和差值，优化滚动性能和复用DOM
             const direction = startIndex - this.prevStartIndex || 0;
             const endIndex = 2 + startIndex + poolSize;
-            this.updateScrollData(startIndex, endIndex, direction, isDataChange);
+            this.updateScrollData(
+                startIndex,
+                endIndex,
+                direction,
+                isDataChange
+            );
             this.prevStartIndex = startIndex;
             // this.requestId && cancelAnimationFrame(this.requestId);
         },
-        updateScrollData(startIndex, endIndex, direction,  isDataChange) {
+        updateScrollData(startIndex, endIndex, direction, isDataChange) {
             const { data, itemHeight, dataList, isSameDataRef, isSelectAll } =
                 this;
             if (!data.length) {
@@ -1268,7 +1286,6 @@ export default {
                 this.prefixData = [];
             } else {
                 this.prefixData = Object.assign([], data, this.prefixData);
-                
             }
             if (!dataList.length || !isSameDataRef) {
                 // reset flag
@@ -1299,7 +1316,9 @@ export default {
                             // 这里加多了一层判断逻辑，处理删除表格数据时，数据项对应不上的问题
                             const isCheck =
                                 prefixData[index] &&
-                                data.some((item) => this.getId(item) === prefixDataId)
+                                data.some(
+                                    (item) => this.getId(item) === prefixDataId
+                                )
                                     ? prefixData[index]['_isChecked']
                                     : false;
                             news[key] = news.item[key];
@@ -1307,14 +1326,14 @@ export default {
                         }
                     });
                 });
-                console.log('newData: ',isDataChange, newData);
+                console.log('newData: ', isDataChange, newData);
                 // return (this.dataList = newData);
-                if(isDataChange){
+                if (isDataChange) {
                     this.dataList = [];
                 }
                 setTimeout(() => {
-                    this.dataList = Object.assign([], newData)
-                }, 0)
+                    this.dataList = Object.assign([], newData);
+                }, 0);
             }
         },
 
@@ -1330,10 +1349,10 @@ export default {
 
         initFixedScrollListener() {
             const container = this.getScrollContainer();
-            this._scrollContainer = container
+            this._scrollContainer = container;
             this.containerScrollFn = () => {
                 this.updateFixedScroll();
-            }
+            };
             container.addEventListener('scroll', this.containerScrollFn);
         },
 
@@ -1343,16 +1362,18 @@ export default {
             }
             const fixedXScroll = this.$refs.fixedXScroll;
             const flexTableLayout = this.$refs.flexTableLayout;
-            const {width,  bottom} = flexTableLayout.getBoundingClientRect();
+            const { width, bottom } = flexTableLayout.getBoundingClientRect();
             if (bottom < window.innerHeight) {
                 fixedXScroll.style.display = 'none';
             } else {
                 fixedXScroll.style.display = 'block';
-                const fixedScrollContent = fixedXScroll.querySelector('.flex-table-fixed-scroll-content');
+                const fixedScrollContent = fixedXScroll.querySelector(
+                    '.flex-table-fixed-scroll-content'
+                );
                 fixedXScroll.style.width = `${width}px`;
                 fixedXScroll.style.bottom = `${this.fixedXScrollBottom}px`;
                 fixedScrollContent.style.width = `${flexTableLayout.scrollWidth}px`;
-                fixedXScroll.scrollLeft = this.scrollLeft;              
+                fixedXScroll.scrollLeft = this.scrollLeft;
             }
         },
 
@@ -1368,7 +1389,7 @@ export default {
 
         getId(item) {
             return item[this.uniqueKey];
-        }
+        },
     },
 };
 </script>
@@ -1376,7 +1397,7 @@ export default {
 .flex-table-head-fixed {
     overflow-x: hidden;
 }
-// .flex-table{
-//     width: fit-content;
-// }
+.flex-table {
+    width: fit-content;
+}
 </style>

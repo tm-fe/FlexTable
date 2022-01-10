@@ -98,7 +98,8 @@ export default {
             let target = this.$refs.tableTd;
             // 创建观察者对象
             let observer = new ResizeObserver(function (mutations) {
-                selt.$forceUpdate();
+                // selt.$forceUpdate();
+                selt.$emit('doLayout')
             });
             // 配置观察选项:
             let config = {
