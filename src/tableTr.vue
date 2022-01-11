@@ -1,6 +1,7 @@
 <template>
+    <!-- :ref="`${!onlyFixed ? 'tableTd' : ''}`" -->
     <div
-        :ref="`${!onlyFixed ? 'tableTd' : ''}`"
+        ref="tableTd"
         class="flex-table-row"
         :class="{ 'flex-table-hover': isHover }"
         :style="{ height: height }"
@@ -98,6 +99,7 @@ export default {
             let target = this.$refs.tableTd;
             // 创建观察者对象
             let observer = new ResizeObserver(function (mutations) {
+                console.log('mutations: ', mutations);
                 // selt.$forceUpdate();
                 selt.$emit('doLayout')
             });
