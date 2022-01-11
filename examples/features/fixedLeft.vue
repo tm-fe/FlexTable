@@ -59,14 +59,14 @@ export default {
                     align: 'center',
                     fixed: 'left',
                 },
-                {
-                    title: 'img',
-                    key: 'img',
-                    width: 100,
-                    fixed: 'left',
-                    sortable: true,
-                    type: 'slot',
-                },
+                // {
+                //     title: 'img',
+                //     key: 'img',
+                //     width: 100,
+                //     fixed: 'left',
+                //     sortable: true,
+                //     type: 'slot',
+                // },
                 {
                     title: 'Name',
                     key: 'name',
@@ -106,20 +106,30 @@ export default {
     },
     mounted() {
         console.timeEnd('fixed');
-             this.list = aTestList;
-
-
-        setTimeout(() => {
-             this.getImg = imgSrc;
-        }, 2000);
+        this.list = aTestList;
+        // this.getImg = imgSrc;
     },
     methods: {
         onSortChange(obj) {
             console.log(obj);
         },
         click() {
-            this.show = !this.show
-        
+            // this.show = !this.show
+            this.list = aTestList;
+              
+            setTimeout(() => {
+                this.getImg = imgSrc;
+
+                  this.columns.push({
+                    title: 'img',
+                    key: 'img',
+                    width: 100,
+                    fixed: 'left',
+                    sortable: true,
+                    type: 'slot',
+                })
+                
+            }, 2000)
         },
     },
 };
