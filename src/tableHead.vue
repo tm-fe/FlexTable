@@ -25,29 +25,35 @@
                         </div>
                     </template>
                     <template v-else>
-                        <Expand
-                            v-if="item.renderHeader"
-                            :column="item"
-                            :index="index"
-                            :render="item.renderHeader"
-                        ></Expand>
-                        <span v-else>{{ item.title }}</span>
-                        <span class="flex-table-sort" v-if="item.sortable">
-                            <i
-                                @click="handleSort(index, 'asc')"
-                                :class="{
-                                    on: getColumns(index)._sort === 'asc',
-                                }"
-                                class="flex-table-arrow-dropup"
-                            ></i>
-                            <i
-                                @click="handleSort(index, 'desc')"
-                                :class="{
-                                    on: getColumns(index)._sort === 'desc',
-                                }"
-                                class="flex-table-arrow-dropdown"
-                            ></i>
-                        </span>
+                        <div class="flex-table-header-content">
+                            <div class="flex-table-header-content-title">
+                                <Expand
+                                    v-if="item.renderHeader"
+                                    :column="item"
+                                    :index="index"
+                                    :render="item.renderHeader"
+                                ></Expand>
+                                <span v-else>{{ item.title }}</span>
+                            </div>
+                            <div class="flex-table-header-content-sort-icon">
+                                <span class="flex-table-sort" v-if="item.sortable">
+                                    <i
+                                        @click="handleSort(index, 'asc')"
+                                        :class="{
+                                            on: getColumns(index)._sort === 'asc',
+                                        }"
+                                        class="flex-table-arrow-dropup"
+                                    ></i>
+                                    <i
+                                        @click="handleSort(index, 'desc')"
+                                        :class="{
+                                            on: getColumns(index)._sort === 'desc',
+                                        }"
+                                        class="flex-table-arrow-dropdown"
+                                    ></i>
+                                </span>
+                            </div>
+                        </div>
                         <div
                             v-if="isColResizable(item)"
                             @mousedown="onColResize($event, index)"
