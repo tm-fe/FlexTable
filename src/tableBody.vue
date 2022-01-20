@@ -48,7 +48,7 @@
                     :rowSpanColumns="rowSpanColumns"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
-                    @click.native="handleRowClick(index, row)"
+                    @click.prevent.native="handleRowClick(index, row)"
                     @doLayout="$emit('doLayout')"
                 ></table-tr>
                 <div class="flex-table-expanded" v-if="row._expanded" :key="'expand_'+index">

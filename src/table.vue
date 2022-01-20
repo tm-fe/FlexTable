@@ -882,66 +882,68 @@ export default {
                 })
                 .catch(() => {});
         },
-        toggleSelect(index) {
-            const row = this.dataList[index];
-            let selection;
-            if (!this.prefixData.length) {
-                this.prefixData = JSON.parse(JSON.stringify(this.data));
-            }
-            if (!row._isDisabled) {
-                // disabled 状态禁止更改 check 状态
+        toggleSelect(index, clickType) {
+            if((this.enableRowCheck && clickType === 'row-click') || !this.enableRowCheck) {
+                const row = this.dataList[index];
+                let selection;
+                if (!this.prefixData.length) {
+                    this.prefixData = JSON.parse(JSON.stringify(this.data));
+                }
+                if (!row._isDisabled) {
+                    // disabled 状态禁止更改 check 状态
+                    if (this.isVirtualScroll) {
+                        const selectIndex = row.index - 1;
+                        this.$set(
+                            this.prefixData[selectIndex],
+                            '_isChecked',
+                            !this.prefixData[selectIndex]['_isChecked']
+                        );
+                    } else {
+                        row._isChecked = !row._isChecked;
+                    }
+                }
+                // 控制tableHeader是否处于全选状态
+                let isCheckedAll;
                 if (this.isVirtualScroll) {
-                    const selectIndex = row.index - 1;
-                    this.$set(
-                        this.prefixData[selectIndex],
-                        '_isChecked',
-                        !this.prefixData[selectIndex]['_isChecked']
+                    isCheckedAll = this.prefixData.every((item) => item._isChecked);
+                    selection = this.prefixData.filter(
+                        (item) => item['_isChecked'] === true
                     );
                 } else {
-                    row._isChecked = !row._isChecked;
+                    isCheckedAll = this.dataList.every((item) => item._isChecked);
+                    selection = this.getSelection();
                 }
-            }
-            // 控制tableHeader是否处于全选状态
-            let isCheckedAll;
-            if (this.isVirtualScroll) {
-                isCheckedAll = this.prefixData.every((item) => item._isChecked);
-                selection = this.prefixData.filter(
-                    (item) => item['_isChecked'] === true
-                );
-            } else {
-                isCheckedAll = this.dataList.every((item) => item._isChecked);
-                selection = this.getSelection();
-            }
 
-            if (!this.multiple && !row._disabled) {
-                // 处理单选逻辑
-                selection = [];
-                const data = JSON.parse(JSON.stringify(this.dataList));
-                for (const item of data) {
-                    this.$set(
-                        item,
-                        '_isChecked',
-                        this.getId(item) === this.getId(row)
-                    );
+                if (!this.multiple && !row._disabled) {
+                    // 处理单选逻辑
+                    selection = [];
+                    const data = JSON.parse(JSON.stringify(this.dataList));
+                    for (const item of data) {
+                        this.$set(
+                            item,
+                            '_isChecked',
+                            this.getId(item) === this.getId(row)
+                        );
+                    }
+                    this.dataList = Object.assign([], this.dataList, data);
+                    selection.push(row);
                 }
-                this.dataList = Object.assign([], this.dataList, data);
-                selection.push(row);
-            }
 
-            this.isSelectAll = isCheckedAll;
-            this.$refs.tableHeader &&
-                this.$refs.tableHeader.handleChangeStatus(isCheckedAll);
-            const curRow = JSON.parse(JSON.stringify(row));
-            if (!row._isChecked) {
-                this.$emit('on-selection-cancel', curRow);
-                this.isSelectAll = false;
+                this.isSelectAll = isCheckedAll;
+                this.$refs.tableHeader &&
+                    this.$refs.tableHeader.handleChangeStatus(isCheckedAll);
+                const curRow = JSON.parse(JSON.stringify(row));
+                if (!row._isChecked) {
+                    this.$emit('on-selection-cancel', curRow);
+                    this.isSelectAll = false;
+                }
+                this.$emit('on-selection-change', selection, curRow);
             }
-            this.$emit('on-selection-change', selection, curRow);
         },
         handleRowClick(index, row) {
             this.$emit('on-row-click', index, row);
             if (this.enableRowCheck) {
-                this.toggleSelect(index);
+                this.toggleSelect(index, 'row-click');
             }
         },
         getSelection() {
@@ -978,7 +980,6 @@ export default {
                     }
                 });
                 selection = prefixData;
-                console.log('selection: ', selection);
                 cancelSelection = prefixData;
                 this.prefixData = prefixData;
 
@@ -1326,7 +1327,6 @@ export default {
                         }
                     });
                 });
-                console.log('newData: ', isDataChange, newData);
                 // return (this.dataList = newData);
                 if (isDataChange) {
                     this.dataList = [];
