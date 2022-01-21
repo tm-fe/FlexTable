@@ -20,7 +20,6 @@
             @on-scroll-x="onTableScroll"
             @on-row-click="handleRowClick"
             @on-selection-change="handleSelection"
-            enableRowCheck
         >
             <template slot-scope="{ row }" slot="name">
                 <div v-if="row.type">slotSum</div>
@@ -62,12 +61,6 @@ export default {
                     width: 20,
                     align: "center",
                     // fixed: 'left',
-                },
-                ,
-                {
-                    type: "selection",
-                    width: 50,
-                    fixed: "left",
                 },
                 {
                     title: "Name",
@@ -131,10 +124,10 @@ export default {
     mounted() {},
     methods: {
         onTableScroll(event) {
-           //  console.log(event.target.scrollLeft);
+           console.log(event.target.scrollLeft);
         },
         handleRowClick(index, row) {
-          //  console.log(index, row);
+          console.log(index, row);
         },
         handleSelection(row) {
             console.log("on-selection-change", row.length);

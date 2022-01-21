@@ -48,7 +48,8 @@
                     :rowSpanColumns="rowSpanColumns"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
-                    @click.prevent.native="handleRowClick(index, row)"
+                    @on-td-click="handleRowClick"
+
                     @doLayout="$emit('doLayout')"
                 ></table-tr>
                 <div class="flex-table-expanded" v-if="row._expanded" :key="'expand_'+index">
@@ -200,8 +201,8 @@ export default {
         this.$el.scrollTop = this.scrollTop;
     },
     methods: {
-        toggleSelect(index) {
-            this.$emit('on-toggle-select', index);
+        toggleSelect(index, value) {
+            this.$emit('on-toggle-select', index, value);
         },
         toggleExpand(index) {
             const row = this.data[index];
@@ -209,8 +210,8 @@ export default {
                 this.data[index]._expanded = !this.data[index]._expanded;
             }
         },
-        handleRowClick(index, row) {
-            this.$emit('on-row-click', index, row);
+        handleRowClick(index, row, column) {
+            this.$emit('on-row-click', index, row, column);
         },
         mouseleave() {
             this.owner.updateHoverIndex();

@@ -21,6 +21,7 @@
             :rowIndex="rowIndex"
             :onlyFixed="onlyFixed"
             :class="tdClassName(column, row)"
+            @click.native="handleTdClick($event, column, row)"
             @on-toggle-select="toggleSelect"
             @on-toggle-expand="toggleExpand"
             @load="handleLoad"
@@ -137,11 +138,26 @@ export default {
         },
     },
     methods: {
-        toggleSelect(index) {
-            this.$emit('on-toggle-select', index);
+        toggleSelect(index, value) {
+            this.$emit('on-toggle-select', index, value);
         },
         toggleExpand() {
             this.$emit('on-toggle-expand', this.rowIndex);
+        },
+        handleTdClick($event, column, row) {
+            if(column.type == 'selection' && ['checkbox', 'radio'].includes($event.target.type)) {
+                this.$emit('on-selection-click', this.rowIndex, row); 
+                return;
+            } else if(column.type == 'selection') {
+                const _checked = row._isChecked;
+                setTimeout(() => {
+                    if(_checked === row._isChecked) {
+                        this.$emit('on-td-click', this.rowIndex, row, column);  
+                    }
+                })
+                return;
+            }
+            this.$emit('on-td-click', this.rowIndex, row, column); 
         },
         onRowHeightChange() {
             // 如果是fixed 或者是合并行，则不进行 rowHeight的更新
