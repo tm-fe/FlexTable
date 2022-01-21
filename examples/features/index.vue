@@ -17,10 +17,9 @@
             :minWidth="80"
             :maxWidth="600"
             uniqueKey="myid"
-            :selectedData="[3, 5, 6]"
             @on-scroll-x="onTableScroll"
             @on-row-click="handleRowClick"
-            fixed-x-scroll
+            @on-selection-change="handleSelection"
         >
             <template slot-scope="{ row }" slot="name">
                 <div v-if="row.type">slotSum</div>
@@ -28,24 +27,23 @@
                     {{ row.name }}
                 </div>
             </template>
-
         </flex-table>
     </div>
 </template>
 <script>
 // import flexTable from '../../index.js';
 
-const aTestList = []
-for(let i=0;i<20;i++){
+const aTestList = [];
+for (let i = 0; i < 20; i++) {
     const oTestData = {
-        myid:i,
-        name: 'John Brown' + i,
+        myid: i,
+        name: "John Brown" + i,
         age: 18,
-        sex: '男',
-        school: 'high school',
-        color: 'red',
-        address: 'New York No. 1 Lake Park',
-        date: '2016-10-03',
+        sex: "男",
+        school: "high school",
+        color: "red",
+        address: "New York No. 1 Lake Park",
+        date: "2016-10-03",
     };
     aTestList.push(oTestData);
 }
@@ -56,84 +54,83 @@ export default {
     // },
     data() {
         return {
+            selectData: [],
             columns: [
-                 {
-                    type: 'selection',
+                {
+                    type: "selection",
                     width: 20,
-                    align: 'center',
+                    align: "center",
                     // fixed: 'left',
-                },,
-                {
-                    type: 'selection',
-                    width: 50,
-                    fixed: 'left'
                 },
                 {
-                    title: 'Name',
-                    key: 'name',
+                    title: "Name",
+                    key: "name",
                     width: 240,
-                    type: 'slot',
+                    type: "slot",
                     // fixed: 'left',
                 },
                 {
-                    title: 'Age',
-                    key: 'age',
+                    title: "Age",
+                    key: "age",
                     width: 140,
-                    render(h, params){
-                        return h('span', 'age: '+ params.row.age)
+                    render(h, params) {
+                        return h("span", "age: " + params.row.age);
                     },
                     // fixed: 'left',
                 },
                 {
-                    title: 'Address',
-                    key: 'address',
-                    width: 240
+                    title: "Address",
+                    key: "address",
+                    width: 240,
                 },
                 {
-                    title: 'Sex',
-                    key: 'sex',
-                    width: 140
+                    title: "Sex",
+                    key: "sex",
+                    width: 140,
                 },
                 {
-                    title: 'School',
-                    key: 'school',
-                    width: 240
+                    title: "School",
+                    key: "school",
+                    width: 240,
                 },
                 {
-                    title: 'Color',
-                    key: 'color',
-                    width: 140
+                    title: "Color",
+                    key: "color",
+                    width: 140,
                 },
                 {
-                    title: 'Date',
-                    key: 'date',
-                    width: 240
+                    title: "Date",
+                    key: "date",
+                    width: 240,
                 },
             ],
             loading: false,
             list: aTestList,
             sum: {
-                name: 'Jim Green',
+                name: "Jim Green",
                 age: 24,
-                address: 'London',
-                date: '2016-10-01',
+                address: "London",
+                date: "2016-10-01",
             },
             headSum: {
-                type: 'headSum',
-                name: 'I m Head Sum',
+                type: "headSum",
+                name: "I m Head Sum",
                 age: 24,
-                address: 'London',
-                date: '2016-10-01',
+                address: "London",
+                date: "2016-10-01",
             },
         };
     },
     mounted() {},
     methods: {
         onTableScroll(event) {
-            console.log(event.target.scrollLeft);
+           console.log(event.target.scrollLeft);
         },
         handleRowClick(index, row) {
-            console.log(index, row);
+          console.log(index, row);
+        },
+        handleSelection(row) {
+            console.log("on-selection-change", row.length);
         },
     },
 };

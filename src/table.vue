@@ -978,7 +978,6 @@ export default {
                     }
                 });
                 selection = prefixData;
-                console.log('selection: ', selection);
                 cancelSelection = prefixData;
                 this.prefixData = prefixData;
 
@@ -1326,7 +1325,6 @@ export default {
                         }
                     });
                 });
-                console.log('newData: ', isDataChange, newData);
                 // return (this.dataList = newData);
                 if (isDataChange) {
                     this.dataList = [];
