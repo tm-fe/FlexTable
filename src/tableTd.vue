@@ -159,8 +159,8 @@ export default {
             });
             return flag;
         },
-        toggleSelect() {
-            this.$emit('on-toggle-select', this.rowIndex);
+        toggleSelect(val) {
+            this.$emit('on-toggle-select', this.rowIndex, val);
         },
         onToggleExpand() {
             if (this.renderType !== 'expand') {
