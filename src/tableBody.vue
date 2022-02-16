@@ -299,7 +299,7 @@ export default {
         background: #fff;
     }
 }
-.commonItem{
+.commonItem:not(:last-child){
     .flex-table-row{
         border-bottom: 1px solid #e9eaec;
     }
