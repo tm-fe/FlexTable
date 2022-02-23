@@ -93,20 +93,20 @@ export default {
             default: 40,
         },
     },
+    data() {
+        return {
+            selfHeight: 0,
+        }
+    },
     mounted() {
-        const selt = this;
+        const self = this;
         if (this.$refs.tableTd) {
-            let initHeight = document.body.clientHeight;
             let target = this.$refs.tableTd;
             // 创建观察者对象
             let observer = new ResizeObserver(function (mutations) {
-                selt.$forceUpdate();
-                selt.$emit('doLayout')
+                self.$forceUpdate();
+                self.$emit('doLayout')
             });
-            // 配置观察选项:
-            let config = {
-                attributes: true,
-            };
             // 传入目标节点和观察选项
             observer.observe(target);
         }
@@ -127,7 +127,7 @@ export default {
             if (this.isVirtualScroll) {
                 return `${this.virtualHeight}px`;
             }
-            if ((this.onlyFixed || this.rowSpan) && this.rowHeight) {
+            if (this.selfHeight && this.rowHeight && this.selfHeight <= this.rowHeight) {
                 return `${this.rowHeight}px`;
             } else {
                 return 'auto';
@@ -163,6 +163,9 @@ export default {
             // 如果是fixed 或者是合并行，则不进行 rowHeight的更新
             if (!this.rowSpan) {
                 let { height } = this.$el.getBoundingClientRect();
+                if (height !== this.selfHeight) {
+                    this.selfHeight = height;
+                }
                 if(!this.rowHeight || height > this.rowHeight) {
                     this.owner.onRowHeightChange({
                         rowIndex: this.rowIndex,
