@@ -8,15 +8,18 @@
                 >source code</a
             >
         </p>
-        <div @click="click">show</div>
+        <div @click="click">切换</div>
         <flex-table
-            v-show="show"
+            v-if="show"
             :loading="loading"
-            :columns="columns"
+            :columns="columnsData"
             :data="list"
             :sum="sum"
             :fixed-head="true"
             @on-sort-change="onSortChange"
+            @hook:mounted="mountedHook"
+            @hook:updated="updateHook"
+            @hook:beforeDestroy="beforeDestroy"
         >
             <template slot-scope="{ row, index }" slot="img">
                 <div style="padding: 15px 20px">
@@ -59,26 +62,26 @@ export default {
                     align: 'center',
                     fixed: 'left',
                 },
-                // {
-                //     title: 'img',
-                //     key: 'img',
-                //     width: 100,
-                //     fixed: 'left',
-                //     sortable: true,
-                //     type: 'slot',
-                // },
+                {
+                    title: 'img',
+                    key: 'img',
+                    width: 200,
+                    fixed: 'left',
+                    sortable: true,
+                    type: 'slot',
+                },
                 {
                     title: 'Name',
                     key: 'name',
                     width: 100,
-                    // fixed: 'left',
+                    fixed: 'left',
                     sortable: true,
                 },
                 {
                     title: 'Height',
                     key: 'hegith',
                     width: 300,
-                    // fixed: 'left'
+                    fixed: 'left'
                 },
                 {
                     title: 'Address',
@@ -106,32 +109,30 @@ export default {
     },
     mounted() {
         console.timeEnd('fixed');
-        this.list = aTestList;
-        // this.getImg = imgSrc;
+        this.columnsData = this.columns;
+        this.loading = true;
+        setTimeout(() => {
+            this.loading = false;
+            this.list = aTestList;
+            this.getImg = imgSrc;
+        }, 2000);
     },
     methods: {
         onSortChange(obj) {
             console.log(obj);
         },
         click() {
-            // this.show = !this.show
-            this.list = aTestList;
-            this.columns.push({
-                    title: 'img',
-                    key: 'img',
-                    width: 100,
-                    fixed: 'left',
-                    sortable: true,
-                    type: 'slot',
-                })
-              
-            setTimeout(() => {
-                this.getImg = imgSrc;
-
-                  
-                
-            }, 2000)
+            this.show = !this.show;
         },
+        mountedHook(){
+            console.log('mounted了')
+        },
+        updateHook(){
+            console.log('update了')
+        },
+        beforeDestroy(){
+            console.log('destroy了')
+        }
     },
 };
 </script>

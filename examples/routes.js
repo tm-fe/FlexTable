@@ -64,6 +64,14 @@ export default [
         },
     },
     {
+        path: '/fixedLeft1',
+        name: 'fixedLeft1',
+        component: resolve => require(['./features/fixedLeft1.vue'], resolve),
+        meta: {
+            title: '固定列',
+        },
+    },
+    {
         path: '/resizable',
         name: 'resizable',
         component: resolve => require(['./features/resizable.vue'], resolve),

@@ -4,7 +4,7 @@
         ref="tableTd"
         class="flex-table-row"
         :class="{ 'flex-table-hover': isHover }"
-        :style="{ height: height }"
+        :style="{ minHeight: height }"
         @mouseenter="mouseenter"
     >
         <table-td
