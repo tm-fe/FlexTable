@@ -1,5 +1,7 @@
 <template>
     <div :class="wrapClasses" :style="wrapStyle" ref="tableWrap">
+        <table-loading-bar v-bind="$props" :headHeight="headHeight" />
+                 <!-- /table-loading-bar -->
         <div
             :class="[
                 'flex-table-layout',
@@ -19,6 +21,7 @@
                     :data="dataList"
                     :allData="prefixData"
                     :resizable="resizable"
+                    @getheadHeight="getheadHeight"
                     @on-select-all="selectAll"
                     @on-sort-change="onSortChange"
                     @on-col-resize="onColResizeStart"
@@ -89,6 +92,7 @@
                     :resizable="resizable"
                     :rowHeight="rowHeight.header"
                     :is-render-done="isRenderDone"
+                    @getheadHeight="getheadHeight"
                     @on-select-all="selectAll"
                     @on-sort-change="onSortChange"
                     @on-col-resize="onColResizeStart"
@@ -97,6 +101,7 @@
                         <slot name="batchCheck" />
                     </template>
                 </table-head>
+
                 <table-sum
                     v-if="headSum"
                     ref="tableSum"
@@ -203,9 +208,9 @@
                 :class="{ cur: colResize.currentX !== 0 }"
                 :style="{ left: `${colResize.currentX}px` }"
             ></div>
-            <slot name="loading" v-if="loading">
+            <!-- <slot name="loading" v-if="loading && !progressLoading">
                 <Spinner fix size="large"></Spinner>
-            </slot>
+            </slot> -->
             <div
                 class="flex-table-fixed-scroll"
                 v-if="fixedXScroll"
@@ -298,6 +303,7 @@ import tableHead from './tableHead.vue';
 import tableBody from './tableBody.vue';
 import tableFoot from './tableFoot.vue';
 import tableSum from './tableSum.vue';
+import tableLoadingBar from './tableLoadingBar.vue';
 import tableScrollBar from './tableScrollBar.vue';
 import Spinner from './Spinner.vue';
 import debounce from 'lodash.debounce';
@@ -318,6 +324,7 @@ export default {
         tableScrollBar,
         Spinner,
         tableSum,
+        tableLoadingBar,
     },
     props: {
         data: {
@@ -453,6 +460,10 @@ export default {
             type: [String, Number],
             default: 0,
         },
+        vertical: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -501,6 +512,7 @@ export default {
             selected: [],
             prefixData: [],
             isSelectAll: false,
+            headHeight: 0,
         };
     },
     computed: {
@@ -1388,6 +1400,10 @@ export default {
         getId(item) {
             return item[this.uniqueKey];
         },
+
+        getheadHeight(height){
+            this.headHeight = height
+        }
     },
 };
 </script>

@@ -92,6 +92,10 @@ export default {
             type: Number,
             default: 40,
         },
+        vertical: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {

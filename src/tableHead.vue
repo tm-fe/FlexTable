@@ -128,6 +128,7 @@ export default {
             } else {
                 return 'auto';
             }
+            
         },
         isAllDisabled() {
             return (
@@ -177,7 +178,7 @@ export default {
         });
     },
     updated() {
-         this.$nextTick(() => {
+        this.$nextTick(() => {
             this.onRowHeightChange();
         });
     },
@@ -213,6 +214,7 @@ export default {
         onRowHeightChange() {
             if (!this.onlyFixed) {
                 let { height } = this.$el.getBoundingClientRect();
+                this.$emit('getheadHeight', height)
                 this.owner.onRowHeightChange({
                     rowIndex: 'header',
                     height,

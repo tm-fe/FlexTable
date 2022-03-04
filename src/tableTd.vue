@@ -1,50 +1,57 @@
 <template>
     <div
-        :class="cellClsName(column, row)"
+        :class="[cellClsName(column, row), 'tableCol']"
         :style="setCellStyle(column)"
         @click="onToggleExpand"
         ref="cell"
     >
         <template v-if="!isHidden">
-            <template v-if="renderType === 'selection'">
-                <Checkbox v-if="multiple" :checked="row._isChecked" @input="toggleSelect" :disabled="row._isDisabled"></Checkbox>
-                <Radio
-                    v-else
-                    :checked="row._isChecked"
-                    @input="toggleSelect"
-                    :disabled="row._isDisabled"
-                ></Radio>
-            </template>
-            <template v-if="renderType === 'expand'">
-                <i
-                    :class="{
-                        'flex-table-arrow-right': !expandOpen,
-                        'flex-table-arrow-down': expandOpen,
-                    }"
-                ></i>
-            </template>
-            <Expand
-                v-else-if="renderType === 'render'"
-                :row="row"
-                :column="column"
-                :index="rowIndex"
-                :render="column.render"
-            ></Expand>
-            <TableSlot
-                v-else-if="renderType === 'slot'"
-                :row="row"
-                :column="column"
-                :index="rowIndex"
-                :owner="owner"
-            ></TableSlot>
+            <div>
+                <template v-if="renderType === 'selection'">
+                    <Checkbox
+                        v-if="multiple"
+                        :checked="row._isChecked"
+                        @input="toggleSelect"
+                        :disabled="row._isDisabled"
+                    ></Checkbox>
+                    <Radio
+                        v-else
+                        :checked="row._isChecked"
+                        @input="toggleSelect"
+                        :disabled="row._isDisabled"
+                    ></Radio>
+                </template>
+                <template v-if="renderType === 'expand'">
+                    <i
+                        :class="{
+                            'flex-table-arrow-right': !expandOpen,
+                            'flex-table-arrow-down': expandOpen,
+                        }"
+                    ></i>
+                </template>
+                <Expand
+                    v-else-if="renderType === 'render'"
+                    :row="row"
+                    :column="column"
+                    :index="rowIndex"
+                    :render="column.render"
+                ></Expand>
+                <TableSlot
+                    v-else-if="renderType === 'slot'"
+                    :row="row"
+                    :column="column"
+                    :index="rowIndex"
+                    :owner="owner"
+                ></TableSlot>
 
-            <template v-else-if="renderType === 'normal'">{{
-                row[column.key]
-            }}</template>
+                <template v-else-if="renderType === 'normal'">{{
+                    row[column.key]
+                }}</template>
 
-            <template v-else-if="renderType === 'html'"
-                ><span v-html="row[column.key]"></span
-            ></template>
+                <template v-else-if="renderType === 'html'"
+                    ><span v-html="row[column.key]"></span
+                ></template>
+            </div>
         </template>
     </div>
 </template>
@@ -91,6 +98,10 @@ export default {
         multiple: {
             type: Boolean,
             default: true,
+        },
+        vertical: {
+            type: Boolean,
+            default: false,
         },
     },
     data() {
@@ -196,13 +207,17 @@ export default {
 };
 </script>
 <style scoped lang="less">
-/deep/ .input-box{
+// .flex-table-col{
+//     display: flex;
+//     align-items: center;
+// }
+/deep/ .input-box {
     position: relative;
     border: 1px solid #ccc !important;
     box-shadow: none !important;
 }
-/deep/ .radio-component>input:checked+label>.input-box{
-    border: 1px solid #3475ff  !important;
+/deep/ .radio-component > input:checked + label > .input-box {
+    border: 1px solid #3475ff !important;
 }
 /deep/ .input-box-circle {
     width: 8px !important;
@@ -214,7 +229,7 @@ export default {
     margin-left: -4px !important;
     background: #3475ff !important;
 }
-/deep/ .radio-component>input:disabled+label>.input-box{
+/deep/ .radio-component > input:disabled + label > .input-box {
     background: #f7f7f7;
     cursor: not-allowed;
 }

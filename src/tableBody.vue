@@ -8,8 +8,13 @@
         <template v-for="(item, index) in rowSpanList">
             <div
                 :key="index"
-                :class="`flex-table-tr flex-table-span ${isVirtualScroll ? 'virtualItem bgColor' : 'commonItem bgColor'}`"
-                :style="item.style">
+                :class="`flex-table-tr flex-table-span ${
+                    isVirtualScroll
+                        ? 'virtualItem bgColor'
+                        : 'commonItem bgColor'
+                }`"
+                :style="item.style"
+            >
                 <table-tr
                     row-span
                     :column-index="item.columnIndex"
@@ -30,9 +35,26 @@
             </div>
         </template>
 
-        <div class="flex-table-tr" v-if="data.length" :style="isVirtualScroll ? scrollerStyle : null">
-            <div v-for="(row, index) in data" :key="row[uniqueKey] || row.id || index" :class="`${isVirtualScroll ? 'virtualItem bgColor' : 'commonItem bgColor'}`" 
-                :style="{'transform': isVirtualScroll ? `translateY(${row.top}px)` : 'none', 'height': isVirtualScroll ? `${virtualHeight}px` : 'auto'}">
+        <div
+            class="flex-table-tr"
+            v-if="data.length"
+            :style="isVirtualScroll ? scrollerStyle : null"
+        >
+            <div
+                v-for="(row, index) in data"
+                :key="row[uniqueKey] || row.id || index"
+                :class="`${
+                    isVirtualScroll
+                        ? 'virtualItem bgColor'
+                        : 'commonItem bgColor'
+                }`"
+                :style="{
+                    transform: isVirtualScroll
+                        ? `translateY(${row.top}px)`
+                        : 'none',
+                    height: isVirtualScroll ? `${virtualHeight}px` : 'auto',
+                }"
+            >
                 <table-tr
                     v-bind="$props"
                     :key="index"
@@ -41,7 +63,9 @@
                     :columns="columns"
                     :cal-width="calWidth"
                     :onlyFixed="onlyFixed"
-                    :rowHeight="isVirtualScroll ? virtualHeight : rowHeight[index]"
+                    :rowHeight="
+                        isVirtualScroll ? virtualHeight : rowHeight[index]
+                    "
                     :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
                     :spanMethod="spanMethod"
@@ -49,21 +73,25 @@
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                     @on-td-click="handleRowClick"
-
                     @doLayout="$emit('doLayout')"
                 ></table-tr>
-                <div class="flex-table-expanded" v-if="row._expanded" :key="'expand_'+index">
+                <div
+                    class="flex-table-expanded"
+                    v-if="row._expanded"
+                    :key="'expand_' + index"
+                >
                     <Expand
                         :row="row"
                         :index="index"
-                        :render="expandRender"></Expand>
+                        :render="expandRender"
+                    ></Expand>
                 </div>
             </div>
         </div>
 
         <div v-else>
             <div class="flex-table-col flex-table-tip">
-                {{ (!onlyFixed && !loading) ? noData : '&nbsp;' }}
+                {{ !onlyFixed && !loading ? noData : '&nbsp;' }}
             </div>
         </div>
     </div>
@@ -145,19 +173,29 @@ export default {
             type: Boolean,
             default: false,
         },
+        vertical: {
+            type: Boolean,
+            default: false,
+        },
     },
     computed: {
         style() {
-            const tableSumHeight = this.$parent.$refs.tableSum ? this.$parent.$refs.tableSum.$el.offsetHeight : 0;
+            const tableSumHeight = this.$parent.$refs.tableSum
+                ? this.$parent.$refs.tableSum.$el.offsetHeight
+                : 0;
             if (this.virtualScroll) {
                 return {
-                    height: this.maxHeight ? `${this.maxHeight + tableSumHeight}px` : `auto`,
+                    height: this.maxHeight
+                        ? `${this.maxHeight + tableSumHeight}px`
+                        : `auto`,
                 };
             }
 
             return {
-                'max-height': this.maxHeight ? `${this.maxHeight - tableSumHeight}px` : `auto`,
-                'z-index': !this.data.length ? '10' : '0'
+                'max-height': this.maxHeight
+                    ? `${this.maxHeight - tableSumHeight}px`
+                    : `auto`,
+                'z-index': !this.data.length ? '10' : '0',
             };
         },
         defaultHeight() {
@@ -253,7 +291,6 @@ export default {
                 });
             });
 
-
             this.rowSpanList = list;
             return list;
         },
@@ -299,8 +336,8 @@ export default {
         background: #fff;
     }
 }
-.commonItem:not(:last-child){
-    .flex-table-row{
+.commonItem:not(:last-child) {
+    .flex-table-row {
         border-bottom: 1px solid #e9eaec;
     }
 }
@@ -309,11 +346,11 @@ export default {
     position: absolute;
     left: 0;
     width: 100%;
-    .flex-table-row{
+    .flex-table-row {
         border-bottom: 1px solid #e9eaec;
     }
 }
-.flex-table-body .flex-table-tr > .flex-table-row{
+.flex-table-body .flex-table-tr > .flex-table-row {
     border-bottom: 0 !important;
 }
 </style>

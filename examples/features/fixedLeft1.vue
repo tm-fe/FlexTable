@@ -10,7 +10,7 @@
         </p>
         <div @click="click">切换</div>
         <flex-table
-            v-show="show"
+            v-if="show"
             :loading="loading"
             :columns="columnsData"
             :data="list"
@@ -108,9 +108,10 @@ export default {
         console.timeEnd('fixed');
         this.columnsData = this.columns;
         this.loading = true;
+            this.list = aTestList;
+
         setTimeout(() => {
             this.loading = false;
-            this.list = aTestList;
             this.getImg = imgSrc;
         }, 2000);
     },

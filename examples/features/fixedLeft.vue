@@ -11,11 +11,12 @@
         <div @click="click">show</div>
         <flex-table
             v-show="show"
-            :loading="loading"
+            :loading="loading"            
             :columns="columns"
             :data="list"
             :sum="sum"
             :fixed-head="true"
+            vertical
             @on-sort-change="onSortChange"
         >
             <template slot-scope="{ row, index }" slot="img">
@@ -73,12 +74,12 @@ export default {
                     width: 100,
                     // fixed: 'left',
                     sortable: true,
+                    vertical: false,
                 },
                 {
                     title: 'Height',
                     key: 'hegith',
                     width: 300,
-                    // fixed: 'left'
                 },
                 {
                     title: 'Address',
