@@ -78,7 +78,7 @@ export default {
                     title: 'Height',
                     key: 'hegith',
                     width: 300,
-                    fixed: 'left'
+                    fixed: 'left',
                 },
                 {
                     title: 'Address',
@@ -108,7 +108,7 @@ export default {
         console.timeEnd('fixed');
         this.columnsData = this.columns;
         this.loading = true;
-            this.list = aTestList;
+        this.list = aTestList;
 
         setTimeout(() => {
             this.loading = false;
@@ -120,7 +120,13 @@ export default {
             console.log(obj);
         },
         click() {
-            this.show = !this.show;
+            // this.show = !this.show;
+            this.loading = true;
+            setTimeout(() => {
+                this.loading = false;
+                this.getImg = imgSrc;
+                this.list = aTestList;
+            }, 2000);
         },
     },
 };

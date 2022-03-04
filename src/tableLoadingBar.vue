@@ -56,6 +56,7 @@ export default {
                     this.width = '100%';
                     setTimeout(() => {
                         this.isShow = false;
+                        this.width = '0%';
                     }, 300);
                 }
             },
