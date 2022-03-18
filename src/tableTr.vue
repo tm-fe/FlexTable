@@ -1,5 +1,5 @@
 <template>
-    <!-- :ref="`${!onlyFixed ? 'tableTd' : ''}`" -->
+    <!-- :style="{ minHeight: height }" -->
     <div
         ref="tableTd"
         class="flex-table-row"
@@ -130,12 +130,17 @@ export default {
         height() {
             if (this.isVirtualScroll) {
                 return `${this.virtualHeight}px`;
-            }
-            if (this.selfHeight && this.rowHeight && this.selfHeight <= this.rowHeight) {
-                return `${this.rowHeight}px`;
-            } else {
+            }else {
                 return 'auto';
             }
+            // if (this.selfHeight && this.rowHeight && this.selfHeight <= this.rowHeight) {
+            //     console.log('this.rowHeigh: ', this.rowHeigh);
+
+            //     return `${this.rowHeight}px`;
+            // } else {
+            //     return 'auto';
+            // }
+
         },
         isHover() {
             return this.hoverIndex === this.rowIndex;

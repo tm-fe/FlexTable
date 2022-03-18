@@ -33,7 +33,7 @@ import imgSrc from './123.png';
 const aTestList = [];
 for (let i = 0; i < 5; i++) {
     const oTestData = {
-        name: 'John Brown',
+        name: 'John',
         age: 18,
         hegith: '178',
         address: 'New York No. 1 Lake Park',
@@ -72,7 +72,7 @@ export default {
                     title: 'Name',
                     key: 'name',
                     width: 100,
-                    // fixed: 'left',
+                    fixed: 'left',
                     sortable: true,
                     vertical: false,
                 },

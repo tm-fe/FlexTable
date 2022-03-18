@@ -32,7 +32,7 @@ import imgSrc from './123.png';
 const aTestList = [];
 for (let i = 0; i < 5; i++) {
     const oTestData = {
-        name: 'John Brown',
+        name: 'John BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn BrownJohn Brown',
         age: 18,
         hegith: '178',
         address: 'New York No. 1 Lake Park',
@@ -70,7 +70,7 @@ export default {
                 {
                     title: 'Name',
                     key: 'name',
-                    width: 100,
+                    width: 400,
                     fixed: 'left',
                     sortable: true,
                 },
@@ -78,7 +78,6 @@ export default {
                     title: 'Height',
                     key: 'hegith',
                     width: 300,
-                    fixed: 'left',
                 },
                 {
                     title: 'Address',
