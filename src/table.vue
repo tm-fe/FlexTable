@@ -1,7 +1,7 @@
 <template>
     <div :class="wrapClasses" :style="wrapStyle" ref="tableWrap">
-        <table-loading-bar v-bind="$props" :headHeight="headHeight" />
-                 <!-- /table-loading-bar -->
+        <!-- <table-loading-bar v-bind="$props" :headHeight="headHeight" /> -->
+        <!-- /table-loading-bar -->
         <div
             :class="[
                 'flex-table-layout',
@@ -208,9 +208,9 @@
                 :class="{ cur: colResize.currentX !== 0 }"
                 :style="{ left: `${colResize.currentX}px` }"
             ></div>
-            <!-- <slot name="loading" v-if="loading && !progressLoading">
+            <slot name="loading" v-if="loading">
                 <Spinner fix size="large"></Spinner>
-            </slot> -->
+            </slot>
             <div
                 class="flex-table-fixed-scroll"
                 v-if="fixedXScroll"
