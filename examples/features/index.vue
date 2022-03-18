@@ -37,7 +37,7 @@ const aTestList = [];
 for (let i = 0; i < 20; i++) {
     const oTestData = {
         myid: i,
-        name: "John Brown" + i,
+        name: "John Brownhigh schoolhigh schoolhigh schoolhigh schoolhigh schoolhigh schoolhigh schoolhigh schoolhigh schoolhigh schoolhigh schoolhigh schoolhigh schoolhigh schoolhigh schoolhigh school" + i,
         age: 18,
         sex: "男",
         school: "high school",
@@ -60,14 +60,14 @@ export default {
                     type: "selection",
                     width: 20,
                     align: "center",
-                    // fixed: 'left',
+                    fixed: 'left',
                 },
                 {
                     title: "Name",
                     key: "name",
                     width: 240,
                     type: "slot",
-                    // fixed: 'left',
+                    fixed: 'left',
                 },
                 {
                     title: "Age",

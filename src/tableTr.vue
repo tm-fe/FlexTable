@@ -100,7 +100,7 @@ export default {
     data() {
         return {
             selfHeight: 0,
-        }
+        };
     },
     mounted() {
         const self = this;
@@ -109,7 +109,7 @@ export default {
             // 创建观察者对象
             let observer = new ResizeObserver(function (mutations) {
                 self.$forceUpdate();
-                self.$emit('doLayout')
+                self.$emit('doLayout');
             });
             // 传入目标节点和观察选项
             observer.observe(target);
@@ -130,7 +130,10 @@ export default {
         height() {
             if (this.isVirtualScroll) {
                 return `${this.virtualHeight}px`;
-            }else {
+            }
+            if ((this.onlyFixed || this.rowSpan) && this.rowHeight) {
+                return `${this.rowHeight}px`;
+            } else {
                 return 'auto';
             }
             // if (this.selfHeight && this.rowHeight && this.selfHeight <= this.rowHeight) {
@@ -140,7 +143,6 @@ export default {
             // } else {
             //     return 'auto';
             // }
-
         },
         isHover() {
             return this.hoverIndex === this.rowIndex;
@@ -154,33 +156,49 @@ export default {
             this.$emit('on-toggle-expand', this.rowIndex);
         },
         handleTdClick($event, column, row) {
-            if(column.type == 'selection' && ['checkbox', 'radio'].includes($event.target.type)) {
-                this.$emit('on-selection-click', this.rowIndex, row); 
+            if (
+                column.type == 'selection' &&
+                ['checkbox', 'radio'].includes($event.target.type)
+            ) {
+                this.$emit('on-selection-click', this.rowIndex, row);
                 return;
-            } else if(column.type == 'selection') {
+            } else if (column.type == 'selection') {
                 const _checked = row._isChecked;
                 setTimeout(() => {
-                    if(_checked === row._isChecked) {
-                        this.$emit('on-td-click', this.rowIndex, row, column);  
+                    if (_checked === row._isChecked) {
+                        this.$emit('on-td-click', this.rowIndex, row, column);
                     }
-                })
+                });
                 return;
             }
-            this.$emit('on-td-click', this.rowIndex, row, column); 
+            this.$emit('on-td-click', this.rowIndex, row, column);
         },
         onRowHeightChange() {
             // 如果是fixed 或者是合并行，则不进行 rowHeight的更新
-            if (!this.rowSpan) {
+            // if (!this.rowSpan) {
+            //     let { height } = this.$el.getBoundingClientRect();
+
+            //     if (height !== this.selfHeight) {
+            //         this.selfHeight = height;
+            //     }
+            //     console.log('height: ', height, this.rowHeight, this.selfHeight);
+
+            //     if (!this.rowHeight || height > this.rowHeight) {
+            //         this.owner.onRowHeightChange({
+            //             rowIndex: this.rowIndex,
+            //             height,
+            //         });
+            //     }
+            // }
+            if (!this.onlyFixed && !this.rowSpan) {
                 let { height } = this.$el.getBoundingClientRect();
                 if (height !== this.selfHeight) {
                     this.selfHeight = height;
                 }
-                if(!this.rowHeight || height > this.rowHeight) {
-                    this.owner.onRowHeightChange({
-                        rowIndex: this.rowIndex,
-                        height,
-                    });
-                }
+                this.owner.onRowHeightChange({
+                    rowIndex: this.rowIndex,
+                    height,
+                });
             }
         },
         debounce(fn, wait) {
