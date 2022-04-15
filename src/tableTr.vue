@@ -113,6 +113,7 @@ export default {
             });
             // 传入目标节点和观察选项
             observer.observe(target);
+            this.resizeObserver = observer;
         }
         this.$nextTick(() => {
             this.onRowHeightChange();
@@ -122,6 +123,11 @@ export default {
         this.$nextTick(() => {
             this.onRowHeightChange();
         });
+    },
+    beforeDestroy() {
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+        }
     },
     computed: {
         isVirtualScroll() {

@@ -622,7 +622,11 @@ export default {
         }
 
         this.doLayout();
-        window.addEventListener('resize', this.doLayout);
+        let observer = new ResizeObserver(() => {
+            this.doLayout();
+        });
+        observer.observe(this.$el);
+        this.resizeObserver = observer;
         window.addEventListener('scroll', this.winScroll, false);
         if (this.resizable) {
             window.addEventListener('mouseup', this.onColResizeEnd);
@@ -740,7 +744,9 @@ export default {
     beforeDestroy() {
         this.shouldEachRenderQueue = false;
         this._queueId = null;
-        window.removeEventListener('resize', this.doLayout);
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+        }
         window.removeEventListener('scroll', this.winScroll, false);
         window.removeEventListener('mouseup', this.onColResizeEnd);
         this.$el.removeEventListener('mousemove', this.onColResizeMove);
