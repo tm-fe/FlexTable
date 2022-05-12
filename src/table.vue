@@ -786,6 +786,7 @@ export default {
         }, 0),
         updateHoverIndex: debounce(function (index) {
             this.hoverIndex = index;
+            this.$emit('hover-row', this.hoverIndex);
         }, 100),
         handleMousewheel(event) {
             if (!this.$refs.tableBody) {
