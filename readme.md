@@ -156,6 +156,8 @@ export default {
 | scrollContainer | 表格所在的滚动容器，默认document，传String会使用document.querySelector查询 | String/Object | document |
 | fixedXScroll | 是否固定横向滚动 | Boolean | false |
 | fixedXScrollBottom | 固定横向滚动的底部位置 | Number/String | 0 |
+| vertical | 表格单元格是否垂直居中 | Boolean | false(如果需要某一列需要垂直居中：在表columns中给需要垂直居中的字段增加 vertical: true 即可) |
+
 
 ### Table events
 
