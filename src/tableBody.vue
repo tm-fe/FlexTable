@@ -338,7 +338,7 @@ export default {
 }
 .commonItem:not(:last-child) {
     .flex-table-row {
-        border-bottom: 1px solid #e9eaec;
+        border-bottom: 1px solid #eee;
     }
 }
 .virtualItem {
@@ -347,7 +347,7 @@ export default {
     left: 0;
     width: 100%;
     .flex-table-row {
-        border-bottom: 1px solid #e9eaec;
+        border-bottom: 1px solid #eee;
     }
 }
 .flex-table-body .flex-table-tr > .flex-table-row {
