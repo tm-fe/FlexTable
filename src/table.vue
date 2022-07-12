@@ -1374,11 +1374,11 @@ export default {
         },
 
         updateFixedScroll() {
-            if (!this.fixedXScroll) {
-                return;
-            }
             const fixedXScroll = this.$refs.fixedXScroll;
             const flexTableLayout = this.$refs.flexTableLayout;
+            if (!this.fixedXScroll || !flexTableLayout || !fixedXScroll) {
+                return;
+            }
             const { width, bottom } = flexTableLayout.getBoundingClientRect();
             if (bottom < window.innerHeight) {
                 fixedXScroll.style.display = 'none';
