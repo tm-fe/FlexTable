@@ -34,7 +34,7 @@
                 <!-- /flex-table-head -->
 
                 <table-sum
-                    v-if="headSum"
+                    v-if="headSum && data.length"
                     ref="tableSum"
                     :cal-width="calWidth"
                     :columns="tableColumns"
@@ -64,7 +64,7 @@
                 <!-- /flex-table-body -->
 
                 <table-foot
-                    v-if="sum"
+                    v-if="sum && data.length"
                     ref="tableFoot"
                     :cal-width="calWidth"
                     :columns="tableColumns"
@@ -103,7 +103,7 @@
                 </table-head>
 
                 <table-sum
-                    v-if="headSum"
+                    v-if="headSum && data.length"
                     ref="tableSum"
                     :cal-width="calWidth"
                     :columns="tableColumns"
@@ -130,7 +130,7 @@
                 ></table-body>
 
                 <table-foot
-                    v-if="sum"
+                    v-if="sum && data.length"
                     onlyFixed="left"
                     :cal-width="calWidth"
                     :columns="tableColumns"
@@ -166,7 +166,7 @@
                     </table-head>
 
                     <table-sum
-                        v-if="headSum"
+                        v-if="headSum && data.length"
                         ref="tableSum"
                         :cal-width="calWidth"
                         :columns="tableColumns"
@@ -193,7 +193,7 @@
                     ></table-body>
 
                     <table-foot
-                        v-if="sum"
+                        v-if="sum && data.length"
                         onlyFixed="right"
                         :cal-width="calWidth"
                         :columns="tableColumns"

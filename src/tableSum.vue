@@ -110,7 +110,6 @@ export default {
 </script>
 <style lang="less" scoped>
 .flex-table-headSum{
-    border-top: 1px solid #eee;
     border-bottom: 1px solid #eee;
     text-align: left;
     box-sizing: border-box;

@@ -17,6 +17,7 @@
             :minWidth="80"
             :maxWidth="600"
             uniqueKey="myid"
+            :headSum="headSum"
             @on-scroll-x="onTableScroll"
             @on-row-click="handleRowClick"
             @on-selection-change="handleSelection"
