@@ -91,7 +91,7 @@ export default {
             return this.onlyFixed && (item.fixed !== this.onlyFixed);
         },
         shouldRender(item) {
-            return this.sum[item.key] !== undefined && !this.isHidden(item)
+            return !this.isHidden(item)
         },
         isInvisible(col) { // 非固定层的固定列应不可见
             return col.fixed && !this.onlyFixed;
