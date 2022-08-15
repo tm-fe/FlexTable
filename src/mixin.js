@@ -18,7 +18,6 @@ export default {
         setCellStyle(column) {
             const sWidth = this.calWidth[column.key];
             const oStyle = {};
-            const { vertical } = column;
             if (sWidth) {
                 oStyle.width = `${sWidth}px`;
                 oStyle.flex = 'none';
@@ -26,10 +25,8 @@ export default {
             if (column.align) {
                 oStyle['text-align'] = column.align;
             }
-            if (vertical || this.vertical) {
-                oStyle.display = 'flex';
-                oStyle['align-items'] = 'center';
-            }
+            oStyle.display = 'grid';
+            oStyle['align-items'] = 'center';
             return oStyle;
         },
         alignCls (column, row = {}) {

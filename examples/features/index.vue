@@ -67,43 +67,44 @@ export default {
                     title: "Name",
                     key: "name",
                     width: 240,
+                    // maxWidth: 250,
+                    // minWidth: 150,
                     type: "slot",
                     fixed: 'left',
                 },
                 {
                     title: "Age",
                     key: "age",
-                    width: 140,
-                    render(h, params) {
-                        return h("span", "age: " + params.row.age);
-                    },
+                    // width: 140,
+                    align: 'right',
+                    // render(h, params) {
+                    //     return h("span", "age: " + params.row.age);
+                    // },
                     // fixed: 'left',
                 },
-                {
-                    title: "Address",
-                    key: "address",
-                    width: 240,
-                },
-                {
-                    title: "Sex",
-                    key: "sex",
-                    width: 140,
-                },
-                {
-                    title: "School",
-                    key: "school",
-                    width: 240,
-                },
-                {
-                    title: "Color",
-                    key: "color",
-                    width: 140,
-                },
-                {
-                    title: "Date",
-                    key: "date",
-                    width: 240,
-                },
+                // {
+                //     title: "Address",
+                //     key: "address",
+                // },
+                // {
+                //     title: "Sex",
+                //     key: "sex",
+                // },
+                // {
+                //     title: "School",
+                //     key: "school",
+                //     width: 240,
+                // },
+                // {
+                //     title: "Color",
+                //     key: "color",
+                //     width: 140,
+                // },
+                // {
+                //     title: "Date",
+                //     key: "date",
+                //     width: 240,
+                // },
             ],
             loading: false,
             list: aTestList,
