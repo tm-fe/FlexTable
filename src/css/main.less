@@ -407,13 +407,16 @@
         }
     }
     &-header-content {
-        // display: inline-flex;
-        display: flex;
+        display: inline-flex;
         &-title {
+            position: relative;
             display: inline-block;
+            padding-right: 18px;
         }
         &-sort-icon {
-            display: inline-block;
+            position: absolute;
+            top: 0;
+            right: 0;
         }
     }
 }

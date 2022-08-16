@@ -8,7 +8,7 @@
                     'flex-table-col': true,
                     'flex-table-hidden': isInvisible(item),
                 }"
-                :style="setCellStyle(item)"
+                :style="setCellStyle(item, 'head')"
             >
                 <template v-if="!isHidden(item)">
                     <template v-if="item.type === 'selection' && multiple">
@@ -25,7 +25,9 @@
                         </div>
                     </template>
                     <template v-else>
-                        <div class="flex-table-header-content">
+                        <div
+                            class="flex-table-header-content"
+                        >
                             <div class="flex-table-header-content-title">
                                 <Expand
                                     v-if="item.renderHeader"
@@ -34,25 +36,33 @@
                                     :render="item.renderHeader"
                                 ></Expand>
                                 <span v-else>{{ item.title }}</span>
-                            </div>
-                            <div class="flex-table-header-content-sort-icon">
-                                <span class="flex-table-sort" v-if="item.sortable">
+                                <div class="flex-table-header-content-sort-icon">
+                                <span
+                                    class="flex-table-sort"
+                                    v-if="item.sortable"
+                                >
                                     <i
                                         @click="handleSort(index, 'asc')"
                                         :class="{
-                                            on: getColumns(index)._sort === 'asc',
+                                            on:
+                                                getColumns(index)._sort ===
+                                                'asc',
                                         }"
                                         class="flex-table-arrow-dropup"
                                     ></i>
                                     <i
                                         @click="handleSort(index, 'desc')"
                                         :class="{
-                                            on: getColumns(index)._sort === 'desc',
+                                            on:
+                                                getColumns(index)._sort ===
+                                                'desc',
                                         }"
                                         class="flex-table-arrow-dropdown"
                                     ></i>
                                 </span>
                             </div>
+                            </div>
+                            
                         </div>
                         <div
                             v-if="isColResizable(item)"
@@ -128,7 +138,6 @@ export default {
             } else {
                 return 'auto';
             }
-            
         },
         isAllDisabled() {
             return (
@@ -173,7 +182,7 @@ export default {
         },
     },
     mounted() {
-         this.$nextTick(() => {
+        this.$nextTick(() => {
             this.onRowHeightChange();
         });
     },
@@ -214,7 +223,7 @@ export default {
         onRowHeightChange() {
             if (!this.onlyFixed) {
                 let { height } = this.$el.getBoundingClientRect();
-                this.$emit('getheadHeight', height)
+                this.$emit('getheadHeight', height);
                 this.owner.onRowHeightChange({
                     rowIndex: 'header',
                     height,
@@ -235,4 +244,10 @@ export default {
     },
 };
 </script>
+<style lang="less" scoped>
+/deep/ .flex-table-header-content {
+   display: table-cell;
+   vertical-align: middle;
+}
+</style>
 

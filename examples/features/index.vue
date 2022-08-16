@@ -94,8 +94,9 @@ export default {
                 {
                     title: "Schoolasdfasdfsadf",
                     key: "school",
-                    width: 20,
-                     sortable: true,
+                    align: 'right',
+                    width: 500,
+                    sortable: true,
                 },
                 {
                     title: "Color",
