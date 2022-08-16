@@ -25,9 +25,7 @@
                         </div>
                     </template>
                     <template v-else>
-                        <div
-                            class="flex-table-header-content"
-                        >
+                        <div class="flex-table-header-content">
                             <div class="flex-table-header-content-title">
                                 <Expand
                                     v-if="item.renderHeader"
@@ -36,7 +34,8 @@
                                     :render="item.renderHeader"
                                 ></Expand>
                                 <span v-else>{{ item.title }}</span>
-                                <div class="flex-table-header-content-sort-icon">
+                            </div>
+                            <div class="flex-table-header-content-sort-icon">
                                 <span
                                     class="flex-table-sort"
                                     v-if="item.sortable"
@@ -61,8 +60,6 @@
                                     ></i>
                                 </span>
                             </div>
-                            </div>
-                            
                         </div>
                         <div
                             v-if="isColResizable(item)"
@@ -245,9 +242,9 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-/deep/ .flex-table-header-content {
-   display: table-cell;
-   vertical-align: middle;
-}
+// /deep/ .flex-table-header-content {
+//     display: table-cell;
+//     vertical-align: middle;
+// }
 </style>
 

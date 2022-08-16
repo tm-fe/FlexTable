@@ -15,7 +15,7 @@ export default {
         },
     },
     methods: {
-        setCellStyle(column) {
+        setCellStyle(column, type) {
             const sWidth = this.calWidth[column.key];
             const oStyle = {};
             if (sWidth) {
@@ -25,11 +25,13 @@ export default {
             if (column.align) {
                 oStyle['text-align'] = column.align;
             }
-            oStyle.display = 'grid';
-            oStyle['align-items'] = 'center';
+            if (type !== 'head') {
+                oStyle.display = 'grid';
+                oStyle['align-items'] = 'center';
+            }
             return oStyle;
         },
-        alignCls (column, row = {}) {
+        alignCls(column, row = {}) {
             let cellClassName = '';
             if (row.cellClassName && column.key && row.cellClassName[column.key]) {
                 cellClassName = row.cellClassName[column.key];
