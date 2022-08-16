@@ -25,9 +25,8 @@ export default {
             if (column.align) {
                 oStyle['text-align'] = column.align;
             }
-            // oStyle.display = 'grid';
-            // oStyle['align-items'] = 'center';
-            return oStyle;
+            oStyle.display = 'grid';
+            oStyle['align-items'] = 'center';
         },
         alignCls (column, row = {}) {
             let cellClassName = '';
