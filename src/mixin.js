@@ -25,8 +25,8 @@ export default {
             if (column.align) {
                 oStyle['text-align'] = column.align;
             }
-            oStyle.display = 'grid';
-            oStyle['align-items'] = 'center';
+            // oStyle.display = 'grid';
+            // oStyle['align-items'] = 'center';
             return oStyle;
         },
         alignCls (column, row = {}) {
