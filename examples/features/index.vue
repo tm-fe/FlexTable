@@ -82,29 +82,31 @@ export default {
                     // },
                     // fixed: 'left',
                 },
-                // {
-                //     title: "Address",
-                //     key: "address",
-                // },
-                // {
-                //     title: "Sex",
-                //     key: "sex",
-                // },
-                // {
-                //     title: "School",
-                //     key: "school",
-                //     width: 240,
-                // },
-                // {
-                //     title: "Color",
-                //     key: "color",
-                //     width: 140,
-                // },
-                // {
-                //     title: "Date",
-                //     key: "date",
-                //     width: 240,
-                // },
+                {
+                    title: "Address",
+                    key: "address",
+                    sortable: true,
+                },
+                {
+                    title: "Sex",
+                    key: "sex",
+                },
+                {
+                    title: "Schoolasdfasdfsadf",
+                    key: "school",
+                    width: 20,
+                     sortable: true,
+                },
+                {
+                    title: "Color",
+                    key: "color",
+                    width: 140,
+                },
+                {
+                    title: "Date",
+                    key: "date",
+                    width: 240,
+                },
             ],
             loading: false,
             list: aTestList,

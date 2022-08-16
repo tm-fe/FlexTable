@@ -44,11 +44,6 @@ export default {
                     sortable: true,
                 },
                 {
-                    title: 'Address',
-                    key: 'address',
-                    width: 300,
-                },
-                {
                     title: 'Date',
                     key: 'date',
                     sortable: true,
