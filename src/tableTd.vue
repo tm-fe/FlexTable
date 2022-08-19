@@ -1,7 +1,7 @@
 <template>
     <div
         :class="[cellClsName(column, row), 'tableCol']"
-        :style="setCellStyle(column)"
+        :style="[setCellStyle(column), handleWidth(column)]"
         @click="onToggleExpand"
         ref="cell"
     >
@@ -70,6 +70,10 @@ export default {
             type: Object,
             required: true,
         },
+        columns: {
+            type: Array,
+            required: true,
+        },
         index: {
             type: Number,
             required: true,
@@ -134,6 +138,9 @@ export default {
             // 非固定层的固定列应不可见
             return this.column.fixed && !this.onlyFixed;
         },
+        lastFixedIdx() {
+            return this.columns.filter((item) => item.fixed === 'left').length;
+        },
     },
     created() {
         // renderType
@@ -194,6 +201,32 @@ export default {
         flexTableHidden() {
             return this.isInvisible ? 'flex-table-hidden' : '';
         },
+        handleWidth(column) {
+            const idx = this.columns.findIndex(
+                (item) =>
+                    item.key === this.column.key &&
+                    this.column.fixed === 'left' &&
+                    this.column.type !== 'selection'
+            );
+            const beforeKey = JSON.parse(JSON.stringify(this.columns))
+                .splice(0, idx)
+                .map((item) => item.key);
+            let num = 0;
+            for (const item of beforeKey) {
+                num += this.calWidth[item];
+            }
+            if (num) {
+                return {
+                    left: `${num}px`,
+                };
+            }
+        },
+        flexTableBorder() {
+            if (this.lastFixedIdx && this.columns[this.lastFixedIdx - 1].key === this.column.key) {
+                return 'fixedBorder';
+            }
+            return '';
+        },
         cellClsName(column, row) {
             return [
                 this.flexTableCol(),
@@ -201,6 +234,7 @@ export default {
                 this.flexTableExpandDisabled(),
                 this.flexTableHidden(),
                 this.alignCls(column, row),
+                this.flexTableBorder(),
             ];
         },
     },
@@ -232,5 +266,22 @@ export default {
 /deep/ .radio-component > input:disabled + label > .input-box {
     background: #f7f7f7;
     cursor: not-allowed;
+}
+.fixedBorder:after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: -1px;
+    width: 30px;
+    transform: translate(100%);
+    transition: box-shadow .3s;
+    content: "";
+    pointer-events: none;
+    box-shadow: inset 10px 0 8px -5px #00000026;
+}
+.notFixed {
+    .fixedBorder:after {
+        box-shadow: none;
+    }
 }
 </style>

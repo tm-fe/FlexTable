@@ -323,19 +323,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.bgColor {
-    &:nth-child(odd) {
-        background: #f9f9f9;
-    }
-}
-.no-stripe {
-    .virtualItem:nth-child(odd) {
-        background: #fff;
-    }
-    .commonItem:nth-child(odd) {
-        background: #fff;
-    }
-}
 .commonItem:not(:last-child) {
     .flex-table-row {
         border-bottom: 1px solid #eee;

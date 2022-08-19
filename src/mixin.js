@@ -29,6 +29,7 @@ export default {
                 oStyle.display = 'grid';
                 oStyle['align-items'] = 'center';
             }
+
             return oStyle;
         },
         alignCls(column, row = {}) {

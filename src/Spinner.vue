@@ -37,7 +37,7 @@ export default {
 <style lang="less">
 .flex-table-spinner {
   position: absolute;
-  z-index: 1;
+  z-index: 100;
   top: 0;
   right: 0;
   bottom: 0;
