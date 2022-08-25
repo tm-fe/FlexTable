@@ -89,7 +89,7 @@
             </div>
         </div>
 
-        <div v-else>
+        <div v-else class="noData">
             <div class="flex-table-col flex-table-tip">
                 {{ !onlyFixed && !loading ? noData : '&nbsp;' }}
             </div>
@@ -323,19 +323,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.bgColor {
-    &:nth-child(odd) {
-        background: #f9f9f9;
-    }
-}
-.no-stripe {
-    .virtualItem:nth-child(odd) {
-        background: #fff;
-    }
-    .commonItem:nth-child(odd) {
-        background: #fff;
-    }
-}
 .commonItem:not(:last-child) {
     .flex-table-row {
         border-bottom: 1px solid #eee;
@@ -352,5 +339,15 @@ export default {
 }
 .flex-table-body .flex-table-tr > .flex-table-row {
     border-bottom: 0 !important;
+}
+.flex-table-body{
+    position: relative;
+}
+.noData{
+    position: sticky;
+    width: 200px;
+    bottom: -90px;
+    left: 50%;
+    transform: translateX(-25%);
 }
 </style>

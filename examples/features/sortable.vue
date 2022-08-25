@@ -8,7 +8,11 @@
             :columns="columns" 
             :data="list"
             @on-sort-change="onSortChange"
-        ></flex-table>
+        >
+            <template slot-scope="{ row }" slot="operation">
+                123
+            </template>
+        </flex-table>
     </div>
 </template>
 <script>
@@ -37,6 +41,11 @@ export default {
                     key: 'name',
                     width: 100,
                     sortable: true,
+                },
+                {
+                    title: 'operation',
+                    key: 'operation',
+                    slot: true
                 },
                 {
                     title: 'Age',

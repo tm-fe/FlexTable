@@ -132,7 +132,21 @@ export default {
             },
         }
     },
-    mounted() {},
+   beforeCreate() {
+        console.log('B组件 beforeCreate')
+    },
+    created() {
+        console.log('B组件 created')
+    },
+    mounted() {
+        console.log('B组件 mounted')
+    },
+    beforeDestroy() {
+        console.log('B组件 beforeDestroy')
+    },
+    destroyed() {
+        console.log('B组件 destroyed')
+    },
     methods: {
         onTableScroll(event) {
             console.log(event.target.scrollLeft);

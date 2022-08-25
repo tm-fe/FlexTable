@@ -4,11 +4,11 @@
             <div
                 v-for="(item, index) in headRow"
                 :key="item.key + '_' + index"
-                :class="{
+                :class="[{
                     'flex-table-col': true,
                     'flex-table-hidden': isInvisible(item),
-                }"
-                :style="setCellStyle(item, 'head')"
+                }, cellClsName(item)]"
+                :style="[setCellStyle(item, 'head'), handleWidth(item, columns)]"
             >
                 <template v-if="!isHidden(item)">
                     <template v-if="item.type === 'selection' && multiple">
@@ -118,6 +118,10 @@ export default {
             type: Boolean,
             default: true,
         },
+        loading: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -142,6 +146,9 @@ export default {
                 !this.data.length ||
                 this.data.every((item) => item._disabled)
             );
+        },
+        lastFixedIdx() {
+            return this.columns.filter((item) => item.fixed === 'left').length;
         },
     },
     watch: {
@@ -238,13 +245,40 @@ export default {
             // 控制是否全选
             this.isChecked = status;
         },
+        flexTableBorder(item) {
+            if (this.lastFixedIdx && this.columns[this.lastFixedIdx - 1].key === item.key) {
+                return 'fixedBorder';
+            }
+            return '';
+        },
+        cellClsName(item) {
+            return [
+                this.flexTableBorder(item),
+            ];
+        },
     },
 };
 </script>
 <style lang="less" scoped>
-// /deep/ .flex-table-header-content {
-//     display: table-cell;
-//     vertical-align: middle;
-// }
+.flex-table-head, .flex-table-hidden {
+    background: #f5f6f7;
+}
+.fixedBorder:after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: -1px;
+    width: 30px;
+    transform: translate(100%);
+    transition: box-shadow .3s;
+    content: "";
+    pointer-events: none;
+    box-shadow: inset 10px 0 8px -5px #00000026;
+}
+.notFixed{
+    .fixedBorder:after{
+        box-shadow: none;
+    }
+}
 </style>
 

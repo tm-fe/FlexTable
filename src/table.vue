@@ -73,7 +73,7 @@
                 <!-- /flex-table-foot -->
             </div>
 
-            <div
+            <!-- <div
                 :class="[
                     'flex-table-fixed-left',
                     bodyIsScroll > 0 ? 'is-scroll' : '',
@@ -109,7 +109,6 @@
                     :columns="tableColumns"
                     :headSum="headSum"
                 ></table-sum>
-                <!-- /flex-table-headSum -->
 
                 <table-body
                     v-bind="$props"
@@ -137,9 +136,9 @@
                     :sum="sum"
                     :rowHeight="rowHeight.footer"
                 ></table-foot>
-            </div>
+            </div> -->
 
-            <div
+            <!-- <div
                 :class="['flex-table-fixed-right-wrap']"
                 v-if="hasFixedRight"
                 :style="{ width: fixedRightWidth + 'px' }"
@@ -172,7 +171,6 @@
                         :columns="tableColumns"
                         :headSum="headSum"
                     ></table-sum>
-                    <!-- /flex-table-headSum -->
 
                     <table-body
                         v-bind="$props"
@@ -201,7 +199,7 @@
                         :rowHeight="rowHeight.footer"
                     ></table-foot>
                 </div>
-            </div>
+            </div> -->
 
             <div
                 class="flex-table-reference-line"
@@ -239,6 +237,7 @@
                         :columns="tableColumns"
                         :data="dataList"
                         :resizable="resizable"
+                        :loading="loading"
                         @on-select-all="selectAll"
                         @on-sort-change="onSortChange"
                         @on-col-resize="onColResizeStart"
@@ -534,6 +533,10 @@ export default {
             }
             if (!this.stripe) {
                 arr.push(`no-stripe`);
+            }
+            if (this.isScrollLeft) {
+                // classNames.push('flex-table-scroll-left');
+                arr.push('notFixed');
             }
             return arr;
         },
@@ -1052,7 +1055,6 @@ export default {
                 this.doLayout();
                 this.emitColResize.newWidth = finalX;
                 this.emitColResize.event = e;
-
                 // 列宽拖拽结束后，回调返回
                 this.$emit(
                     'on-col-width-resize',
@@ -1408,13 +1410,33 @@ export default {
             return item[this.uniqueKey];
         },
 
-        getheadHeight(height){
-            this.headHeight = height
-        }
+        getheadHeight(height) {
+            this.headHeight = height;
+        },
     },
 };
 </script>
 <style lang="less" scoped>
+/deep/ .commonItem {
+    &:nth-child(even) {
+        background: #fcfcfc;
+        .flex-table-hidden {
+            background: #fcfcfc;
+        }
+    }
+    &:nth-child(odd) {
+        background: #fff;
+        .flex-table-hidden {
+            background: #fff;
+        }
+    }
+    &:hover {
+        background: #ebf7ff;
+        .flex-table-hidden {
+            background: #ebf7ff;
+        }
+    }
+}
 .flex-table-head-fixed {
     overflow-x: hidden;
 }
