@@ -138,7 +138,7 @@
                 ></table-foot>
             </div> -->
 
-            <div
+            <!-- <div
                 :class="['flex-table-fixed-right-wrap']"
                 v-if="hasFixedRight"
                 :style="{ width: fixedRightWidth + 'px' }"
@@ -171,7 +171,6 @@
                         :columns="tableColumns"
                         :headSum="headSum"
                     ></table-sum>
-                    <!-- /flex-table-headSum -->
 
                     <table-body
                         v-bind="$props"
@@ -200,7 +199,7 @@
                         :rowHeight="rowHeight.footer"
                     ></table-foot>
                 </div>
-            </div>
+            </div> -->
 
             <div
                 class="flex-table-reference-line"

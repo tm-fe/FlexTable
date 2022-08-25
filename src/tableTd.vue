@@ -1,7 +1,7 @@
 <template>
     <div
         :class="[cellClsName(column, row), 'tableCol']"
-        :style="[setCellStyle(column), handleWidth(column)]"
+        :style="[setCellStyle(column), handleWidth(column, columns)]"
         @click="onToggleExpand"
         ref="cell"
     >
@@ -200,26 +200,6 @@ export default {
         },
         flexTableHidden() {
             return this.isInvisible ? 'flex-table-hidden' : '';
-        },
-        handleWidth(column) {
-            const idx = this.columns.findIndex(
-                (item) =>
-                    item.key === this.column.key &&
-                    this.column.fixed === 'left' &&
-                    this.column.type !== 'selection'
-            );
-            const beforeKey = JSON.parse(JSON.stringify(this.columns))
-                .splice(0, idx)
-                .map((item) => item.key);
-            let num = 0;
-            for (const item of beforeKey) {
-                num += this.calWidth[item];
-            }
-            if (num) {
-                return {
-                    left: `${num}px`,
-                };
-            }
         },
         flexTableBorder() {
             if (this.lastFixedIdx && this.columns[this.lastFixedIdx - 1].key === this.column.key) {

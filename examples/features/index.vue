@@ -109,6 +109,7 @@ export default {
                     title: "Date",
                     key: "date",
                     width: 240,
+                    fixed: 'rigth',
                 },
             ],
             loading: false,

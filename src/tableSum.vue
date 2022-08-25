@@ -8,7 +8,7 @@
                     'flex-table-col': true,
                 }, cellClsName(item)]"
                 :key="index"
-                :style="[setCellStyle(item), handleWidth(item)]"
+                :style="[setCellStyle(item), handleHeadSumWidth(item)]"
             >
                 <template v-if="shouldRender(item)">
                     <Expand
@@ -113,7 +113,7 @@ export default {
 
             return renderType;
         },
-        handleWidth(column) {
+        handleHeadSumWidth(column) {
             const idx = this.columns.findIndex(
                 (item) =>
                     item.key === column.key &&
@@ -128,7 +128,6 @@ export default {
                 for (const item of beforeKey) {
                     num += this.calWidth[item];
                 }
-
                 return {
                     position: 'sticky',
                     background: '#f5f6f7',

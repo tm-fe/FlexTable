@@ -89,7 +89,7 @@
             </div>
         </div>
 
-        <div v-else>
+        <div v-else class="noData">
             <div class="flex-table-col flex-table-tip">
                 {{ !onlyFixed && !loading ? noData : '&nbsp;' }}
             </div>
@@ -339,5 +339,15 @@ export default {
 }
 .flex-table-body .flex-table-tr > .flex-table-row {
     border-bottom: 0 !important;
+}
+.flex-table-body{
+    position: relative;
+}
+.noData{
+    position: sticky;
+    width: 200px;
+    bottom: -90px;
+    left: 50%;
+    transform: translateX(-25%);
 }
 </style>

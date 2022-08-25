@@ -8,7 +8,7 @@
                     'flex-table-col': true,
                     'flex-table-hidden': isInvisible(item),
                 }, cellClsName(item)]"
-                :style="[setCellStyle(item, 'head'), handleWidth(item)]"
+                :style="[setCellStyle(item, 'head'), handleWidth(item, columns)]"
             >
                 <template v-if="!isHidden(item)">
                     <template v-if="item.type === 'selection' && multiple">
@@ -244,26 +244,6 @@ export default {
         handleChangeStatus(status) {
             // 控制是否全选
             this.isChecked = status;
-        },
-        handleWidth(column) {
-            const idx = this.columns.findIndex(
-                (item) =>
-                    item.key === column.key &&
-                    column.fixed === 'left' &&
-                    column.type !== 'selection'
-            );
-            const beforeKey = JSON.parse(JSON.stringify(this.columns))
-                .splice(0, idx)
-                .map((item) => item.key);
-            let num = 0;
-            for (const item of beforeKey) {
-                num += this.calWidth[item];
-            }
-            if (num) {
-                return {
-                    left: `${num}px`,
-                };
-            }
         },
         flexTableBorder(item) {
             if (this.lastFixedIdx && this.columns[this.lastFixedIdx - 1].key === item.key) {
