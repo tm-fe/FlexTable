@@ -278,7 +278,7 @@
             </div>
         </div>
         <!-- /flex-table-fixed-head -->
-        <!-- <tableScrollBar
+        <tableScrollBar
             v-if="showScrollBar"
             :body-h="bodyH"
             :header-h="headerH"
@@ -289,8 +289,14 @@
             ref="scrollYBody"
             @mouseenter.native="scrollBarOver"
             @mouseleave.native="scrollBarLeave"
-        ></tableScrollBar> -->
+        ></tableScrollBar>
         <!-- /Y轴固定滚动条 -->
+        <!-- <div :style="wrapStyle" class="scrollBar">
+            <div
+                :style="`width: ${contentWidth}`"
+            ></div>
+            123
+        </div> -->
     </div>
 </template>
 <style lang="less">
@@ -512,6 +518,7 @@ export default {
             prefixData: [],
             isSelectAll: false,
             headHeight: 0,
+            contentWidth: 0,
         };
     },
     computed: {
@@ -741,6 +748,14 @@ export default {
                 flexTableFixedHead.scrollLeft = left;
             }
             this.updateFixedScrollLeft(left);
+        },
+        calWidth(val) {
+            let num = 0;
+            Object.keys(val).forEach(key => {
+                num += val[key]
+            });
+            console.log('calWidth: ', val,num);
+            this.contentWidth = num
         },
     },
     updated() {},
@@ -1442,5 +1457,13 @@ export default {
 }
 .flex-table {
     width: fit-content;
+}
+.scrollBar {
+    position: fixed;
+    bottom: 5px;
+    left:0;
+    width: 100%;
+    height: 5px;
+    background: #333;
 }
 </style>
