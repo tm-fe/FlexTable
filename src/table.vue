@@ -449,7 +449,7 @@ export default {
             default: false,
         },
         scrollContainer: {
-            type: [String, Object],
+            type: [String, Object, HTMLElement],
         },
         fixedXScroll: {
             type: Boolean,
