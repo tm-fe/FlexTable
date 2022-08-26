@@ -279,7 +279,6 @@
         </div>
         <!-- /flex-table-fixed-head -->
         <tableScrollBar
-            v-if="showScrollBar"
             :body-h="bodyH"
             :header-h="headerH"
             :max-height="maxHeight"
