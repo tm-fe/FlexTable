@@ -348,6 +348,6 @@ export default {
     width: 200px;
     bottom: -90px;
     left: 50%;
-    transform: translateX(-25%);
+    transform: translateX(-50%);
 }
 </style>

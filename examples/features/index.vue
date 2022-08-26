@@ -113,7 +113,7 @@ export default {
                 },
             ],
             loading: false,
-            list: aTestList,
+            list: [],
             sum: {
                 name: "Jim Green",
                 age: 24,

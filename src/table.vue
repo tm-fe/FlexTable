@@ -291,11 +291,11 @@
             @mouseleave.native="scrollBarLeave"
         ></tableScrollBar>
         <!-- /Y轴固定滚动条 -->
-        <!-- <div :style="wrapStyle" class="scrollBar">
+        <!-- <div :style="wrapStyle" class="scrollBar" v-if="!!contentWidth">
             <div
-                :style="`width: ${contentWidth}`"
-            ></div>
-            123
+                :style="`width: ${contentWidth}px`"
+            > 123</div>
+           
         </div> -->
     </div>
 </template>
@@ -754,7 +754,6 @@ export default {
             Object.keys(val).forEach(key => {
                 num += val[key]
             });
-            console.log('calWidth: ', val,num);
             this.contentWidth = num
         },
     },
