@@ -278,7 +278,8 @@
             </div>
         </div>
         <!-- /flex-table-fixed-head -->
-        <tableScrollBar
+        <!-- <tableScrollBar
+            v-if="showScrollBar"
             :body-h="bodyH"
             :header-h="headerH"
             :max-height="maxHeight"
@@ -288,7 +289,7 @@
             ref="scrollYBody"
             @mouseenter.native="scrollBarOver"
             @mouseleave.native="scrollBarLeave"
-        ></tableScrollBar>
+        ></tableScrollBar> -->
         <!-- /Y轴固定滚动条 -->
     </div>
 </template>
