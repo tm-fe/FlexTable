@@ -1210,12 +1210,19 @@ export default {
                 if (nCalLength > 0) {
                     let nLessWidth = nTableWidth - defineTotalWidth;
                     let nCalWidth = nLessWidth / nCalLength; //计算出来的宽度
+                    let realUsedWidth = 0;
 
-                    this.tableColumns.forEach((item) => {
+                    this.tableColumns.filter(item => item.width).forEach((item, index) => {
                         let sKey = item.key || item.title;
                         let nWidth = item.width;
                         if (!nWidth) {
-                            const autoWidth = this.limitWidth(nCalWidth, item);
+                            let autoWidth = this.limitWidth(nCalWidth, item);
+                            // 最后一个没有设置宽度的列，应该取最终剩余的宽度。
+                            // 否则，nCalWidth小于minWidth，大于maxWidth时，会使用maxWidth导致table宽度没有填充完整
+                            if (index + 1 === this.tableColumns.length && nLessWidth > realUsedWidth) {
+                                autoWidth = nLessWidth - realUsedWidth;
+                            }
+                            realUsedWidth += autoWidth;
                             oWidth[sKey] = autoWidth;
                         }
                     });
