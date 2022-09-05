@@ -463,7 +463,7 @@ export default {
         },
         fixedXScrollBottom: {
             type: [String, Number],
-            default: 0,
+            default: 2,
         },
         vertical: {
             type: Boolean,
