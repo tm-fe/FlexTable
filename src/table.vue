@@ -1226,7 +1226,7 @@ export default {
                     let nCalWidth = nLessWidth / nCalLength; //计算出来的宽度
                     let realUsedWidth = 0;
 
-                    this.tableColumns.filter(item => item.width).forEach((item, index) => {
+                    this.tableColumns.forEach((item, index) => {
                         let sKey = item.key || item.title;
                         let nWidth = item.width;
                         if (!nWidth) {
