@@ -43,11 +43,7 @@
             <div
                 v-for="(row, index) in data"
                 :key="row[uniqueKey] || row.id || index"
-                :class="`${
-                    isVirtualScroll
-                        ? 'virtualItem bgColor'
-                        : 'commonItem bgColor'
-                }`"
+                :class="getRowClass(row, index)"
                 :style="{
                     transform: isVirtualScroll
                         ? `translateY(${row.top}px)`
@@ -228,11 +224,22 @@ export default {
         data(val) {
             this.updateRowList();
         },
+        customClass(val) {
+            let elem = document.getElementsByClassName(val)[0];
+            const customClass = window.getComputedStyle(elem, null)['background-color']
+            const fixedEl = document.getElementsByClassName('flex-table-hidden')
+            for (const item of fixedEl) {
+                if(item.parentNode.parentNode.getAttribute('class') === val){
+                    item.style.background = customClass
+                }
+            }
+        },
     },
     data() {
         return {
             rowSpanList: [],
             rowSpanColumns: [],
+            customClass: '',
         };
     },
     updated() {
@@ -316,6 +323,19 @@ export default {
                 }, 10);
             });
         },
+        getRowClass(row, index) {
+            if (this.$parent.$parent.rowClassName && this.$parent.$parent.rowClassName(row, index)) {
+                this.customClass = this.$parent.$parent.rowClassName(
+                    row,
+                    index
+                );
+                return [this.$parent.$parent.rowClassName(row, index), 'custom'];
+            }
+
+            return this.isVirtualScroll
+                ? 'virtualItem bgColor'
+                : 'commonItem bgColor';
+        },
     },
     mounted() {
         this.updateRowList();
@@ -340,10 +360,10 @@ export default {
 .flex-table-body .flex-table-tr > .flex-table-row {
     border-bottom: 0 !important;
 }
-.flex-table-body{
+.flex-table-body {
     position: relative;
 }
-.noData{
+.noData {
     position: sticky;
     width: 200px;
     bottom: -90px;

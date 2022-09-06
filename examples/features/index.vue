@@ -19,6 +19,7 @@
             uniqueKey="myid"
             :headSum="headSum"
             fixedHead
+            :rowClassName="rowClassName"
             @on-scroll-x="onTableScroll"
             @on-row-click="handleRowClick"
             @on-selection-change="handleSelection"
@@ -113,7 +114,7 @@ export default {
                 },
             ],
             loading: false,
-            list: [],
+            list: aTestList,
             sum: {
                 name: "Jim Green",
                 age: 24,
@@ -158,7 +159,15 @@ export default {
         aaa(){
             console.log('在 A组件 点击了路由跳转 至 B组件: ');
             this.$router.push({ path: 'autoCalWidth' });
+        },
+        rowClassName(row, index){
+            return index === 1 ? 'aaaaa' : ''
         }
     },
 };
 </script>
+<style lang="less">
+.aaaaa{
+    background:#999
+}
+</style>

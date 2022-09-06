@@ -1451,6 +1451,13 @@ export default {
         }
     }
 }
+/deep/ .custom {
+    &:hover {
+        .flex-table-col {
+            background: #ebf7ff !important;
+        }
+    }
+}
 .flex-table-head-fixed {
     overflow-x: hidden;
 }
