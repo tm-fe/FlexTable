@@ -324,14 +324,13 @@ export default {
             });
         },
         getRowClass(row, index) {
-            if (this.$parent.$parent.rowClassName && this.$parent.$parent.rowClassName(row, index)) {
-                this.customClass = this.$parent.$parent.rowClassName(
+            if (this.$parent.rowClassName && this.$parent.rowClassName(row, index)) {
+                this.customClass = this.$parent.rowClassName(
                     row,
                     index
                 );
-                return [this.$parent.$parent.rowClassName(row, index), 'custom'];
+                return [this.$parent.rowClassName(row, index), 'custom'];
             }
-
             return this.isVirtualScroll
                 ? 'virtualItem bgColor'
                 : 'commonItem bgColor';
