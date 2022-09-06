@@ -221,7 +221,7 @@ export default {
             // this.debounce(this.owner.updateHoverIndex(this.rowIndex), 200);
         },
         rowClsName(_index) {
-            return this.$parent.$parent.rowClassName(this.row, _index);
+            return [this.$parent.$parent.rowClassName(this.row, _index)];
         },
         selectedCls(row) {
             return row._isChecked ? this.selectedClass : '';
