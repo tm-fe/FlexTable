@@ -1234,7 +1234,10 @@ export default {
                             // 最后一个没有设置宽度的列，应该取最终剩余的宽度。
                             // 否则，nCalWidth小于minWidth，大于maxWidth时，会使用maxWidth导致table宽度没有填充完整
                             if (index + 1 === this.tableColumns.length && nLessWidth > realUsedWidth) {
-                                autoWidth = nLessWidth - realUsedWidth;
+                                const remain = nLessWidth - realUsedWidth;
+                                if (remain > autoWidth) {
+                                    autoWidth = remain;
+                                }
                             }
                             realUsedWidth += autoWidth;
                             oWidth[sKey] = autoWidth;
