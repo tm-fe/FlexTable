@@ -1226,7 +1226,13 @@ export default {
                     let nCalWidth = nLessWidth / nCalLength; //计算出来的宽度
                     let realUsedWidth = 0;
 
-                    const lastNoWidthIndex = this.tableColumns.findLastIndex(col => !col.width);
+                    let lastNoWidthIndex = undefined;
+                    for (let i = this.tableColumns.length -1 ; i >= 0; i--) {
+                        if (this.tableColumns[i] && !this.tableColumns[i].width) {
+                            lastNoWidthIndex = i;
+                            break;
+                        }
+                    }
                     this.tableColumns.forEach((item, index) => {
                         let sKey = item.key || item.title;
                         let nWidth = item.width;
