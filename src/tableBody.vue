@@ -342,6 +342,26 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.custom {
+    border-bottom: 1px solid #eee;
+    &:nth-child(even) {
+        background: #fcfcfc;
+        .flex-table-hidden {
+            background-color: #fcfcfc;
+        }
+    }
+    &:nth-child(odd) {
+        background: #fff;
+        .flex-table-hidden {
+            background: #fff;
+        }
+    }
+    &:hover {
+        .flex-table-col {
+            background: #ebf7ff !important;
+        }
+    }
+}
 .commonItem:not(:last-child) {
     .flex-table-row {
         border-bottom: 1px solid #eee;
