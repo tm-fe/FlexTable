@@ -1469,6 +1469,7 @@ export default {
     }
 }
 /deep/ .custom {
+    border-bottom: 1px solid #eee;
     &:hover {
         .flex-table-col {
             background: #ebf7ff !important;
