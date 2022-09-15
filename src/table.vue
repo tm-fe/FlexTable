@@ -399,6 +399,10 @@ export default {
             type: Number,
             default: 0,
         },
+        fixedSum: {
+            type: Boolean,
+            default: false,
+        },
         // 自定义的head fixed判断方法
         checkFixedHeadTop: {
             type: Function,
@@ -627,11 +631,12 @@ export default {
         });
         observer.observe(this.$el);
         this.resizeObserver = observer;
-        window.addEventListener('scroll', this.winScroll, false);
         if (this.resizable) {
             window.addEventListener('mouseup', this.onColResizeEnd);
             this.$el.addEventListener('mousemove', this.onColResizeMove);
         }
+        this.initScrollContainer();
+        this._scrollContainer.addEventListener('scroll', this.winScroll, false);
         if (this.fixedXScroll) {
             this.$nextTick(() => {
                 this.initFixedScrollListener();
@@ -1144,23 +1149,17 @@ export default {
             return currentWidth;
         },
         getTableOffset() {
-            const element = this.$el;
-            let actualLeft = element.offsetLeft;
-            let actualTop = element.offsetTop;
-            let current = element.offsetParent;
-            while (current !== null) {
-                actualLeft += current.offsetLeft;
-                actualTop += current.offsetTop;
-                current = current.offsetParent;
-            }
+            const { left, top } = this.$el.getBoundingClientRect();
             return {
-                left: actualLeft,
-                top: actualTop,
+                left,
+                top,
             };
         },
         winScroll() {
-            const sTop =
-                document.body.scrollTop + document.documentElement.scrollTop;
+            let sTop = 0;
+            if (this._scrollContainer !== document) {
+                sTop = this._scrollContainer.getBoundingClientRect().top;
+            }
             const tableOffset = this.getTableOffset();
             let startFixedHead = sTop > tableOffset.top; // checkFixedHeadTop
 
@@ -1173,7 +1172,7 @@ export default {
                 this.fixedHeadStyle.left =
                     tableOffset.left + (this.border ? 1 : 0) + 'px';
                 this.fixedHeadStyle.position = 'fixed';
-                this.fixedHeadStyle.top = this.fixedHeadTop + 'px';
+                this.fixedHeadStyle.top = (this.fixedHeadTop || sTop) + 'px';
             } else {
                 this.isFixedHead = false;
                 this.fixedHeadStyle.position = 'absolute';
@@ -1364,13 +1363,16 @@ export default {
             return scrollContainer;
         },
 
-        initFixedScrollListener() {
+        initScrollContainer() {
             const container = this.getScrollContainer();
             this._scrollContainer = container;
+        },
+
+        initFixedScrollListener() {
             this.containerScrollFn = () => {
                 this.updateFixedScroll();
             };
-            container.addEventListener('scroll', this.containerScrollFn);
+            this._scrollContainer.addEventListener('scroll', this.containerScrollFn);
         },
 
         updateFixedScroll() {
