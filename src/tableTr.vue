@@ -13,6 +13,7 @@
             v-if="!rowSpan || (rowSpan && i === columnIndex)"
             :key="column.key + '_' + i + '_' + rowIndex"
             :column="column"
+            :columns="columns"
             :index="i"
             :cal-width="calWidth"
             :row="row"
@@ -217,10 +218,10 @@ export default {
             };
         },
         mouseenter() {
-            this.debounce(this.owner.updateHoverIndex(this.rowIndex), 200);
+            // this.debounce(this.owner.updateHoverIndex(this.rowIndex), 200);
         },
         rowClsName(_index) {
-            return this.$parent.$parent.rowClassName(this.row, _index);
+            return [this.$parent.$parent.rowClassName(this.row, _index)];
         },
         selectedCls(row) {
             return row._isChecked ? this.selectedClass : '';

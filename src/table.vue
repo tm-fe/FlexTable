@@ -73,7 +73,7 @@
                 <!-- /flex-table-foot -->
             </div>
 
-            <div
+            <!-- <div
                 :class="[
                     'flex-table-fixed-left',
                     bodyIsScroll > 0 ? 'is-scroll' : '',
@@ -109,7 +109,6 @@
                     :columns="tableColumns"
                     :headSum="headSum"
                 ></table-sum>
-                <!-- /flex-table-headSum -->
 
                 <table-body
                     v-bind="$props"
@@ -137,9 +136,9 @@
                     :sum="sum"
                     :rowHeight="rowHeight.footer"
                 ></table-foot>
-            </div>
+            </div> -->
 
-            <div
+            <!-- <div
                 :class="['flex-table-fixed-right-wrap']"
                 v-if="hasFixedRight"
                 :style="{ width: fixedRightWidth + 'px' }"
@@ -172,7 +171,6 @@
                         :columns="tableColumns"
                         :headSum="headSum"
                     ></table-sum>
-                    <!-- /flex-table-headSum -->
 
                     <table-body
                         v-bind="$props"
@@ -201,7 +199,7 @@
                         :rowHeight="rowHeight.footer"
                     ></table-foot>
                 </div>
-            </div>
+            </div> -->
 
             <div
                 class="flex-table-reference-line"
@@ -239,6 +237,7 @@
                         :columns="tableColumns"
                         :data="dataList"
                         :resizable="resizable"
+                        :loading="loading"
                         @on-select-all="selectAll"
                         @on-sort-change="onSortChange"
                         @on-col-resize="onColResizeStart"
@@ -292,6 +291,12 @@
             @mouseleave.native="scrollBarLeave"
         ></tableScrollBar>
         <!-- /Y轴固定滚动条 -->
+        <!-- <div :style="wrapStyle" class="scrollBar" v-if="!!contentWidth">
+            <div
+                :style="`width: ${contentWidth}px`"
+            > 123</div>
+           
+        </div> -->
     </div>
 </template>
 <style lang="less">
@@ -454,7 +459,7 @@ export default {
             default: false,
         },
         scrollContainer: {
-            type: [String, Object],
+            type: [String, Object, HTMLElement],
         },
         fixedXScroll: {
             type: Boolean,
@@ -462,7 +467,7 @@ export default {
         },
         fixedXScrollBottom: {
             type: [String, Number],
-            default: 0,
+            default: 2,
         },
         vertical: {
             type: Boolean,
@@ -517,6 +522,7 @@ export default {
             prefixData: [],
             isSelectAll: false,
             headHeight: 0,
+            contentWidth: 0,
         };
     },
     computed: {
@@ -538,6 +544,10 @@ export default {
             }
             if (!this.stripe) {
                 arr.push(`no-stripe`);
+            }
+            if (this.isScrollLeft) {
+                // classNames.push('flex-table-scroll-left');
+                arr.push('notFixed');
             }
             return arr;
         },
@@ -743,6 +753,13 @@ export default {
                 flexTableFixedHead.scrollLeft = left;
             }
             this.updateFixedScrollLeft(left);
+        },
+        calWidth(val) {
+            let num = 0;
+            Object.keys(val).forEach(key => {
+                num += val[key]
+            });
+            this.contentWidth = num
         },
     },
     updated() {},
@@ -1057,7 +1074,6 @@ export default {
                 this.doLayout();
                 this.emitColResize.newWidth = finalX;
                 this.emitColResize.event = e;
-
                 // 列宽拖拽结束后，回调返回
                 this.$emit(
                     'on-col-width-resize',
@@ -1207,12 +1223,29 @@ export default {
                 if (nCalLength > 0) {
                     let nLessWidth = nTableWidth - defineTotalWidth;
                     let nCalWidth = nLessWidth / nCalLength; //计算出来的宽度
+                    let realUsedWidth = 0;
 
-                    this.tableColumns.forEach((item) => {
+                    let lastNoWidthIndex = undefined;
+                    for (let i = this.tableColumns.length -1 ; i >= 0; i--) {
+                        if (this.tableColumns[i] && !this.tableColumns[i].width) {
+                            lastNoWidthIndex = i;
+                            break;
+                        }
+                    }
+                    this.tableColumns.forEach((item, index) => {
                         let sKey = item.key || item.title;
                         let nWidth = item.width;
                         if (!nWidth) {
-                            const autoWidth = this.limitWidth(nCalWidth, item);
+                            let autoWidth = this.limitWidth(nCalWidth, item);
+                            // 最后一个没有设置宽度的列，应该取最终剩余的宽度。
+                            // 否则，nCalWidth小于minWidth，大于maxWidth时，会使用maxWidth导致table宽度没有填充完整
+                            if (index === lastNoWidthIndex && nLessWidth > realUsedWidth) {
+                                const remain = nLessWidth - realUsedWidth;
+                                if (remain > autoWidth) {
+                                    autoWidth = remain;
+                                }
+                            }
+                            realUsedWidth += autoWidth;
                             oWidth[sKey] = autoWidth;
                         }
                     });
@@ -1410,17 +1443,52 @@ export default {
             return item[this.uniqueKey];
         },
 
-        getheadHeight(height){
-            this.headHeight = height
-        }
+        getheadHeight(height) {
+            this.headHeight = height;
+        },
     },
 };
 </script>
 <style lang="less" scoped>
+/deep/ .commonItem {
+    &:nth-child(even) {
+        background: #fcfcfc;
+        .flex-table-hidden {
+            background: #fcfcfc;
+        }
+    }
+    &:nth-child(odd) {
+        background: #fff;
+        .flex-table-hidden {
+            background: #fff;
+        }
+    }
+    &:hover {
+        background: #ebf7ff;
+        .flex-table-hidden {
+            background: #ebf7ff;
+        }
+    }
+}
+/deep/ .custom {
+    &:hover {
+        .flex-table-col {
+            background: #ebf7ff !important;
+        }
+    }
+}
 .flex-table-head-fixed {
     overflow-x: hidden;
 }
 .flex-table {
     width: fit-content;
+}
+.scrollBar {
+    position: fixed;
+    bottom: 5px;
+    left:0;
+    width: 100%;
+    height: 5px;
+    background: #333;
 }
 </style>

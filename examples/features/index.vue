@@ -8,7 +8,7 @@
                 >source code</a
             >
         </p>
-
+        <button @click="aaa">aaaaaa</button>
         <flex-table
             resizable
             :loading="loading"
@@ -18,6 +18,8 @@
             :maxWidth="600"
             uniqueKey="myid"
             :headSum="headSum"
+            fixedHead
+            :rowClassName="rowClassName"
             fixed-head
             @on-scroll-x="onTableScroll"
             @on-row-click="handleRowClick"
@@ -60,7 +62,7 @@ export default {
             columns: [
                 {
                     type: "selection",
-                    width: 20,
+// 
                     align: "center",
                     fixed: 'left',
                 },
@@ -70,7 +72,7 @@ export default {
                     width: 240,
                     // maxWidth: 250,
                     // minWidth: 150,
-                    type: "slot",
+                    // type: "slot",
                     fixed: 'left',
                 },
                 {
@@ -81,12 +83,13 @@ export default {
                     // render(h, params) {
                     //     return h("span", "age: " + params.row.age);
                     // },
-                    // fixed: 'left',
+                    fixed: 'left',
                 },
                 {
                     title: "Address",
                     key: "address",
                     sortable: true,
+                    fixed: 'left',
                 },
                 {
                     title: "Sex",
@@ -108,6 +111,7 @@ export default {
                     title: "Date",
                     key: "date",
                     width: 240,
+                    fixed: 'rigth',
                 },
             ],
             loading: false,
@@ -122,12 +126,27 @@ export default {
                 type: "headSum",
                 name: "I m Head Sum",
                 age: 24,
+                sex: '1234',
                 address: "London",
                 date: "2016-10-01",
             },
         };
     },
-    mounted() {},
+    beforeCreate() {
+        console.log('A组件 beforeCreate')
+    },
+    created() {
+        console.log('A组件 created')
+    },
+    mounted() {
+        console.log('A组件 mounted')
+    },
+    beforeDestroy() {
+        console.log('A组件 beforeDestroy')
+    },
+    destroyed() {
+        console.log('A组件 destroyed')
+    },
     methods: {
         onTableScroll(event) {
            console.log(event.target.scrollLeft);
@@ -138,6 +157,19 @@ export default {
         handleSelection(row) {
             console.log("on-selection-change", row.length);
         },
+        aaa(){
+            console.log('在 A组件 点击了路由跳转 至 B组件: ');
+            this.$router.push({ path: 'autoCalWidth' });
+        },
+        rowClassName(row, index){
+            // return 'aaaaaa'
+            return index === 1 ? 'aaaaa' : ''
+        }
     },
 };
 </script>
+<style lang="less">
+.aaaaa{
+    background:#999
+}
+</style>
