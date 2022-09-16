@@ -9,29 +9,32 @@
             >
         </p>
         <button @click="aaa">aaaaaa</button>
-        <flex-table
-            resizable
-            :loading="loading"
-            :columns="columns"
-            :data="list"
-            :minWidth="80"
-            :maxWidth="600"
-            uniqueKey="myid"
-            :headSum="headSum"
-            fixedHead
-            :rowClassName="rowClassName"
-            fixed-head
-            @on-scroll-x="onTableScroll"
-            @on-row-click="handleRowClick"
-            @on-selection-change="handleSelection"
-        >
-            <template slot-scope="{ row }" slot="name">
-                <div v-if="row.type">slotSum</div>
-                <div v-if="!row.type">
-                    {{ row.name }}
-                </div>
-            </template>
-        </flex-table>
+        <div class="flex-table-wrap1111">
+            <div v-for="item in 10" :key="item">{{ item }}</div>
+            <flex-table
+                resizable
+                :loading="loading"
+                :columns="columns"
+                :data="list"
+                :minWidth="80"
+                :maxWidth="600"
+                uniqueKey="myid"
+                :headSum="headSum"
+                fixedHead
+                :rowClassName="rowClassName"
+                scrollContainer=".flex-table-wrap1111"
+                @on-scroll-x="onTableScroll"
+                @on-row-click="handleRowClick"
+                @on-selection-change="handleSelection"
+            >
+                <template slot-scope="{ row }" slot="name">
+                    <div v-if="row.type">slotSum</div>
+                    <div v-if="!row.type">
+                        {{ row.name }}
+                    </div>
+                </template>
+            </flex-table>
+        </div>
     </div>
 </template>
 <script>
@@ -111,7 +114,32 @@ export default {
                     title: "Date",
                     key: "date",
                     width: 240,
-                    fixed: 'rigth',
+                },
+                {
+                    title: "a",
+                    key: "date",
+                    width: 240,
+                },
+                {
+                    title: "Date",
+                    key: "b",
+                    width: 240,
+                },
+                {
+                    title: "Date",
+                    key: "c",
+                    width: 240,
+                },
+                {
+                    title: "Date",
+                    key: "d",
+                    width: 240,
+                },
+                {
+                    title: "Date",
+                    key: "e",
+                    width: 240,
+                    fixed: 'right',
                 },
             ],
             loading: false,
@@ -171,5 +199,9 @@ export default {
 <style lang="less">
 .aaaaa{
     background:#999
+}
+.flex-table-wrap1111 {
+    height: 800px;
+    overflow: auto;
 }
 </style>

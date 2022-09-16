@@ -1,79 +1,79 @@
 <template>
-    <div :class="wrapClasses" :style="wrapStyle" ref="tableWrap">
-        <!-- <table-loading-bar v-bind="$props" :headHeight="headHeight" /> -->
-        <!-- /table-loading-bar -->
-        <div
-            :class="[
-                'flex-table-layout',
-                isScrollLeft ? 'flex-table-scroll-left' : '',
-            ]"
-            ref="flexTableLayout"
-            @scroll="onScroll"
-            @mousewheel="handleMousewheel"
-            @DOMMouseScroll="handleMousewheel"
+  <div :class="wrapClasses" :style="wrapStyle" ref="tableWrap">
+    <!-- <table-loading-bar v-bind="$props" :headHeight="headHeight" /> -->
+    <!-- /table-loading-bar -->
+    <div
+      :class="[
+        'flex-table-layout',
+        isScrollLeft ? 'flex-table-scroll-left' : '',
+      ]"
+      ref="flexTableLayout"
+      @scroll="onScroll"
+      @mousewheel="handleMousewheel"
+      @DOMMouseScroll="handleMousewheel"
+    >
+      <div class="flex-table" :style="style">
+        <table-head
+          v-bind="$props"
+          ref="tableHeader"
+          :cal-width="calWidth"
+          :columns="tableColumns"
+          :data="dataList"
+          :allData="prefixData"
+          :resizable="resizable"
+          @getheadHeight="getheadHeight"
+          @on-select-all="selectAll"
+          @on-sort-change="onSortChange"
+          @on-col-resize="onColResizeStart"
+          :style="fixedHead ? 'visibility: hidden;' : ''"
         >
-            <div class="flex-table" :style="style">
-                <table-head
-                    v-bind="$props"
-                    ref="tableHeader"
-                    :cal-width="calWidth"
-                    :columns="tableColumns"
-                    :data="dataList"
-                    :allData="prefixData"
-                    :resizable="resizable"
-                    @getheadHeight="getheadHeight"
-                    @on-select-all="selectAll"
-                    @on-sort-change="onSortChange"
-                    @on-col-resize="onColResizeStart"
-                    :style="fixedHead ? 'visibility: hidden;' : ''"
-                >
-                    <template #batchCheck>
-                        <slot name="batchCheck" />
-                    </template>
-                </table-head>
-                <!-- /flex-table-head -->
+          <template #batchCheck>
+            <slot name="batchCheck" />
+          </template>
+        </table-head>
+        <!-- /flex-table-head -->
 
-                <table-sum
-                    v-if="headSum && data.length"
-                    ref="tableSum"
-                    :cal-width="calWidth"
-                    :columns="tableColumns"
-                    :headSum="headSum"
-                ></table-sum>
-                <!-- /flex-table-headSum -->
+        <table-sum
+          v-if="headSum && data.length"
+          ref="tableSum"
+          :cal-width="calWidth"
+          :columns="tableColumns"
+          :headSum="headSum"
+        ></table-sum>
+        <!-- /flex-table-headSum -->
 
-                <table-body
-                    v-bind="$props"
-                    ref="tableBody"
-                    :cal-width="calWidth"
-                    :columns="tableColumns"
-                    :data="dataList"
-                    :maxHeight="maxHeight"
-                    :rowHeight="rowHeight"
-                    :no-data="noData"
-                    :scrollTop="scrollTop"
-                    :hoverIndex="hoverIndex"
-                    :selectedClass="selectedClass"
-                    :spanMethod="spanMethod"
-                    :scrollerStyle="scrollerStyle"
-                    @scroll.native.passive="syncScroll"
-                    @on-toggle-select="toggleSelect"
-                    @on-row-click="handleRowClick"
-                    @doLayout="doLayout"
-                ></table-body>
-                <!-- /flex-table-body -->
+        <table-body
+          v-bind="$props"
+          ref="tableBody"
+          :cal-width="calWidth"
+          :columns="tableColumns"
+          :data="dataList"
+          :maxHeight="maxHeight"
+          :rowHeight="rowHeight"
+          :no-data="noData"
+          :scrollTop="scrollTop"
+          :hoverIndex="hoverIndex"
+          :selectedClass="selectedClass"
+          :spanMethod="spanMethod"
+          :scrollerStyle="scrollerStyle"
+          @scroll.native.passive="syncScroll"
+          @on-toggle-select="toggleSelect"
+          @on-row-click="handleRowClick"
+          @doLayout="doLayout"
+        ></table-body>
+        <!-- /flex-table-body -->
 
-                <table-foot
-                    v-if="sum && data.length"
-                    ref="tableFoot"
-                    :cal-width="calWidth"
-                    :columns="tableColumns"
-                    :sum="sum"
-                ></table-foot>
-                <!-- /flex-table-foot -->
-            </div>
+        <table-foot
+          v-if="sum && data.length"
+          ref="tableFoot"
+          :cal-width="calWidth"
+          :columns="tableColumns"
+          :sum="sum"
+        ></table-foot>
+        <!-- /flex-table-foot -->
+      </div>
 
-            <!-- <div
+      <!-- <div
                 :class="[
                     'flex-table-fixed-left',
                     bodyIsScroll > 0 ? 'is-scroll' : '',
@@ -138,7 +138,7 @@
                 ></table-foot>
             </div> -->
 
-            <!-- <div
+      <!-- <div
                 :class="['flex-table-fixed-right-wrap']"
                 v-if="hasFixedRight"
                 :style="{ width: fixedRightWidth + 'px' }"
@@ -201,106 +201,118 @@
                 </div>
             </div> -->
 
-            <div
-                class="flex-table-reference-line"
-                :class="{ cur: colResize.currentX !== 0 }"
-                :style="{ left: `${colResize.currentX}px` }"
-            ></div>
-            <slot name="loading" v-if="loading">
-                <Spinner fix size="large"></Spinner>
-            </slot>
-            <div
-                class="flex-table-fixed-scroll"
-                v-if="fixedXScroll"
-                ref="fixedXScroll"
-                @scroll="onScroll"
-            >
-                <div class="flex-table-fixed-scroll-content"></div>
-            </div>
+      <div
+        class="flex-table-reference-line"
+        :class="{ cur: colResize.currentX !== 0 }"
+        :style="{ left: `${colResize.currentX}px` }"
+      ></div>
+      <slot name="loading" v-if="loading">
+        <Spinner fix size="large"></Spinner>
+      </slot>
+      <div
+        class="flex-table-fixed-scroll"
+        v-if="fixedXScroll"
+        ref="fixedXScroll"
+        @scroll="onScroll"
+      >
+        <div class="flex-table-fixed-scroll-content"></div>
+      </div>
+    </div>
+    <div :class="getFixedHeadClass" :style="fixedHeadStyle" v-if="fixedHead">
+      <div
+        class="flex-table-head-fixed"
+        ref="flexTableFixedHead"
+        @mousewheel="handleMousewheel"
+        @DOMMouseScroll="handleMousewheel"
+      >
+        <div class="flex-table" :style="style">
+          <table-head
+            v-bind="$props"
+            ref="tableHeader"
+            :cal-width="calWidth"
+            :columns="tableColumns"
+            :data="dataList"
+            :resizable="resizable"
+            :loading="loading"
+            @on-select-all="selectAll"
+            @on-sort-change="onSortChange"
+            @on-col-resize="onColResizeStart"
+          >
+            <template #batchCheck>
+              <slot name="batchCheck" />
+            </template>
+          </table-head>
+          <!-- /flex-table-head -->
         </div>
         <div
-            :class="getFixedHeadClass"
-            :style="fixedHeadStyle"
-            v-if="fixedHead"
+          :class="[
+            'flex-table-fixed-left',
+            bodyIsScroll > 0 ? 'is-scroll' : '',
+          ]"
+          v-if="hasFixedLeft"
+          :style="{ width: fixedLeftWidth + 'px' }"
         >
-            <div
-                class="flex-table-head-fixed"
-                ref="flexTableFixedHead"
-                @mousewheel="handleMousewheel"
-                @DOMMouseScroll="handleMousewheel"
-            >
-                <div class="flex-table" :style="style">
-                    <table-head
-                        v-bind="$props"
-                        ref="tableHeader"
-                        :cal-width="calWidth"
-                        :columns="tableColumns"
-                        :data="dataList"
-                        :resizable="resizable"
-                        :loading="loading"
-                        @on-select-all="selectAll"
-                        @on-sort-change="onSortChange"
-                        @on-col-resize="onColResizeStart"
-                    >
-                        <template #batchCheck>
-                            <slot name="batchCheck" />
-                        </template>
-                    </table-head>
-                    <!-- /flex-table-head -->
-                </div>
-                <div
-                    :class="[
-                        'flex-table-fixed-left',
-                        bodyIsScroll > 0 ? 'is-scroll' : '',
-                    ]"
-                    v-if="hasFixedLeft"
-                    :style="{ width: fixedLeftWidth + 'px' }"
-                >
-                    <table-head
-                        v-bind="$props"
-                        ref="tableHeader"
-                        :cal-width="calWidth"
-                        :columns="tableColumns"
-                        onlyFixed="left"
-                        :data="dataList"
-                        :resizable="resizable"
-                        :rowHeight="rowHeight.header"
-                        :is-render-done="isRenderDone"
-                        @on-select-all="selectAll"
-                        @on-sort-change="onSortChange"
-                        @on-col-resize="onColResizeStart"
-                    >
-                        <template #batchCheck>
-                            <slot name="batchCheck" />
-                        </template>
-                    </table-head>
-                </div>
-            </div>
+          <table-head
+            v-bind="$props"
+            ref="tableHeader"
+            :cal-width="calWidth"
+            :columns="tableColumns"
+            onlyFixed="left"
+            :data="dataList"
+            :resizable="resizable"
+            :rowHeight="rowHeight.header"
+            :is-render-done="isRenderDone"
+            @on-select-all="selectAll"
+            @on-sort-change="onSortChange"
+            @on-col-resize="onColResizeStart"
+          >
+            <template #batchCheck>
+              <slot name="batchCheck" />
+            </template>
+          </table-head>
         </div>
-        <!-- /flex-table-fixed-head -->
-        <tableScrollBar
-            v-if="showScrollBar"
-            :body-h="bodyH"
-            :header-h="headerH"
-            :max-height="maxHeight"
-            :scroll="handleScrollYScroll"
-            :sum="!!sum"
-            :scrollTop="scrollTop"
-            ref="scrollYBody"
-            @mouseenter.native="scrollBarOver"
-            @mouseleave.native="scrollBarLeave"
-        ></tableScrollBar>
-        <!-- /Y轴固定滚动条 -->
-        <!-- <div :style="wrapStyle" class="scrollBar" v-if="!!contentWidth">
+      </div>
+    </div>
+    <div
+      v-if="fixedSum"
+      :class="['fixed-sum-wrap', showFixedSum ? 'is-fixed-sum' : '']"
+      :style="fixedSumStyle"
+    >
+      <div class="fix-sum-content" ref="fixedSumRef">
+        <div class="flex-table" :style="style">
+            <table-sum
+                ref="tableSum"
+                :cal-width="calWidth"
+                :columns="tableColumns"
+                :headSum="headSum"
+            ></table-sum>
+        </div>
+      </div>
+    </div>
+    <!-- /flex-table-fixed-head -->
+    <tableScrollBar
+      v-if="showScrollBar"
+      :body-h="bodyH"
+      :header-h="headerH"
+      :max-height="maxHeight"
+      :scroll="handleScrollYScroll"
+      :sum="!!sum"
+      :scrollTop="scrollTop"
+      ref="scrollYBody"
+      @mouseenter.native="scrollBarOver"
+      @mouseleave.native="scrollBarLeave"
+    ></tableScrollBar>
+    <!-- /Y轴固定滚动条 -->
+    <!-- <div :style="wrapStyle" class="scrollBar" v-if="!!contentWidth">
             <div
                 :style="`width: ${contentWidth}px`"
             > 123</div>
            
         </div> -->
-    </div>
+  </div>
 </template>
 <style lang="less">
-@import url('./css/main.less');
+@import url("./css/main.less");
 </style>
 
 <script>
@@ -403,10 +415,6 @@ export default {
         fixedHeadTop: {
             type: Number,
             default: 0,
-        },
-        fixedSum: {
-            type: Boolean,
-            default: false,
         },
         // 自定义的head fixed判断方法
         checkFixedHeadTop: {
@@ -523,6 +531,8 @@ export default {
             isSelectAll: false,
             headHeight: 0,
             contentWidth: 0,
+            showFixedSum: false,
+            fixedSumStyle: {},
         };
     },
     computed: {
@@ -629,6 +639,9 @@ export default {
         isScrollLeft() {
             return this.scrollLeft === 0;
         },
+        fixedSum() {
+            return this.fixedHead && !!this.headSum && this.data.length;
+        },
     },
     mounted() {
         if (this.isVirtualScroll) {
@@ -651,6 +664,10 @@ export default {
             this.$nextTick(() => {
                 this.initFixedScrollListener();
             });
+        }
+        // 处理keep-alive切换tab， 页面滚动导致固定计算不对问题, 需要重新计算
+        if (this.fixedHead) {
+            this.observerTableVisible();
         }
     },
     watch: {
@@ -752,6 +769,10 @@ export default {
             if (flexTableFixedHead) {
                 flexTableFixedHead.scrollLeft = left;
             }
+            const fixedSumRef = this.$refs.fixedSumRef;
+            if (fixedSumRef) {
+                fixedSumRef.scrollLeft = left;
+            }
             this.updateFixedScrollLeft(left);
         },
         calWidth(val) {
@@ -777,6 +798,9 @@ export default {
                 'scroll',
                 this.containerScrollFn
             );
+        }
+        if (this.observerVisible) {
+            this.observerVisible.disconnect();
         }
     },
     beforeCreate() {
@@ -894,6 +918,9 @@ export default {
                 const nTableWidth = this.$el.offsetWidth - 2 - scrollBarWidth;
                 if (this.fixedHeadStyle.width !== nTableWidth + 'px') {
                     this.fixedHeadStyle.width = nTableWidth + 'px';
+                }
+                if (this.fixedSumStyle.width !== nTableWidth + 'px') {
+                    this.fixedSumStyle.width = nTableWidth + 'px';
                 }
             });
         },
@@ -1178,6 +1205,7 @@ export default {
             }
             const tableOffset = this.getTableOffset();
             let startFixedHead = sTop > tableOffset.top; // checkFixedHeadTop
+            let fixedTop = this.fixedHeadTop || sTop;
 
             if (this.checkFixedHeadTop) {
                 startFixedHead = this.checkFixedHeadTop();
@@ -1188,13 +1216,30 @@ export default {
                 this.fixedHeadStyle.left =
                     tableOffset.left + (this.border ? 1 : 0) + 'px';
                 this.fixedHeadStyle.position = 'fixed';
-                this.fixedHeadStyle.top = (this.fixedHeadTop || sTop) + 'px';
+                this.fixedHeadStyle.top = fixedTop + 'px';
             } else {
                 this.isFixedHead = false;
                 this.fixedHeadStyle.position = 'absolute';
                 this.fixedHeadStyle.left = 0;
                 this.fixedHeadStyle.top = 0;
             }
+
+            // 固定汇总行计算
+            const startFixedSum = sTop > tableOffset.top + this.headHeight;
+            if (this.fixedHead) {
+                fixedTop = fixedTop + this.headHeight;
+            }
+            if (startFixedSum) {
+                this.showFixedSum = true;
+                this.fixedSumStyle.top = fixedTop + 'px';
+                this.fixedSumStyle.left =
+                    tableOffset.left + (this.border ? 1 : 0) + 'px';
+            } else {
+                this.showFixedSum = false;
+                this.fixedSumStyle.top = '-3000px';
+                this.fixedSumStyle.left = '-3000px';
+            }
+
         },
         resize() {
             this.$nextTick(() => {
@@ -1202,6 +1247,7 @@ export default {
                 const scrollBarWidth = this.showScrollBar ? 16 : 0;
                 const nTableWidth = this.$el.offsetWidth - 2 - scrollBarWidth;
                 this.fixedHeadStyle.width = nTableWidth + 'px';
+                this.fixedSumStyle.width = nTableWidth + 'px';
 
                 const oWidth = {};
                 let defineTotalWidth = 0; //定义的宽度总和
@@ -1446,49 +1492,77 @@ export default {
         getheadHeight(height) {
             this.headHeight = height;
         },
+        observerTableVisible() {
+            this.observerVisible = new IntersectionObserver((entries) => {
+                entries.forEach(item => {
+                    if(item.isIntersecting){
+                        this.winScroll();
+                    }
+                });
+            });
+            this.observerVisible.observe(this.$el);
+        },
     },
 };
 </script>
 <style lang="less" scoped>
 /deep/ .commonItem {
-    &:nth-child(even) {
-        background: #fcfcfc;
-        .flex-table-hidden {
-            background: #fcfcfc;
-        }
+  &:nth-child(even) {
+    background: #fcfcfc;
+    .flex-table-hidden {
+      background: #fcfcfc;
     }
-    &:nth-child(odd) {
-        background: #fff;
-        .flex-table-hidden {
-            background: #fff;
-        }
+  }
+  &:nth-child(odd) {
+    background: #fff;
+    .flex-table-hidden {
+      background: #fff;
     }
-    &:hover {
-        background: #ebf7ff;
-        .flex-table-hidden {
-            background: #ebf7ff;
-        }
+  }
+  &:hover {
+    background: #ebf7ff;
+    .flex-table-hidden {
+      background: #ebf7ff;
     }
+  }
 }
 /deep/ .custom {
-    &:hover {
-        .flex-table-col {
-            background: #ebf7ff !important;
-        }
+  &:hover {
+    .flex-table-col {
+      background: #ebf7ff !important;
     }
+  }
 }
 .flex-table-head-fixed {
-    overflow-x: hidden;
+  overflow-x: hidden;
 }
 .flex-table {
-    width: fit-content;
+  width: fit-content;
 }
 .scrollBar {
-    position: fixed;
-    bottom: 5px;
-    left:0;
+  position: fixed;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: #333;
+}
+.fixed-sum-wrap {
+  position: absolute;
+  left: -3000px;
+  top: -3000px;
+  overflow-x: hidden;
+  .fix-sum-content {
     width: 100%;
-    height: 5px;
-    background: #333;
+    overflow-x: auto;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+  }
+  &.is-fixed-sum {
+    z-index: 30;
+    position: fixed;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.08);
+  }
 }
 </style>
