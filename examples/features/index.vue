@@ -9,32 +9,28 @@
             >
         </p>
         <button @click="aaa">aaaaaa</button>
-        <div class="flex-table-wrap1111">
-            <div v-for="item in 10" :key="item">{{ item }}</div>
-            <flex-table
-                resizable
-                :loading="loading"
-                :columns="columns"
-                :data="list"
-                :minWidth="80"
-                :maxWidth="600"
-                uniqueKey="myid"
-                :headSum="headSum"
-                fixedHead
-                :rowClassName="rowClassName"
-                scrollContainer=".flex-table-wrap1111"
-                @on-scroll-x="onTableScroll"
-                @on-row-click="handleRowClick"
-                @on-selection-change="handleSelection"
-            >
-                <template slot-scope="{ row }" slot="name">
-                    <div v-if="row.type">slotSum</div>
-                    <div v-if="!row.type">
-                        {{ row.name }}
-                    </div>
-                </template>
-            </flex-table>
-        </div>
+        <flex-table
+            resizable
+            :loading="loading"
+            :columns="columns"
+            :data="list"
+            :minWidth="80"
+            :maxWidth="600"
+            uniqueKey="myid"
+            :headSum="headSum"
+            fixedHead
+            :rowClassName="rowClassName"
+            @on-scroll-x="onTableScroll"
+            @on-row-click="handleRowClick"
+            @on-selection-change="handleSelection"
+        >
+            <template slot-scope="{ row }" slot="name">
+                <div v-if="row.type">slotSum</div>
+                <div v-if="!row.type">
+                    {{ row.name }}
+                </div>
+            </template>
+        </flex-table>
     </div>
 </template>
 <script>

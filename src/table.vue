@@ -1204,7 +1204,7 @@ export default {
                 sTop = this._scrollContainer.getBoundingClientRect().top;
             }
             const tableOffset = this.getTableOffset();
-            let startFixedHead = sTop > tableOffset.top; // checkFixedHeadTop
+            let startFixedHead = this.fixedHeadTop > tableOffset.top; // checkFixedHeadTop
             let fixedTop = this.fixedHeadTop || sTop;
 
             if (this.checkFixedHeadTop) {
@@ -1217,29 +1217,19 @@ export default {
                     tableOffset.left + (this.border ? 1 : 0) + 'px';
                 this.fixedHeadStyle.position = 'fixed';
                 this.fixedHeadStyle.top = fixedTop + 'px';
+                this.showFixedSum = true;
+                this.fixedSumStyle.top = (fixedTop + this.headHeight) + 'px';
+                this.fixedSumStyle.left =
+                    tableOffset.left + (this.border ? 1 : 0) + 'px';                
             } else {
                 this.isFixedHead = false;
                 this.fixedHeadStyle.position = 'absolute';
                 this.fixedHeadStyle.left = 0;
                 this.fixedHeadStyle.top = 0;
-            }
-
-            // 固定汇总行计算
-            const startFixedSum = sTop > tableOffset.top + this.headHeight;
-            if (this.fixedHead) {
-                fixedTop = fixedTop + this.headHeight;
-            }
-            if (startFixedSum) {
-                this.showFixedSum = true;
-                this.fixedSumStyle.top = fixedTop + 'px';
-                this.fixedSumStyle.left =
-                    tableOffset.left + (this.border ? 1 : 0) + 'px';
-            } else {
                 this.showFixedSum = false;
                 this.fixedSumStyle.top = '-3000px';
                 this.fixedSumStyle.left = '-3000px';
             }
-
         },
         resize() {
             this.$nextTick(() => {
