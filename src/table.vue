@@ -657,17 +657,19 @@ export default {
             window.addEventListener('mouseup', this.onColResizeEnd);
             this.$el.addEventListener('mousemove', this.onColResizeMove);
         }
-        this.initScrollContainer();
-        if (this.fixedHead) {
-            // 处理keep-alive切换tab， 页面滚动导致固定计算不对问题, 需要重新计算
-            this.observerTableVisible();
-            this._scrollContainer.addEventListener('scroll', this.winScroll, false);
-        }
-        if (this.fixedXScroll) {
-            this.$nextTick(() => {
-                this.initFixedScrollListener();
-            });
-        }
+        this.$nextTick(() => {
+            this.initScrollContainer();
+            if (this.fixedHead) {
+                // 处理keep-alive切换tab， 页面滚动导致固定计算不对问题, 需要重新计算
+                this.observerTableVisible();
+                this._scrollContainer.addEventListener('scroll', this.winScroll, false);
+            }
+            if (this.fixedXScroll) {
+                this.$nextTick(() => {
+                    this.initFixedScrollListener();
+                });
+            }
+        })
     },
     watch: {
         selectedData: {
