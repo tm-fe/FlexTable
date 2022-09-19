@@ -275,7 +275,7 @@
     </div>
     <div
       v-if="fixedSum"
-      :class="['fixed-sum-wrap', showFixedSum ? 'is-fixed-sum' : '']"
+      :class="['fixed-sum-wrap', isFixedHead ? 'is-fixed-sum' : '']"
       :style="fixedSumStyle"
     >
       <div class="fix-sum-content" ref="fixedSumRef">
@@ -531,7 +531,6 @@ export default {
             isSelectAll: false,
             headHeight: 0,
             contentWidth: 0,
-            showFixedSum: false,
             fixedSumStyle: {},
         };
     },
@@ -659,15 +658,15 @@ export default {
             this.$el.addEventListener('mousemove', this.onColResizeMove);
         }
         this.initScrollContainer();
-        this._scrollContainer.addEventListener('scroll', this.winScroll, false);
+        if (this.fixedHead) {
+            // 处理keep-alive切换tab， 页面滚动导致固定计算不对问题, 需要重新计算
+            this.observerTableVisible();
+            this._scrollContainer.addEventListener('scroll', this.winScroll, false);
+        }
         if (this.fixedXScroll) {
             this.$nextTick(() => {
                 this.initFixedScrollListener();
             });
-        }
-        // 处理keep-alive切换tab， 页面滚动导致固定计算不对问题, 需要重新计算
-        if (this.fixedHead) {
-            this.observerTableVisible();
         }
     },
     watch: {
@@ -1213,20 +1212,23 @@ export default {
 
             if (startFixedHead) {
                 this.isFixedHead = true;
-                this.fixedHeadStyle.left =
-                    tableOffset.left + (this.border ? 1 : 0) + 'px';
+                const leftOffset = tableOffset.left + (this.border ? 1 : 0) + 'px';
+                this.fixedHeadStyle.left = leftOffset;
                 this.fixedHeadStyle.position = 'fixed';
                 this.fixedHeadStyle.top = fixedTop + 'px';
-                this.showFixedSum = true;
+
+                // 固定汇总行
+                this.fixedSumStyle.position = 'fixed';
                 this.fixedSumStyle.top = (fixedTop + this.headHeight) + 'px';
-                this.fixedSumStyle.left =
-                    tableOffset.left + (this.border ? 1 : 0) + 'px';                
+                this.fixedSumStyle.left = leftOffset;
             } else {
                 this.isFixedHead = false;
                 this.fixedHeadStyle.position = 'absolute';
                 this.fixedHeadStyle.left = 0;
                 this.fixedHeadStyle.top = 0;
-                this.showFixedSum = false;
+
+                // 解除汇总行固定
+                this.fixedSumStyle.position = 'absolute';
                 this.fixedSumStyle.top = '-3000px';
                 this.fixedSumStyle.left = '-3000px';
             }
