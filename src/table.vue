@@ -1478,11 +1478,9 @@ export default {
                 fixedXScroll.scrollLeft = left;
             }
         },
-
         getId(item) {
             return item[this.uniqueKey];
         },
-
         getheadHeight(height) {
             this.headHeight = height;
         },
