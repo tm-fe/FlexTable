@@ -110,7 +110,32 @@ export default {
                     title: "Date",
                     key: "date",
                     width: 240,
-                    fixed: 'rigth',
+                },
+                {
+                    title: "a",
+                    key: "date",
+                    width: 240,
+                },
+                {
+                    title: "Date",
+                    key: "b",
+                    width: 240,
+                },
+                {
+                    title: "Date",
+                    key: "c",
+                    width: 240,
+                },
+                {
+                    title: "Date",
+                    key: "d",
+                    width: 240,
+                },
+                {
+                    title: "Date",
+                    key: "e",
+                    width: 240,
+                    fixed: 'right',
                 },
             ],
             loading: false,
@@ -170,5 +195,9 @@ export default {
 <style lang="less">
 .aaaaa{
     background:#999
+}
+.flex-table-wrap1111 {
+    height: 800px;
+    overflow: auto;
 }
 </style>
