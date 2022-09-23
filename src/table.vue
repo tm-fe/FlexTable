@@ -307,7 +307,7 @@
             <div
                 :style="`width: ${contentWidth}px`"
             > 123</div>
-           
+
         </div> -->
   </div>
 </template>
@@ -1205,8 +1205,8 @@ export default {
                 sTop = this._scrollContainer.getBoundingClientRect().top;
             }
             const tableOffset = this.getTableOffset();
-            let startFixedHead = this.fixedHeadTop > tableOffset.top; // checkFixedHeadTop
-            let fixedTop = this.fixedHeadTop || sTop;
+            let fixedTop = this.fixedHeadTop + sTop;
+            let startFixedHead = fixedTop > tableOffset.top; // checkFixedHeadTop
 
             if (this.checkFixedHeadTop) {
                 startFixedHead = this.checkFixedHeadTop();
