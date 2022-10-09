@@ -191,7 +191,7 @@ export default {
                 'max-height': this.maxHeight
                     ? `${this.maxHeight - tableSumHeight}px`
                     : `auto`,
-                'z-index': !this.data.length ? '10' : '0',
+                'z-index': !this.data.length ? '7' : '0',
             };
         },
         defaultHeight() {
@@ -384,7 +384,7 @@ export default {
 }
 .noData {
     position: sticky;
-    width: 200px;
+    width: 100px;
     bottom: -90px;
     left: 50%;
     transform: translateX(-50%);
