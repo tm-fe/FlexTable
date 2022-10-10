@@ -384,7 +384,7 @@ export default {
 }
 .noData {
     position: sticky;
-    width: 100px;
+    width: 200px;
     bottom: -90px;
     left: 50%;
     transform: translateX(-50%);

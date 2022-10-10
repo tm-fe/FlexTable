@@ -68,7 +68,7 @@ export default {
                 {
                     title: "Name",
                     key: "name",
-                    width: 240,
+                    // width: 240,
                     // maxWidth: 250,
                     // minWidth: 150,
                     // type: "slot",
@@ -131,15 +131,9 @@ export default {
                     key: "d",
                     width: 240,
                 },
-                {
-                    title: "Date",
-                    key: "e",
-                    width: 240,
-                    fixed: 'right',
-                },
             ],
             loading: false,
-            list: aTestList,
+            list: [],
             sum: {
                 name: "Jim Green",
                 age: 24,
