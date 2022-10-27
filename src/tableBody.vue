@@ -180,10 +180,12 @@ export default {
                 ? this.$parent.$refs.tableSum.$el.offsetHeight
                 : 0;
             if (this.virtualScroll) {
+                const max = this.maxHeight + tableSumHeight;
                 return {
-                    height: this.maxHeight
-                        ? `${this.maxHeight + tableSumHeight}px`
-                        : `auto`,
+                    // height: this.maxHeight
+                    //     ? `${this.maxHeight + tableSumHeight}px`
+                    //     : `auto`,
+                    height: this.data.length * this.virtualHeight < max ? `auto` : `${max}px`,
                 };
             }
 

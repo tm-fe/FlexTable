@@ -4,6 +4,10 @@ export default {
             type: Object,
             required: true,
         },
+        scrollLeft: {
+            type: Number,
+            required: false,
+        },
     },
     computed: {
         owner() {
@@ -62,6 +66,26 @@ export default {
                     left: `${num}px`,
                 };
             }
+        },
+        isFixedCol(column) {
+            return column.fixed === 'left' || column.type === 'selection';
+        },
+        handleColWidth(curColumn) {
+            if (this.isFixedCol(curColumn)) {
+                const finalColumns = this.columns.filter(c => this.isFixedCol(c));
+                const idx = finalColumns.findIndex(item => item.key === curColumn.key);
+                const beforeKey = finalColumns.slice(0, idx).map(item => item.key);
+                let num = 0;
+                beforeKey.forEach((item) => {
+                    num += this.calWidth[item];
+                });
+                return {
+                    left: `${num + this.scrollLeft}px`,
+                };
+            }
+            return {
+                left: `${0}px`,
+            };
         },
     },
 };

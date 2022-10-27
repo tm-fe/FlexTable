@@ -56,6 +56,7 @@
           :selectedClass="selectedClass"
           :spanMethod="spanMethod"
           :scrollerStyle="scrollerStyle"
+          :scroll-left="scrollLeft"
           @scroll.native.passive="syncScroll"
           @on-toggle-select="toggleSelect"
           @on-row-click="handleRowClick"
@@ -293,7 +294,8 @@
     <tableScrollBar
       v-if="showScrollBar"
       :body-h="bodyH"
-      :header-h="headerH"
+      :header-h="headHeight"
+      :header-sum="headerSum"
       :max-height="maxHeight"
       :scroll="handleScrollYScroll"
       :sum="!!sum"
@@ -481,6 +483,11 @@ export default {
             type: Boolean,
             default: true,
         },
+        // 缓冲的屏幕数量
+        virtualCacheScreens: {
+            type: Number,
+            default: 2,
+        },
     },
     data() {
         return {
@@ -492,6 +499,7 @@ export default {
             calWidth: {},
             tableColumns: [],
             headerH: 38,
+            headerSum: 0,
             maxHeight: 0,
             bodyH: 0,
             footH: 54,
@@ -521,6 +529,8 @@ export default {
                 event: null,
             },
             // 虚拟滚动变量
+            virtualScrollRange: [0, 0],
+            ticking: false,
             tableHeight: 0,
             startIndex: 0,
             prevStartIndex: -1,
@@ -824,10 +834,18 @@ export default {
             const { scrollTop } = event.target;
             this.scrollTop = scrollTop;
             if (this.isVirtualScroll) {
+                if (this.ticking) {
+                    return;
+                }
+                this.ticking = true;
+                requestAnimationFrame(() => {
+                    this.ticking = false;
+                })
+                this.updateTable();
                 // this.requestId = requestAnimationFrame(() => {
-                this.$nextTick(() => {
-                    this.requestId = this.updateTable();
-                });
+                // this.$nextTick(() => {
+                //     this.requestId = this.updateTable();
+                // });
                 // });
             }
         }, 0),
@@ -836,6 +854,7 @@ export default {
             this.$emit('hover-row', this.hoverIndex);
         }, 100),
         handleMousewheel(event) {
+            console.log('handleMousewheel', event);
             if (!this.$refs.tableBody) {
                 return;
             }
@@ -1165,6 +1184,7 @@ export default {
             const bodyH = $tableBodyTr ? $tableBodyTr.offsetHeight : 0;
             const footH = $tableFoot ? $tableFoot.$el.offsetHeight : 0;
             this.headerH = headerH;
+            this.headerSum = $refs.tableSum ? $refs.tableSum.$el.offsetHeight : 0;
             this.footH = footH;
             this.bodyH = bodyH;
             if (!this.isVirtualScroll) {
@@ -1342,33 +1362,74 @@ export default {
                 this.calHeight();
             }
         },
+        /* 虚拟滚动相关 start */
+        getStartIndex () {
+            const { scrollTop } = this;
+            let start = 0, end = this.data.length - 1;
+            while (start < end) {
+                const mid = Math.floor((start + end) / 2);
+                const top = this.itemHeight * (mid - 1);
+                if (scrollTop >= top && scrollTop < top + this.itemHeight) {
+                    start = mid;
+                    break;
+                } else if (scrollTop >= top + this.itemHeight) {
+                    start = mid + 1;
+                } else if (scrollTop < top) {
+                    end = mid - 1;
+                }
+            }
+            return start;
+        },
+        getLimitIndex(index) {
+            if (index < 0) {
+                return 0;
+            }
+            if (index > this.data.length) {
+                return this.data.length
+            }
+            return index;
+        },
         updateTable(isDataChange) {
-            const { data, maxIndex, itemHeight, poolSize } = this;
-
-            const currentIndex = Math.floor(
-                this.$refs.tableBody.scrollTop / itemHeight
-            );
-            let startIndex = Math.min(maxIndex, currentIndex);
-
-            // 当前列表的索引发生实际变化或者源数据有增减时才进行更新
-            const shouldUpdate =
-                this.prevStartIndex !== startIndex || isDataChange;
-
-            // if (!shouldUpdate) return;
-
-            // 获取滚动方向和差值，优化滚动性能和复用DOM
-            const direction = startIndex - this.prevStartIndex || 0;
-            const endIndex = 2 + startIndex + poolSize;
+            if (this.virtualScrollRange) {
+                if (this.scrollTop > this.virtualScrollRange[0] && this.scrollTop < this.virtualScrollRange[1]) {
+                    return;
+                }
+            }
+            let startIndex = this.getStartIndex();
+            startIndex = this.getLimitIndex(startIndex);
+            const upperStartIndex = startIndex - this.virtualScroll * this.virtualCacheScreens;
+            const downEndIndex = startIndex + this.virtualScroll * (this.virtualCacheScreens + 1);
             this.updateScrollData(
-                startIndex,
-                endIndex,
-                direction,
+                this.getLimitIndex(upperStartIndex),
+                this.getLimitIndex(downEndIndex),
                 isDataChange
             );
-            this.prevStartIndex = startIndex;
+            // const { data, maxIndex, itemHeight, poolSize } = this;
+            //
+            // const currentIndex = Math.floor(
+            //     this.$refs.tableBody.scrollTop / itemHeight
+            // );
+            // let startIndex = Math.min(maxIndex, currentIndex);
+            //
+            // // 当前列表的索引发生实际变化或者源数据有增减时才进行更新
+            // const shouldUpdate =
+            //     this.prevStartIndex !== startIndex || isDataChange;
+            //
+            // // if (!shouldUpdate) return;
+            //
+            // // 获取滚动方向和差值，优化滚动性能和复用DOM
+            // const direction = startIndex - this.prevStartIndex || 0;
+            // const endIndex = 2 + startIndex + poolSize;
+            // this.updateScrollData(
+            //     startIndex,
+            //     endIndex,
+            //     direction,
+            //     isDataChange
+            // );
+            // this.prevStartIndex = startIndex;
             // this.requestId && cancelAnimationFrame(this.requestId);
         },
-        updateScrollData(startIndex, endIndex, direction, isDataChange) {
+        updateScrollData(startIndex, endIndex, isDataChange) {
             const { data, itemHeight, dataList, isSameDataRef, isSelectAll } =
                 this;
             if (!data.length) {
@@ -1380,9 +1441,7 @@ export default {
             if (!dataList.length || !isSameDataRef) {
                 // reset flag
                 this.isSameDataRef = true;
-                let prefixData = JSON.parse(
-                    JSON.stringify(this.prefixData)
-                ).slice(startIndex, endIndex);
+                let prefixData = this.prefixData.slice(startIndex, endIndex);
                 const newData = data
                     .slice(startIndex, endIndex)
                     .map((item, index) => ({
@@ -1393,9 +1452,9 @@ export default {
                         _isChecked: false,
                     }));
 
-                if (!prefixData.length) {
-                    prefixData = newData;
-                }
+                // if (!prefixData.length) {
+                //     prefixData = newData;
+                // }
 
                 newData.forEach((news, index) => {
                     Object.keys(news.item).forEach((key, newIndex) => {
@@ -1498,7 +1557,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-/deep/ .commonItem {
+/deep/ .commonItem, /deep/ .virtualItem {
   &:nth-child(even) {
     background: #fcfcfc;
     .flex-table-hidden {

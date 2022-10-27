@@ -14,8 +14,10 @@
             :loading="loading"            
             :columns="columns"
             :data="list"
-            :sum="sum"
+            :head-sum="sum"
             :fixed-head="true"
+            :virtual-scroll="20"
+            fixedXScroll
             vertical
             @on-sort-change="onSortChange"
         >
@@ -31,8 +33,9 @@
 // import flexTable from '../../index.js';
 import imgSrc from './123.png';
 const aTestList = [];
-for (let i = 0; i < 5; i++) {
+for (let i = 0; i < 20000; i++) {
     const oTestData = {
+        id: i,
         name: 'John',
         age: 18,
         hegith: '178',
@@ -69,9 +72,19 @@ export default {
                 //     type: 'slot',
                 // },
                 {
+                    title: 'ID',
+                    key: 'id',
+                    width: 100,
+                    minWidth: 100,
+                    fixed: 'left',
+                    sortable: true,
+                    vertical: false,
+                },
+                {
                     title: 'Name',
                     key: 'name',
                     width: 100,
+                    minWidth: 100,
                     fixed: 'left',
                     sortable: true,
                     vertical: false,

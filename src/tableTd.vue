@@ -1,7 +1,7 @@
 <template>
     <div
         :class="[cellClsName(column, row), 'tableCol']"
-        :style="[setCellStyle(column), handleWidth(column, columns)]"
+        :style="[setCellStyle(column), handleColWidth(column, columns)]"
         @click="onToggleExpand"
         ref="cell"
     >
