@@ -1613,7 +1613,7 @@ export default {
   &.is-fixed-sum {
     z-index: 30;
     position: fixed;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 9px 9px -8px rgba(59,68,87,15%);
   }
 }
 </style>
