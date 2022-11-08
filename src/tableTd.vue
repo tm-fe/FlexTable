@@ -1,7 +1,7 @@
 <template>
     <div
         :class="[cellClsName(column, row), 'tableCol']"
-        :style="[setCellStyle(column), handleColWidth(column, columns)]"
+        :style="[setCellStyle(column), widthStyle]"
         @click="onToggleExpand"
         ref="cell"
     >
@@ -70,15 +70,15 @@ export default {
             type: Object,
             required: true,
         },
-        columns: {
-            type: Array,
-            required: true,
-        },
-        index: {
-            type: Number,
-            required: true,
-        },
+        // columns: {
+        //     type: Array,
+        //     required: true,
+        // },
         row: {
+            type: Object,
+            required: true,
+        },
+        widthStyle: {
             type: Object,
             required: true,
         },
@@ -86,6 +86,11 @@ export default {
             type: Number,
         },
         onlyFixed: {
+            type: String,
+            default: '',
+        },
+        // 最后固定在左侧的列
+        lastFixedField: {
             type: String,
             default: '',
         },
@@ -137,9 +142,6 @@ export default {
         isInvisible() {
             // 非固定层的固定列应不可见
             return this.column.fixed && !this.onlyFixed;
-        },
-        lastFixedIdx() {
-            return this.columns.filter((item) => item.fixed === 'left').length;
         },
     },
     created() {
@@ -202,7 +204,7 @@ export default {
             return this.isInvisible ? 'flex-table-hidden' : '';
         },
         flexTableBorder() {
-            if (this.lastFixedIdx && this.columns[this.lastFixedIdx - 1].key === this.column.key) {
+            if (this.lastFixedField === this.column.key) {
                 return 'fixedBorder';
             }
             return '';

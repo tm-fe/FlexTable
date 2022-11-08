@@ -53,7 +53,6 @@
             >
                 <table-tr
                     v-bind="$props"
-                    :key="index"
                     :row="row"
                     :rowIndex="index"
                     :columns="columns"
@@ -66,6 +65,8 @@
                     :selectedClass="selectedClass"
                     :spanMethod="spanMethod"
                     :rowSpanColumns="rowSpanColumns"
+                    :last-fixed-field="lastFixedField"
+                    :cols-left-style="colsLeftStyle"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                     @on-td-click="handleRowClick"
@@ -173,6 +174,10 @@ export default {
             type: Boolean,
             default: false,
         },
+        colsLeftStyle: {
+            type: Object,
+            required: true,
+        },
     },
     computed: {
         style() {
@@ -217,6 +222,10 @@ export default {
             return (
                 !!this.virtualScroll & (this.virtualScroll < this.data.length)
             );
+        },
+        lastFixedField() {
+            const idx = this.columns.filter((item) => item.fixed === 'left').length - 1;
+            return this.columns[idx] && this.columns[idx].key;
         },
     },
     watch: {

@@ -33,9 +33,9 @@
 // import flexTable from '../../index.js';
 import imgSrc from './123.png';
 const aTestList = [];
-for (let i = 0; i < 20000; i++) {
+for (let i = 0; i < 200; i++) {
     const oTestData = {
-        id: i,
+        id: i + 1,
         name: 'John',
         age: 18,
         hegith: '178',

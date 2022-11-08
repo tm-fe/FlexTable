@@ -49,7 +49,6 @@
           :columns="tableColumns"
           :data="dataList"
           :maxHeight="maxHeight"
-          :rowHeight="rowHeight"
           :no-data="noData"
           :scrollTop="scrollTop"
           :hoverIndex="hoverIndex"
@@ -57,6 +56,7 @@
           :spanMethod="spanMethod"
           :scrollerStyle="scrollerStyle"
           :scroll-left="scrollLeft"
+          :cols-left-style="colsLeftStyle"
           @scroll.native.passive="syncScroll"
           @on-toggle-select="toggleSelect"
           @on-row-click="handleRowClick"
@@ -261,7 +261,6 @@
             onlyFixed="left"
             :data="dataList"
             :resizable="resizable"
-            :rowHeight="rowHeight.header"
             :is-render-done="isRenderDone"
             @on-select-all="selectAll"
             @on-sort-change="onSortChange"
@@ -492,7 +491,7 @@ export default {
     data() {
         return {
             tableId: tableIdSeed++,
-            rowHeight: { header: 0, footer: 0 },
+            // rowHeight: { header: 0, footer: 0 },
             dataList: [],
             style: {},
             wrapStyle: {},
@@ -542,6 +541,7 @@ export default {
             headHeight: 0,
             contentWidth: 0,
             fixedSumStyle: {},
+            colsLeftStyle: {},
         };
     },
     computed: {
@@ -785,6 +785,7 @@ export default {
                 fixedSumRef.scrollLeft = left;
             }
             this.updateFixedScrollLeft(left);
+            this.calcColsLeftStyle();
         },
         calWidth(val) {
             let num = 0;
@@ -829,6 +830,34 @@ export default {
         onScroll(event) {
             // 兼容拖动滚动条
             this.scrollLeft = event.target.scrollLeft;
+        },
+        calcColsLeftStyle() {
+            let total = 0;
+            this.colsLeftStyle = this.columns.reduce((res, currentCol) => {
+                if (currentCol.fixed === 'left' || currentCol.type === 'selection') {
+                    const width = this.calWidth[currentCol.key];
+                    let left = total;
+                    if (this.virtualScroll) {
+                        left += this.scrollLeft;
+                    }
+                    if (currentCol.key) {
+                        res[currentCol.key] = {
+                            left: `${left}px`,
+                        }
+                    } else if (currentCol.type === 'selection') {
+                        res['_selection_left'] = {
+                            left: `${left}px`,
+                        }
+                    }
+                    total += width;
+                } else {
+                    res[currentCol.key] = {
+                        left: `${0}px`,
+                    };
+                }
+
+                return res;
+            }, {});
         },
         syncScroll: throttle(function (event) {
             const { scrollTop } = event.target;
@@ -900,7 +929,7 @@ export default {
         },
         initData() {
             this._queueId = new Date().getTime();
-            this.rowHeight = { header: 0, footer: 0 };
+            // this.rowHeight = { header: 0, footer: 0 };
             this.dataList = [];
             if (this.asyncRender > 0) {
                 this.isRenderDone = false;
@@ -930,7 +959,7 @@ export default {
             newItem._isDisabled = !!newItem._disabled;
             newItem._expanded = newItem.expandStatus || !!newItem._expanded;
             newItem._disableExpand = !!newItem._disableExpand;
-            this.$set(this.rowHeight, index, 0);
+            // this.$set(this.rowHeight, index, 0);
             this.dataList.push(newItem);
             // 出现页面滚动条时，重新计算宽度
             this.$nextTick(() => {
@@ -1348,7 +1377,7 @@ export default {
         },
         onRowHeightChange(row) {
             if (!this.isVirtualScroll) {
-                this.$set(this.rowHeight, row.rowIndex, row.height);
+                // this.$set(this.rowHeight, row.rowIndex, row.height);
             }
         },
         reSetItemHeight() {

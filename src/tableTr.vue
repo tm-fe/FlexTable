@@ -1,31 +1,29 @@
 <template>
     <!-- :style="{ minHeight: height }" -->
     <div
-        ref="tableTd"
         class="flex-table-row"
         :class="{ 'flex-table-hover': isHover }"
         :style="{ minHeight: height }"
-        @mouseenter="mouseenter"
     >
         <table-td
             v-bind="$props"
             v-for="(column, i) in columns"
             v-if="!rowSpan || (rowSpan && i === columnIndex)"
-            :key="column.key + '_' + i + '_' + rowIndex"
+            :key="column.key"
             :column="column"
             :columns="columns"
-            :index="i"
             :cal-width="calWidth"
             :row="row"
             :row-span="rowSpan"
             :rowSpanColumns="rowSpanColumns"
             :rowIndex="rowIndex"
             :onlyFixed="onlyFixed"
+            :last-fixed-field="lastFixedField"
+            :width-style="colsLeftStyle[column.type !== 'selection' ? column.key : '_selection_left'] || {}"
             :class="tdClassName(column, row)"
             @click.native="handleTdClick($event, column, row)"
             @on-toggle-select="toggleSelect"
             @on-toggle-expand="toggleExpand"
-            @load="handleLoad"
         ></table-td>
     </div>
 </template>
@@ -97,6 +95,15 @@ export default {
             type: Boolean,
             default: false,
         },
+        // 最后固定在左侧的列
+        lastFixedField: {
+            type: String,
+            default: '',
+        },
+        colsLeftStyle: {
+            type: Object,
+            required: true,
+        },
     },
     data() {
         return {
@@ -143,13 +150,6 @@ export default {
             } else {
                 return 'auto';
             }
-            // if (this.selfHeight && this.rowHeight && this.selfHeight <= this.rowHeight) {
-            //     console.log('this.rowHeigh: ', this.rowHeigh);
-
-            //     return `${this.rowHeight}px`;
-            // } else {
-            //     return 'auto';
-            // }
         },
         isHover() {
             return this.hoverIndex === this.rowIndex;
@@ -197,16 +197,16 @@ export default {
             //         });
             //     }
             // }
-            if (!this.onlyFixed && !this.rowSpan) {
-                let { height } = this.$el.getBoundingClientRect();
-                if (height !== this.selfHeight) {
-                    this.selfHeight = height;
-                }
-                this.owner.onRowHeightChange({
-                    rowIndex: this.rowIndex,
-                    height,
-                });
-            }
+            // if (!this.onlyFixed && !this.rowSpan) {
+            //     let { height } = this.$el.getBoundingClientRect();
+            //     if (height !== this.selfHeight) {
+            //         this.selfHeight = height;
+            //     }
+            //     this.owner.onRowHeightChange({
+            //         rowIndex: this.rowIndex,
+            //         height,
+            //     });
+            // }
         },
         debounce(fn, wait) {
             let timer = null;
@@ -217,9 +217,6 @@ export default {
                 timer = setTimeout(fn, wait);
             };
         },
-        mouseenter() {
-            // this.debounce(this.owner.updateHoverIndex(this.rowIndex), 200);
-        },
         rowClsName(_index) {
             return [this.$parent.$parent.rowClassName(this.row, _index)];
         },
@@ -228,9 +225,6 @@ export default {
         },
         tdClassName() {
             return [this.selectedCls(this.row), this.rowClsName(this.rowIndex)];
-        },
-        handleLoad() {
-            this.mouseenter();
         },
     },
 };
