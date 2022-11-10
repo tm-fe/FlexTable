@@ -1,7 +1,5 @@
 <template>
   <div :class="wrapClasses" :style="wrapStyle" ref="tableWrap">
-    <!-- <table-loading-bar v-bind="$props" :headHeight="headHeight" /> -->
-    <!-- /table-loading-bar -->
     <div
       :class="[
         'flex-table-layout',
@@ -21,6 +19,7 @@
           :data="dataList"
           :allData="prefixData"
           :resizable="resizable"
+          :last-fixed-field="lastFixedField"
           @getheadHeight="getheadHeight"
           @on-select-all="selectAll"
           @on-sort-change="onSortChange"
@@ -52,10 +51,11 @@
           :rowHeight="rowHeight"
           :no-data="noData"
           :scrollTop="scrollTop"
-          :hoverIndex="hoverIndex"
           :selectedClass="selectedClass"
           :spanMethod="spanMethod"
           :scrollerStyle="scrollerStyle"
+          :cols-left-style="colsLeftStyle"
+          :last-fixed-field="lastFixedField"
           @scroll.native.passive="syncScroll"
           @on-toggle-select="toggleSelect"
           @on-row-click="handleRowClick"
@@ -72,134 +72,6 @@
         ></table-foot>
         <!-- /flex-table-foot -->
       </div>
-
-      <!-- <div
-                :class="[
-                    'flex-table-fixed-left',
-                    bodyIsScroll > 0 ? 'is-scroll' : '',
-                ]"
-                v-if="hasFixedLeft"
-                :style="{ width: fixedLeftWidth + 'px' }"
-            >
-                <table-head
-                    v-bind="$props"
-                    ref="tableHeader"
-                    :cal-width="calWidth"
-                    :columns="tableColumns"
-                    onlyFixed="left"
-                    :data="dataList"
-                    :allData="data"
-                    :resizable="resizable"
-                    :rowHeight="rowHeight.header"
-                    :is-render-done="isRenderDone"
-                    @getheadHeight="getheadHeight"
-                    @on-select-all="selectAll"
-                    @on-sort-change="onSortChange"
-                    @on-col-resize="onColResizeStart"
-                >
-                    <template #batchCheck>
-                        <slot name="batchCheck" />
-                    </template>
-                </table-head>
-
-                <table-sum
-                    v-if="headSum && data.length"
-                    ref="tableSum"
-                    :cal-width="calWidth"
-                    :columns="tableColumns"
-                    :headSum="headSum"
-                ></table-sum>
-
-                <table-body
-                    v-bind="$props"
-                    ref="tableBody"
-                    onlyFixed="left"
-                    :cal-width="calWidth"
-                    :columns="tableColumns"
-                    :data="dataList"
-                    :maxHeight="maxHeight"
-                    :rowHeight="rowHeight"
-                    :scrollTop="scrollTop"
-                    :hoverIndex="hoverIndex"
-                    :selectedClass="selectedClass"
-                    :spanMethod="spanMethod"
-                    @on-toggle-select="toggleSelect"
-                    @on-row-click="handleRowClick"
-                    @doLayout="doLayout"
-                ></table-body>
-
-                <table-foot
-                    v-if="sum && data.length"
-                    onlyFixed="left"
-                    :cal-width="calWidth"
-                    :columns="tableColumns"
-                    :sum="sum"
-                    :rowHeight="rowHeight.footer"
-                ></table-foot>
-            </div> -->
-
-      <!-- <div
-                :class="['flex-table-fixed-right-wrap']"
-                v-if="hasFixedRight"
-                :style="{ width: fixedRightWidth + 'px' }"
-            >
-                <div class="flex-table-fixed-right">
-                    <table-head
-                        v-bind="$props"
-                        ref="tableHeader"
-                        :cal-width="calWidth"
-                        :columns="tableColumns"
-                        onlyFixed="right"
-                        :data="dataList"
-                        :allData="data"
-                        :resizable="resizable"
-                        :rowHeight="rowHeight.header"
-                        :is-render-done="isRenderDone"
-                        @on-select-all="selectAll"
-                        @on-sort-change="onSortChange"
-                        @on-col-resize="onColResizeStart"
-                    >
-                        <template #batchCheck>
-                            <slot name="batchCheck" />
-                        </template>
-                    </table-head>
-
-                    <table-sum
-                        v-if="headSum && data.length"
-                        ref="tableSum"
-                        :cal-width="calWidth"
-                        :columns="tableColumns"
-                        :headSum="headSum"
-                    ></table-sum>
-
-                    <table-body
-                        v-bind="$props"
-                        ref="fixedRightBody"
-                        onlyFixed="right"
-                        :cal-width="calWidth"
-                        :columns="tableColumns"
-                        :data="dataList"
-                        :maxHeight="maxHeight"
-                        :rowHeight="rowHeight"
-                        :scrollTop="scrollTop"
-                        :hoverIndex="hoverIndex"
-                        :selectedClass="selectedClass"
-                        :spanMethod="spanMethod"
-                        @on-toggle-select="toggleSelect"
-                        @on-row-click="handleRowClick"
-                        @doLayout="doLayout"
-                    ></table-body>
-
-                    <table-foot
-                        v-if="sum && data.length"
-                        onlyFixed="right"
-                        :cal-width="calWidth"
-                        :columns="tableColumns"
-                        :sum="sum"
-                        :rowHeight="rowHeight.footer"
-                    ></table-foot>
-                </div>
-            </div> -->
 
       <div
         class="flex-table-reference-line"
@@ -234,6 +106,7 @@
             :data="dataList"
             :resizable="resizable"
             :loading="loading"
+            :last-fixed-field="lastFixedField"
             @on-select-all="selectAll"
             @on-sort-change="onSortChange"
             @on-col-resize="onColResizeStart"
@@ -262,6 +135,7 @@
             :resizable="resizable"
             :rowHeight="rowHeight.header"
             :is-render-done="isRenderDone"
+            :last-fixed-field="lastFixedField"
             @on-select-all="selectAll"
             @on-sort-change="onSortChange"
             @on-col-resize="onColResizeStart"
@@ -303,12 +177,6 @@
       @mouseleave.native="scrollBarLeave"
     ></tableScrollBar>
     <!-- /Y轴固定滚动条 -->
-    <!-- <div :style="wrapStyle" class="scrollBar" v-if="!!contentWidth">
-            <div
-                :style="`width: ${contentWidth}px`"
-            > 123</div>
-           
-        </div> -->
   </div>
 </template>
 <style lang="less">
@@ -502,7 +370,6 @@ export default {
             hasFixedLeft: false,
             hasFixedRight: false,
             scrollYScrolling: false,
-            hoverIndex: undefined,
             isRenderDone: true,
             fixedHeadStyle: { 'overflow-x': 'hidden' },
             isFixedHead: false,
@@ -532,6 +399,7 @@ export default {
             headHeight: 0,
             contentWidth: 0,
             fixedSumStyle: {},
+            colsLeftStyle: {},
         };
     },
     computed: {
@@ -591,6 +459,10 @@ export default {
                 classNames.push('flex-table-scroll-left');
             }
             return classNames;
+        },
+        lastFixedField() {
+            const idx = this.columns.filter((item) => item.fixed === 'left').length - 1;
+            return this.columns[idx] && this.columns[idx].key;
         },
         // 虚拟滚动变量
         itemHeight() {
@@ -657,6 +529,7 @@ export default {
             window.addEventListener('mouseup', this.onColResizeEnd);
             this.$el.addEventListener('mousemove', this.onColResizeMove);
         }
+        this.calcColsLeftStyle();
         this.$nextTick(() => {
             this.initScrollContainer();
             if (this.fixedHead) {
@@ -775,6 +648,7 @@ export default {
                 fixedSumRef.scrollLeft = left;
             }
             this.updateFixedScrollLeft(left);
+            this.calcColsLeftStyle();
         },
         calWidth(val) {
             let num = 0;
@@ -831,10 +705,6 @@ export default {
                 // });
             }
         }, 0),
-        updateHoverIndex: debounce(function (index) {
-            this.hoverIndex = index;
-            this.$emit('hover-row', this.hoverIndex);
-        }, 100),
         handleMousewheel(event) {
             if (!this.$refs.tableBody) {
                 return;
@@ -878,6 +748,34 @@ export default {
         },
         computedFixedRight: function () {
             return this.tableColumns.some((item) => item.fixed === 'right');
+        },
+        calcColsLeftStyle() {
+            let total = 0;
+            this.colsLeftStyle = this.columns.reduce((res, currentCol) => {
+                if (currentCol.fixed === 'left' || currentCol.type === 'selection') {
+                    const width = this.calWidth[currentCol.key];
+                    let left = total;
+                    if (this.virtualScroll) {
+                        left += this.scrollLeft;
+                    }
+                    if (currentCol.key) {
+                        res[currentCol.key] = {
+                            left: `${left}px`,
+                        }
+                    } else if (currentCol.type === 'selection') {
+                        res['_selection_left'] = {
+                            left: `${left}px`,
+                        }
+                    }
+                    total += width;
+                } else {
+                    res[currentCol.key] = {
+                        left: `${0}px`,
+                    };
+                }
+
+                return res;
+            }, {});
         },
         initData() {
             this._queueId = new Date().getTime();
@@ -1498,39 +1396,33 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-/deep/ .commonItem {
-  &:nth-child(even) {
-    background: #fcfcfc;
-    .flex-table-hidden {
-      background: #fcfcfc;
-    }
-  }
-  &:nth-child(odd) {
-    background: #fff;
-    .flex-table-hidden {
-      background: #fff;
-    }
-  }
-  &:hover {
-    background: #ebf7ff;
-    .flex-table-hidden {
-      background: #ebf7ff;
-    }
-  }
-}
-/deep/ .custom {
-  &:hover {
-    .flex-table-col {
-      background: #ebf7ff !important;
-    }
-  }
-}
-.flex-table-head-fixed {
-  overflow-x: hidden;
-}
-.flex-table {
-  width: fit-content;
-}
+// 用到的层级自己管理样式就好了，不懂为什么要当到外层？
+///deep/ .commonItem {
+//  &:nth-child(even) {
+//    background: #fcfcfc;
+//    .flex-table-hidden {
+//      background: #fcfcfc;
+//    }
+//  }
+//  &:nth-child(odd) {
+//    background: #fff;
+//    .flex-table-hidden {
+//      background: #fff;
+//    }
+//  }
+//  &:hover {
+//    background: #ebf7ff;
+//    .flex-table-hidden {
+//      background: #ebf7ff;
+//    }
+//  }
+//}
+//.flex-table-head-fixed {
+//  overflow-x: hidden;
+//}
+//.flex-table {
+//  width: fit-content;
+//}
 .scrollBar {
   position: fixed;
   bottom: 5px;

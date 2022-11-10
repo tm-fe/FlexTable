@@ -1,11 +1,12 @@
 @fb: flex-table;
-@borderColor: #e9eaec;
+@borderColor: #eee;
 @hoverColor: #0b8df8;
 
 .@{fb} {
     background-color: #fff;
     // border-bottom: 1px solid #dddee1;
     position: relative;
+    width: fit-content;
 
     &-wrap {
         position: relative;
@@ -31,9 +32,9 @@
                 background: none;
             }
 
-            .@{fb}-body .@{fb}-tr .@{fb}-row.@{fb}-hover {
-                background-color: #ebf7ff;
-            }
+            //.@{fb}-body .@{fb}-tr .@{fb}-row.@{fb}-hover {
+            //    background-color: #ebf7ff;
+            //}
 
             &.@{fb}-dark {
                 .@{fb}-body .@{fb}-tr .@{fb}-row.@{fb}-hover {
@@ -58,7 +59,7 @@
 
     &-head-fixed {
         width: 100%;
-        overflow-x: auto;
+        overflow-x: hidden;
 
         &::-webkit-scrollbar {
             display: none;
@@ -171,18 +172,19 @@
             }
 
             >.@{fb}-row {
-                &:nth-child(odd) {
-                    background: #f9f9f9;
-                }
+                border-bottom: 1px solid @borderColor;
 
                 &:last-child {
-                    border-bottom: 1px solid @borderColor
+                    border-bottom: none;
                 }
-
-                // &:hover,
-                &.@{fb}-hover {
-                    background-color: #ebf7ff;
-                    box-shadow: 0 2px 2px rgba(0, 0, 0, .08);
+                &:nth-child(even) {
+                    background: #fcfcfc;
+                }
+                &:nth-child(odd) {
+                    background: #fff;
+                }
+                &:hover {
+                    background: #ebf7ff;
                 }
             }
         }
@@ -273,6 +275,7 @@
         border-right: 1px solid #eee;
         word-break: break-word;
         box-sizing: border-box;
+        background: inherit;
 
         &:last-child {
             border: none;

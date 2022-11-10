@@ -1,31 +1,28 @@
 <template>
-    <!-- :style="{ minHeight: height }" -->
     <div
         ref="tableTd"
         class="flex-table-row"
-        :class="{ 'flex-table-hover': isHover }"
         :style="{ minHeight: height }"
-        @mouseenter="mouseenter"
     >
         <table-td
-            v-bind="$props"
             v-for="(column, i) in columns"
             v-if="!rowSpan || (rowSpan && i === columnIndex)"
-            :key="column.key + '_' + i + '_' + rowIndex"
+            :key="column.key"
             :column="column"
-            :columns="columns"
-            :index="i"
             :cal-width="calWidth"
             :row="row"
             :row-span="rowSpan"
             :rowSpanColumns="rowSpanColumns"
             :rowIndex="rowIndex"
             :onlyFixed="onlyFixed"
+            :multiple="multiple"
+            :vertical="vertical"
             :class="tdClassName(column, row)"
+            :width-style="colsLeftStyle[column.type !== 'selection' ? column.key : '_selection_left'] || {}"
+            :last-fixed-field="lastFixedField"
             @click.native="handleTdClick($event, column, row)"
             @on-toggle-select="toggleSelect"
             @on-toggle-expand="toggleExpand"
-            @load="handleLoad"
         ></table-td>
     </div>
 </template>
@@ -57,9 +54,6 @@ export default {
         },
         rowHeight: {
             type: Number,
-        },
-        hoverIndex: {
-            type: Number | undefined,
         },
         selectedClass: {
             type: String,
@@ -97,38 +91,18 @@ export default {
             type: Boolean,
             default: false,
         },
+        // 最后固定在左侧的列
+        lastFixedField: {
+            type: String,
+            default: '',
+        },
+        colsLeftStyle: {
+            type: Object,
+            required: true,
+        },
     },
     data() {
-        return {
-            selfHeight: 0,
-        };
-    },
-    mounted() {
-        const self = this;
-        if (this.$refs.tableTd) {
-            let target = this.$refs.tableTd;
-            // 创建观察者对象
-            let observer = new ResizeObserver(function (mutations) {
-                self.$forceUpdate();
-                self.$emit('doLayout');
-            });
-            // 传入目标节点和观察选项
-            observer.observe(target);
-            this.resizeObserver = observer;
-        }
-        this.$nextTick(() => {
-            this.onRowHeightChange();
-        });
-    },
-    updated() {
-        this.$nextTick(() => {
-            this.onRowHeightChange();
-        });
-    },
-    beforeDestroy() {
-        if (this.resizeObserver) {
-            this.resizeObserver.disconnect();
-        }
+        return {};
     },
     computed: {
         isVirtualScroll() {
@@ -143,16 +117,6 @@ export default {
             } else {
                 return 'auto';
             }
-            // if (this.selfHeight && this.rowHeight && this.selfHeight <= this.rowHeight) {
-            //     console.log('this.rowHeigh: ', this.rowHeigh);
-
-            //     return `${this.rowHeight}px`;
-            // } else {
-            //     return 'auto';
-            // }
-        },
-        isHover() {
-            return this.hoverIndex === this.rowIndex;
         },
     },
     methods: {
@@ -180,48 +144,8 @@ export default {
             }
             this.$emit('on-td-click', this.rowIndex, row, column);
         },
-        onRowHeightChange() {
-            // 如果是fixed 或者是合并行，则不进行 rowHeight的更新
-            // if (!this.rowSpan) {
-            //     let { height } = this.$el.getBoundingClientRect();
-
-            //     if (height !== this.selfHeight) {
-            //         this.selfHeight = height;
-            //     }
-            //     console.log('height: ', height, this.rowHeight, this.selfHeight);
-
-            //     if (!this.rowHeight || height > this.rowHeight) {
-            //         this.owner.onRowHeightChange({
-            //             rowIndex: this.rowIndex,
-            //             height,
-            //         });
-            //     }
-            // }
-            if (!this.onlyFixed && !this.rowSpan) {
-                let { height } = this.$el.getBoundingClientRect();
-                if (height !== this.selfHeight) {
-                    this.selfHeight = height;
-                }
-                this.owner.onRowHeightChange({
-                    rowIndex: this.rowIndex,
-                    height,
-                });
-            }
-        },
-        debounce(fn, wait) {
-            let timer = null;
-            return function () {
-                if (timer !== null) {
-                    clearTimeout(timer);
-                }
-                timer = setTimeout(fn, wait);
-            };
-        },
-        mouseenter() {
-            // this.debounce(this.owner.updateHoverIndex(this.rowIndex), 200);
-        },
         rowClsName(_index) {
-            return [this.$parent.$parent.rowClassName(this.row, _index)];
+            // return [this.$parent.$parent.rowClassName(this.row, _index)];
         },
         selectedCls(row) {
             return row._isChecked ? this.selectedClass : '';
@@ -229,14 +153,8 @@ export default {
         tdClassName() {
             return [this.selectedCls(this.row), this.rowClsName(this.rowIndex)];
         },
-        handleLoad() {
-            this.mouseenter();
-        },
     },
 };
 </script>
 <style lang="less" scoped>
-.flex-table-hover {
-    background-color: #ebf7ff;
-}
 </style>
