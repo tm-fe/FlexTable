@@ -54,6 +54,7 @@ export default {
         },
         rowHeight: {
             type: Number,
+            default: 0,
         },
         selectedClass: {
             type: String,
@@ -105,11 +106,8 @@ export default {
         return {};
     },
     computed: {
-        isVirtualScroll() {
-            return this.virtualScroll;
-        },
         height() {
-            if (this.isVirtualScroll) {
+            if (this.virtualScroll) {
                 return `${this.virtualHeight}px`;
             }
             if ((this.onlyFixed || this.rowSpan) && this.rowHeight) {

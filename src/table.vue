@@ -118,10 +118,7 @@
           <!-- /flex-table-head -->
         </div>
         <div
-          :class="[
-            'flex-table-fixed-left',
-            bodyIsScroll > 0 ? 'is-scroll' : '',
-          ]"
+          :class="['flex-table-fixed-left']"
           v-if="hasFixedLeft"
           :style="{ width: fixedLeftWidth + 'px' }"
         >
@@ -365,7 +362,6 @@ export default {
             footH: 54,
             scrollTop: 0,
             scrollLeft: 0,
-            bodyIsScroll: 0,
             shouldEachRenderQueue: false,
             hasFixedLeft: false,
             hasFixedRight: false,
@@ -423,7 +419,6 @@ export default {
                 arr.push(`no-stripe`);
             }
             if (this.isScrollLeft) {
-                // classNames.push('flex-table-scroll-left');
                 arr.push('notFixed');
             }
             return arr;
@@ -501,9 +496,6 @@ export default {
                 overflow: 'hidden',
             };
         },
-        // maxHeight() {
-        //     return this.virtualScroll * this.itemHeight;
-        // },
         isVirtualScroll() {
             return this.virtualScroll;
         },
@@ -793,12 +785,10 @@ export default {
                     this.isRenderDone = true;
                     this.$emit('on-render-done');
                 }
-            } else {
-                if (!this.isVirtualScroll) {
-                    this.data.forEach((item, index) => {
-                        this.copyItem(item, index);
-                    });
-                }
+            } else if (!this.isVirtualScroll){
+                this.data.forEach((item, index) => {
+                    this.copyItem(item, index);
+                });
             }
         },
         copyItem(item, index) {
@@ -1381,6 +1371,7 @@ export default {
         },
         getheadHeight(height) {
             this.headHeight = height;
+            this.$set(this.rowHeight, 'header', height);
         },
         observerTableVisible() {
             this.observerVisible = new IntersectionObserver((entries) => {

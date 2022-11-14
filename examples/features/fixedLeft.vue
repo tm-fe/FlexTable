@@ -11,6 +11,7 @@
         <div @click="click">show</div>
         <flex-table
             v-show="show"
+            resizable
             :loading="loading"            
             :columns="columns"
             :data="list"

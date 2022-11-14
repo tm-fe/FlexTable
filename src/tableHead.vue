@@ -233,10 +233,6 @@ export default {
             if (!this.onlyFixed && this.$el) {
                 let { height } = this.$el.getBoundingClientRect();
                 this.$emit('getheadHeight', height);
-                this.owner.onRowHeightChange({
-                    rowIndex: 'header',
-                    height,
-                });
             }
         },
         isHidden(item) {

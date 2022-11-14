@@ -59,18 +59,18 @@
                             : 'none',
                         height: isVirtualScroll ? `${virtualHeight}px` : 'auto',
                     }"
-                    v-bind="$props"
                     :row="row"
                     :rowIndex="index"
                     :columns="columns"
                     :cal-width="calWidth"
                     :onlyFixed="onlyFixed"
-                    :rowHeight="
-                        isVirtualScroll ? virtualHeight : rowHeight[index]
-                    "
                     :selectedClass="selectedClass"
                     :spanMethod="spanMethod"
                     :rowSpanColumns="rowSpanColumns"
+                    :multiple="multiple"
+                    :virtualScroll="virtualScroll"
+                    :virtualHeight="virtualScroll"
+                    :vertical="vertical"
                     :cols-left-style="colsLeftStyle"
                     :last-fixed-field="lastFixedField"
                     @on-toggle-select="toggleSelect"
@@ -251,9 +251,9 @@ export default {
             // customClass: '',
         };
     },
-    updated() {
-        this.$el.scrollTop = this.scrollTop;
-    },
+    // updated() {
+    //     this.$el.scrollTop = this.scrollTop;
+    // },
     methods: {
         toggleSelect(index, value) {
             this.$emit('on-toggle-select', index, value);
@@ -334,7 +334,6 @@ export default {
             if (this.$parent.rowClassName && this.$parent.rowClassName(row, index)) {
                 commonClass = `${commonClass} ${this.$parent.rowClassName(row, index)}`
             }
-            // return `${commonClass} ${this.isVirtualScroll ? 'virtualItem bgColor' : 'commonItem bgColor'}`;
             return commonClass;
         },
     },
