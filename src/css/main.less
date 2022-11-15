@@ -4,20 +4,15 @@
 
 .@{fb} {
     background-color: #fff;
-    // border-bottom: 1px solid #dddee1;
     position: relative;
     width: fit-content;
 
     &-wrap {
         position: relative;
         border: 1px solid #eee;
-        // border-bottom: none;
         display: flex;
         align-content: stretch;
 
-        // & *{
-        //     box-sizing: border-box;
-        // }
         &.no-boder {
             border-left: none;
             border-right: none;
@@ -28,13 +23,9 @@
         }
 
         &.no-stripe {
-            .@{fb}-body .@{fb}-tr .@{fb}-row:nth-child(odd) {
-                background: none;
+            .@{fb}-body .@{fb}-tr .@{fb}-row:nth-child(even) {
+                background: #fff;
             }
-
-            //.@{fb}-body .@{fb}-tr .@{fb}-row.@{fb}-hover {
-            //    background-color: #ebf7ff;
-            //}
 
             &.@{fb}-dark {
                 .@{fb}-body .@{fb}-tr .@{fb}-row.@{fb}-hover {
