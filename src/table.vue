@@ -38,6 +38,7 @@
           :cal-width="calWidth"
           :columns="tableColumns"
           :headSum="headSum"
+          :last-fixed-field="lastFixedField"
         ></table-sum>
         <!-- /flex-table-headSum -->
 
@@ -156,6 +157,7 @@
                 :cal-width="calWidth"
                 :columns="tableColumns"
                 :headSum="headSum"
+                :last-fixed-field="lastFixedField"
             ></table-sum>
         </div>
       </div>
@@ -165,6 +167,7 @@
       v-if="showScrollBar"
       :body-h="bodyH"
       :header-h="headerH"
+      :header-sum="rowHeight.headerSum"
       :max-height="maxHeight"
       :scroll="handleScrollYScroll"
       :sum="!!sum"
@@ -350,7 +353,7 @@ export default {
     data() {
         return {
             tableId: tableIdSeed++,
-            rowHeight: { header: 0, footer: 0 },
+            rowHeight: { header: 0, footer: 0, headerSum: 0 },
             dataList: [],
             style: {},
             wrapStyle: {},
@@ -771,7 +774,7 @@ export default {
         },
         initData() {
             this._queueId = new Date().getTime();
-            this.rowHeight = { header: 0, footer: 0 };
+            this.rowHeight = { header: 0, headerSum: 0, footer: 0 };
             this.dataList = [];
             if (this.asyncRender > 0) {
                 this.isRenderDone = false;
@@ -914,7 +917,7 @@ export default {
                     selection.push(item);
                 }
             });
-            return JSON.parse(JSON.stringify(selection));
+            return selection;
         },
         selectAll(status) {
             this.isSelectAll = status;
@@ -1056,7 +1059,6 @@ export default {
             this.footH = footH;
             this.bodyH = bodyH;
             if (!this.isVirtualScroll) {
-                // this.maxHeight = this.tableHeight - headerH - footH;
                 this.maxHeight = this.height - headerH - footH;
             } else {
                 this.bodyH = this.totalHeight;
@@ -1215,9 +1217,10 @@ export default {
             });
         },
         onRowHeightChange(row) {
-            if (!this.isVirtualScroll) {
-                this.$set(this.rowHeight, row.rowIndex, row.height);
-            }
+            // if (!this.isVirtualScroll) {
+            //     this.$set(this.rowHeight, row.rowIndex, row.height);
+            // }
+            this.$set(this.rowHeight, row.rowIndex, row.height);
         },
         reSetItemHeight() {
             // 这里给 height 赋值是为了出现滚动条
@@ -1268,9 +1271,7 @@ export default {
             if (!dataList.length || !isSameDataRef) {
                 // reset flag
                 this.isSameDataRef = true;
-                let prefixData = JSON.parse(
-                    JSON.stringify(this.prefixData)
-                ).slice(startIndex, endIndex);
+                let prefixData = this.prefixData.slice(startIndex, endIndex);
                 const newData = data
                     .slice(startIndex, endIndex)
                     .map((item, index) => ({

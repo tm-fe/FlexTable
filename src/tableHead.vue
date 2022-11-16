@@ -152,9 +152,6 @@ export default {
                 this.data.every((item) => item._disabled)
             );
         },
-        lastFixedIdx() {
-            return this.columns.filter((item) => item.fixed === 'left').length;
-        },
     },
     watch: {
         columns: function (val) {

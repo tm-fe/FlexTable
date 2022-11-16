@@ -15,9 +15,10 @@
             :loading="loading"            
             :columns="columns"
             :data="list"
-            :sum="sum"
+            :headSum="sum"
             :fixed-head="true"
             vertical
+            :virtual-scroll="5"
             @on-sort-change="onSortChange"
         >
             <template slot-scope="{ row, index }" slot="img">
@@ -32,7 +33,7 @@
 // import flexTable from '../../index.js';
 import imgSrc from './123.png';
 const aTestList = [];
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 200; i++) {
     const oTestData = {
         name: 'John',
         age: 18,

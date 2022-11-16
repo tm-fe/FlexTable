@@ -1,6 +1,6 @@
 <template>
     <div class="flex-table-scroll-y">
-        <div class="flex-table-scroll-y-head" :style="{'height': `${headerH}px`}"></div>
+        <div class="flex-table-scroll-y-head" :style="{'height': `${headerH + headerSum}px`}"></div>
         <div
             class="flex-table-scroll-y-body"
             :style="{'height': `${maxHeight}px`}"
@@ -19,6 +19,9 @@ export default {
             type: Number
         },
         headerH: {
+            type: Number
+        },
+        headerSum: {
             type: Number
         },
         maxHeight: {

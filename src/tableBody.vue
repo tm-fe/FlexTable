@@ -188,20 +188,17 @@ export default {
     },
     computed: {
         style() {
-            const tableSumHeight = this.$parent.$refs.tableSum
-                ? this.$parent.$refs.tableSum.$el.offsetHeight
-                : 0;
             if (this.virtualScroll) {
                 return {
                     height: this.maxHeight
-                        ? `${this.maxHeight + tableSumHeight}px`
+                        ? `${this.maxHeight}px`
                         : `auto`,
                 };
             }
 
             return {
                 'max-height': this.maxHeight
-                    ? `${this.maxHeight - tableSumHeight}px`
+                    ? `${this.maxHeight}px`
                     : `auto`,
                 'z-index': !this.data.length ? '7' : '0',
             };
