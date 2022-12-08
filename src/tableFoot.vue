@@ -81,10 +81,7 @@ export default {
     methods: {
         onRowHeightChange() {
             if (!this.onlyFixed) {
-                this.owner.onRowHeightChange({
-                    rowIndex: 'footer',
-                    height: this.$el.offsetHeight,
-                });
+                this.owner.onRowHeightChange('footer', this.$el.offsetHeight);
             }
         },
         isHidden(item) {

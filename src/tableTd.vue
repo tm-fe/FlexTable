@@ -11,13 +11,13 @@
                     <Checkbox
                         v-if="multiple"
                         :checked="row._isChecked"
-                        @input="toggleSelect"
+                        @click.native.prevent="toggleSelect"
                         :disabled="row._isDisabled"
                     ></Checkbox>
                     <Radio
                         v-else
                         :checked="row._isChecked"
-                        @input="toggleSelect"
+                        @click.native.prevent="toggleSelect"
                         :disabled="row._isDisabled"
                     ></Radio>
                 </template>
@@ -175,8 +175,11 @@ export default {
             });
             return flag;
         },
-        toggleSelect(val) {
-            this.$emit('on-toggle-select', this.rowIndex, val);
+        toggleSelect(e) {
+            // 阻止影响行点击事件
+            e.preventDefault();
+            e.stopPropagation();
+            this.$emit('on-toggle-select', this.rowIndex, e);
         },
         onToggleExpand() {
             if (this.renderType !== 'expand') {

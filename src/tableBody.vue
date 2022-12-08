@@ -252,8 +252,8 @@ export default {
     //     this.$el.scrollTop = this.scrollTop;
     // },
     methods: {
-        toggleSelect(index, value) {
-            this.$emit('on-toggle-select', index, value);
+        toggleSelect(index, event) {
+            this.$emit('on-toggle-select', index, event);
         },
         toggleExpand(index) {
             const row = this.data[index];
@@ -261,8 +261,8 @@ export default {
                 this.data[index]._expanded = !this.data[index]._expanded;
             }
         },
-        handleRowClick(index, row, column) {
-            this.$emit('on-row-click', index, row, column);
+        handleRowClick(index, row) {
+            this.$emit('on-row-click', index, row);
         },
         getRowSpan() {
             const list = [];

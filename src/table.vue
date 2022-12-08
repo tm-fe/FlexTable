@@ -1216,11 +1216,8 @@ export default {
                 this.calWidth = oWidth;
             });
         },
-        onRowHeightChange(row) {
-            // if (!this.isVirtualScroll) {
-            //     this.$set(this.rowHeight, row.rowIndex, row.height);
-            // }
-            this.$set(this.rowHeight, row.rowIndex, row.height);
+        onRowHeightChange(key, height) {
+            this.$set(this.rowHeight, key, height);
         },
         reSetItemHeight() {
             // 这里给 height 赋值是为了出现滚动条
@@ -1372,7 +1369,7 @@ export default {
         },
         getheadHeight(height) {
             this.headHeight = height;
-            this.$set(this.rowHeight, 'header', height);
+            this.onRowHeightChange('header', height);
         },
         observerTableVisible() {
             this.observerVisible = new IntersectionObserver((entries) => {
