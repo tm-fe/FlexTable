@@ -10,15 +10,15 @@
                 <template v-if="renderType === 'selection'">
                     <Checkbox
                         v-if="multiple"
-                        :checked="row._isChecked"
-                        @input="toggleSelect"
-                        :disabled="row._isDisabled"
+                        :checked="isChecked"
+                        @click.native.prevent="toggleSelect"
+                        :disabled="!!row._disabled"
                     ></Checkbox>
                     <Radio
                         v-else
-                        :checked="row._isChecked"
-                        @input="toggleSelect"
-                        :disabled="row._isDisabled"
+                        :checked="isChecked"
+                        @click.native.prevent="toggleSelect"
+                        :disabled="!!row._disabled"
                     ></Radio>
                 </template>
                 <template v-if="renderType === 'expand'">
@@ -139,6 +139,9 @@ export default {
             // 非固定层的固定列应不可见
             return this.column.fixed && !this.onlyFixed;
         },
+        isChecked() {
+            return !!this.selectedRowsObj[this.row[this.uniqueKey]];
+        }
     },
     created() {
         // renderType
@@ -175,8 +178,11 @@ export default {
             });
             return flag;
         },
-        toggleSelect(val) {
-            this.$emit('on-toggle-select', this.rowIndex, val);
+        toggleSelect(e) {
+            // 阻止影响行点击事件
+            e.preventDefault();
+            e.stopPropagation();
+            this.$emit('on-toggle-select', this.rowIndex, e);
         },
         onToggleExpand() {
             if (this.renderType !== 'expand') {

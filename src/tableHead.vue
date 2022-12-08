@@ -14,7 +14,7 @@
                     <template v-if="item.type === 'selection' && multiple">
                         <div class="headCheckBox">
                             <Checkbox
-                                v-model="isChecked"
+                                :checked="isChecked"
                                 :disabled="isAllDisabled"
                                 @input="selectAll"
                             ></Checkbox>
@@ -85,12 +85,12 @@ export default {
         data: {
             type: Array,
         },
-        allData: {
-            type: Array,
-            default() {
-                return [];
-            },
-        },
+        // allData: {
+        //     type: Array,
+        //     default() {
+        //         return [];
+        //     },
+        // },
         columns: {
             type: Array,
         },
@@ -118,7 +118,7 @@ export default {
             type: Boolean,
             default: true,
         },
-        loading: {
+        isChecked: {
             type: Boolean,
             default: false,
         },
@@ -134,7 +134,6 @@ export default {
                 item._sort = item.sortType || 'normal'; // 可选值 'desc','asc','normal'
                 return item;
             }),
-            isChecked: false, // 是否全选
         };
     },
     computed: {
@@ -149,7 +148,7 @@ export default {
             return (
                 !this.isRenderDone ||
                 !this.data.length ||
-                this.data.every((item) => item._disabled)
+                this.data.every((item) => !!item._disabled)
             );
         },
     },
@@ -159,32 +158,6 @@ export default {
                 item._sort = item.sortType || 'normal';
                 return item;
             });
-        },
-        data: {
-            handler(val) {
-                if (!this.isAllDisabled && !this.virtualScroll) {
-                    let isChecked = false;
-
-                    isChecked = val
-                        .filter((item) => !item._disabled)
-                        .every((item) => item._isChecked);
-                    this.handleChangeStatus(isChecked);
-                }
-            },
-            deep: true,
-        },
-        allData: {
-            handler(val) {
-                if (this.virtualScroll) {
-                    const isChecked =
-                        val.length &&
-                        val
-                            .filter((item) => !item._disabled)
-                            .every((item) => item._isChecked);
-                    this.handleChangeStatus(isChecked);
-                }
-            },
-            deep: true,
         },
     },
     mounted() {
@@ -201,8 +174,8 @@ export default {
         isColResizable(col) {
             return this.resizable && col.resizable !== false;
         },
-        selectAll(status) {
-            this.$emit('on-select-all', this.isChecked);
+        selectAll() {
+            this.$emit('on-select-all', !this.isChecked);
         },
         onColResize(e, index) {
             this.$emit('on-col-resize', e, index);
@@ -238,10 +211,6 @@ export default {
         isInvisible(col) {
             // 非固定层的固定列应不可见
             return col.fixed && !this.onlyFixed;
-        },
-        handleChangeStatus(status) {
-            // 控制是否全选
-            this.isChecked = status;
         },
         flexTableBorder(item) {
             if (this.lastFixedField === item.key) {

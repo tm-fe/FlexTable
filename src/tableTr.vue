@@ -3,6 +3,7 @@
         ref="tableTd"
         class="flex-table-row"
         :style="{ minHeight: height }"
+        @click="handleTdClick($event, row)"
     >
         <table-td
             v-for="(column, i) in columns"
@@ -20,7 +21,8 @@
             :class="tdClassName(column, row)"
             :width-style="colsLeftStyle[column.type !== 'selection' ? column.key : '_selection_left'] || {}"
             :last-fixed-field="lastFixedField"
-            @click.native="handleTdClick($event, column, row)"
+            :selected-rows-obj="selectedRowsObj"
+            :unique-key="uniqueKey"
             @on-toggle-select="toggleSelect"
             @on-toggle-expand="toggleExpand"
         ></table-td>
@@ -118,38 +120,20 @@ export default {
         },
     },
     methods: {
-        toggleSelect(index, value) {
-            this.$emit('on-toggle-select', index, value);
+        toggleSelect(index, event) {
+            this.$emit('on-toggle-select', index, event);
         },
         toggleExpand() {
             this.$emit('on-toggle-expand', this.rowIndex);
         },
-        handleTdClick($event, column, row) {
-            if (
-                column.type == 'selection' &&
-                ['checkbox', 'radio'].includes($event.target.type)
-            ) {
-                this.$emit('on-selection-click', this.rowIndex, row);
-                return;
-            } else if (column.type == 'selection') {
-                const _checked = row._isChecked;
-                setTimeout(() => {
-                    if (_checked === row._isChecked) {
-                        this.$emit('on-td-click', this.rowIndex, row, column);
-                    }
-                });
-                return;
-            }
-            this.$emit('on-td-click', this.rowIndex, row, column);
-        },
-        rowClsName(_index) {
-            // return [this.$parent.$parent.rowClassName(this.row, _index)];
+        handleTdClick($event, row) {
+            this.$emit('on-td-click', this.rowIndex, row);
         },
         selectedCls(row) {
             return row._isChecked ? this.selectedClass : '';
         },
         tdClassName() {
-            return [this.selectedCls(this.row), this.rowClsName(this.rowIndex)];
+            return [this.selectedCls(this.row)];
         },
     },
 };

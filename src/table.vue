@@ -17,9 +17,9 @@
           :cal-width="calWidth"
           :columns="tableColumns"
           :data="dataList"
-          :allData="prefixData"
           :resizable="resizable"
           :last-fixed-field="lastFixedField"
+          :is-checked="isCheckedAll"
           @getheadHeight="getheadHeight"
           @on-select-all="selectAll"
           @on-sort-change="onSortChange"
@@ -57,6 +57,7 @@
           :scrollerStyle="scrollerStyle"
           :cols-left-style="colsLeftStyle"
           :last-fixed-field="lastFixedField"
+          :selected-rows-obj="selectedRowsObj"
           @scroll.native.passive="syncScroll"
           @on-toggle-select="toggleSelect"
           @on-row-click="handleRowClick"
@@ -108,6 +109,7 @@
             :resizable="resizable"
             :loading="loading"
             :last-fixed-field="lastFixedField"
+            :is-checked="isCheckedAll"
             @on-select-all="selectAll"
             @on-sort-change="onSortChange"
             @on-col-resize="onColResizeStart"
@@ -134,6 +136,7 @@
             :rowHeight="rowHeight.header"
             :is-render-done="isRenderDone"
             :last-fixed-field="lastFixedField"
+            :is-checked="isCheckedAll"
             @on-select-all="selectAll"
             @on-sort-change="onSortChange"
             @on-col-resize="onColResizeStart"
@@ -392,13 +395,14 @@ export default {
             prevStartIndex: -1,
             isSameDataRef: false,
             requestId: null,
-            selected: [],
             prefixData: [],
-            isSelectAll: false,
             headHeight: 0,
             contentWidth: 0,
             fixedSumStyle: {},
+            // 存储列的left 距离
             colsLeftStyle: {},
+            // 已选中的列，key为唯一id，value为row data
+            selectedRowsObj: {},
         };
     },
     computed: {
@@ -433,6 +437,10 @@ export default {
                 }
                 return width;
             }, 0);
+        },
+        isCheckedAll() {
+            const canChoose = this.data.filter(dataItem => !dataItem._disabled).length;
+            return !!canChoose && canChoose === this.getSelection().length;
         },
         fixedRightWidth: function () {
             return this.tableColumns.reduce((width, item) => {
@@ -510,9 +518,9 @@ export default {
         },
     },
     mounted() {
-        if (this.isVirtualScroll) {
-            this.maxHeight = this.virtualScroll * this.itemHeight;
-        }
+        // if (this.isVirtualScroll) {
+        //     this.maxHeight = this.virtualScroll * this.itemHeight;
+        // }
 
         this.doLayout();
         let observer = new ResizeObserver(() => {
@@ -544,6 +552,8 @@ export default {
             handler(val) {
                 if (val.length) {
                     this.initData();
+                } else {
+                    this.selectedRowsObj = {};
                 }
             },
             deep: true,
@@ -553,6 +563,7 @@ export default {
                 if (this.isVirtualScroll) {
                     this.prefixData = val;
                     this.doLayout();
+                    this.maxHeight = Math.min(this.data.length, this.virtualScroll) * this.itemHeight;
                     setTimeout(() => {
                         this.updateTable(true);
                     }, 0);
@@ -575,14 +586,10 @@ export default {
             },
             deep: true,
         },
-        // height: function(val){
-        //     this.calHeight();
-        // },
         height: {
             handler(value) {
                 this.calHeight();
             },
-            deep: true,
         },
         columns: {
             handler: function (arr) {
@@ -776,6 +783,7 @@ export default {
             this._queueId = new Date().getTime();
             this.rowHeight = { header: 0, headerSum: 0, footer: 0 };
             this.dataList = [];
+            this.initSelected();
             if (this.asyncRender > 0) {
                 this.isRenderDone = false;
                 this.data.slice(0, this.asyncRender).forEach((item, index) => {
@@ -795,14 +803,12 @@ export default {
             }
         },
         copyItem(item, index) {
+            if (!item[this.uniqueKey]) {
+                throw new Error('flextable：缺失唯一id，请检查data数据');
+            }
             const newItem = JSON.parse(JSON.stringify(item));
-            newItem._isChecked = this.selectedData.length
-                ? this.selectedData.includes(newItem[this.uniqueKey])
-                : !!newItem._checked;
-            newItem._isDisabled = !!newItem._disabled;
             newItem._expanded = newItem.expandStatus || !!newItem._expanded;
             newItem._disableExpand = !!newItem._disableExpand;
-            this.$set(this.rowHeight, index, 0);
             this.dataList.push(newItem);
             // 出现页面滚动条时，重新计算宽度
             this.$nextTick(() => {
@@ -842,61 +848,37 @@ export default {
                 })
                 .catch(() => {});
         },
+        initSelected() {
+            const selected = {};
+            this.data.forEach(row => {
+                if (this.selectedData.includes(row[this.uniqueKey])) {
+                    selected[row[this.uniqueKey]] = row;
+                }
+            });
+            this.selectedRowsObj = selected;
+        },
         toggleSelect(index) {
             const row = this.dataList[index];
-            let selection;
-            if (!this.prefixData.length) {
-                this.prefixData = JSON.parse(JSON.stringify(this.data));
+            // disabled 状态禁止更改 check 状态
+            if (!!row._disabled) {
+                return;
             }
-            if (!row._isDisabled) {
-                // disabled 状态禁止更改 check 状态
-                if (this.isVirtualScroll) {
-                    const selectIndex = row.index - 1;
-                    this.$set(
-                        this.prefixData[selectIndex],
-                        '_isChecked',
-                        !this.prefixData[selectIndex]['_isChecked']
-                    );
+            const selectedId = row[this.uniqueKey];
+            if (!this.selectedRowsObj[selectedId]) {
+                if (this.multiple) {
+                    this.$set(this.selectedRowsObj, selectedId, row);
                 } else {
-                    row._isChecked = !row._isChecked;
+                    this.selectedRowsObj = {
+                        [selectedId]: row,
+                    }
                 }
-            }
-            // 控制tableHeader是否处于全选状态
-            let isCheckedAll;
-            if (this.isVirtualScroll) {
-                isCheckedAll = this.prefixData.every((item) => item._isChecked);
-                selection = this.prefixData.filter(
-                    (item) => item['_isChecked'] === true
-                );
             } else {
-                isCheckedAll = this.dataList.every((item) => item._isChecked);
-                selection = this.getSelection();
+                this.$set(this.selectedRowsObj, selectedId, undefined);
+                delete this.selectedRowsObj[selectedId];
+                this.$emit('on-selection-cancel', row);
             }
+            this.$emit('on-selection-change', this.getSelection(), row);
 
-            if (!this.multiple && !row._disabled) {
-                // 处理单选逻辑
-                selection = [];
-                const data = JSON.parse(JSON.stringify(this.dataList));
-                for (const item of data) {
-                    this.$set(
-                        item,
-                        '_isChecked',
-                        this.getId(item) === this.getId(row)
-                    );
-                }
-                this.dataList = Object.assign([], this.dataList, data);
-                selection.push(row);
-            }
-
-            this.isSelectAll = isCheckedAll;
-            this.$refs.tableHeader &&
-                this.$refs.tableHeader.handleChangeStatus(isCheckedAll);
-            const curRow = JSON.parse(JSON.stringify(row));
-            if (!row._isChecked) {
-                this.$emit('on-selection-cancel', curRow);
-                this.isSelectAll = false;
-            }
-            this.$emit('on-selection-change', selection, curRow);
         },
         handleRowClick(index, row) {
             this.$emit('on-row-click', index, row);
@@ -905,62 +887,21 @@ export default {
             }
         },
         getSelection() {
-            const selection = [];
-            let data = [];
-            if (this.isVirtualScroll) {
-                data = this.data;
-            } else {
-                data = this.dataList;
-            }
-            data.forEach((item) => {
-                if (item._isChecked) {
-                    selection.push(item);
-                }
-            });
-            return selection;
+            return Object.values(this.selectedRowsObj) || [];
         },
         selectAll(status) {
-            this.isSelectAll = status;
-            let selection;
-            let cancelSelection;
-            if (this.isVirtualScroll) {
-                const prefixData = JSON.parse(JSON.stringify(this.data));
-                this.dataList.forEach((item) => {
-                    if (!item._isDisabled) {
-                        // disabled 状态禁止更改 check 状态
-                        item._isChecked = status;
-                    }
-                });
-                prefixData.forEach((item) => {
-                    if (!item._isDisabled) {
-                        // disabled 状态禁止更改 check 状态
-                        item._isChecked = status;
-                    }
-                });
-                selection = prefixData;
-                cancelSelection = prefixData;
-                this.prefixData = prefixData;
-
-                this.updateTable(true);
-
-                // setTimeout(() => {
-                // this.updateTable(true)
-
-                // }, 2000)
-            } else {
-                this.dataList.forEach((item) => {
-                    if (!item._isDisabled) {
-                        // disabled 状态禁止更改 check 状态
-                        item._isChecked = status;
-                    }
-                });
-                selection = this.getSelection();
-                cancelSelection = this.getSelection();
-            }
             if (status) {
-                this.$emit('on-selection-change', selection);
+                const selected = {};
+                this.data.forEach(row => {
+                    if (!row._disabled) {
+                        selected[row[this.uniqueKey]] = row;
+                    }
+                });
+                this.selectedRowsObj = selected;
+                this.$emit('on-selection-change', this.getSelection());
             } else {
-                this.$emit('on-all-cancel', cancelSelection);
+                this.selectedRowsObj = {};
+                this.$emit('on-all-cancel');
             }
         },
         onColResizeMove(e) {
@@ -1216,11 +1157,8 @@ export default {
                 this.calWidth = oWidth;
             });
         },
-        onRowHeightChange(row) {
-            // if (!this.isVirtualScroll) {
-            //     this.$set(this.rowHeight, row.rowIndex, row.height);
-            // }
-            this.$set(this.rowHeight, row.rowIndex, row.height);
+        onRowHeightChange(key, height) {
+            this.$set(this.rowHeight, key, height);
         },
         reSetItemHeight() {
             // 这里给 height 赋值是为了出现滚动条
@@ -1260,58 +1198,26 @@ export default {
             // this.requestId && cancelAnimationFrame(this.requestId);
         },
         updateScrollData(startIndex, endIndex, direction, isDataChange) {
-            const { data, itemHeight, dataList, isSameDataRef, isSelectAll } =
-                this;
-            if (!data.length) {
-                this.isSelectAll = false;
-                this.prefixData = [];
-            } else {
-                this.prefixData = Object.assign([], data, this.prefixData);
-            }
+            const { data, itemHeight, dataList, isSameDataRef } = this;
             if (!dataList.length || !isSameDataRef) {
                 // reset flag
                 this.isSameDataRef = true;
-                let prefixData = this.prefixData.slice(startIndex, endIndex);
                 const newData = data
                     .slice(startIndex, endIndex)
-                    .map((item, index) => ({
-                        item,
-                        top: startIndex * itemHeight,
-                        pos: startIndex++,
-                        index: startIndex,
-                        _isChecked: false,
-                    }));
-
-                if (!prefixData.length) {
-                    prefixData = newData;
-                }
-
-                newData.forEach((news, index) => {
-                    Object.keys(news.item).forEach((key, newIndex) => {
-                        if (prefixData[index]) {
-                            const prefixDataId = prefixData[index].item
-                                ? this.getId(prefixData[index].item)
-                                : this.getId(prefixData[index]);
-                            // 这里加多了一层判断逻辑，处理删除表格数据时，数据项对应不上的问题
-                            const isCheck =
-                                prefixData[index] &&
-                                data.some(
-                                    (item) => this.getId(item) === prefixDataId
-                                )
-                                    ? prefixData[index]['_isChecked']
-                                    : false;
-                            news[key] = news.item[key];
-                            news['_isChecked'] = isSelectAll ? true : isCheck; // 若为全选，每次滚动加载数据时勾上
+                    .map((item, index) => {
+                        let row = {
+                            ...item,
+                            top: startIndex * itemHeight,
+                            pos: startIndex++,
+                            index: startIndex,
+                        };
+                        if (typeof row[this.uniqueKey] === undefined) {
+                            row[this.uniqueKey] = startIndex + index;
                         }
+                        return row;
                     });
-                });
-                // return (this.dataList = newData);
-                if (isDataChange) {
-                    this.dataList = [];
-                }
-                setTimeout(() => {
-                    this.dataList = Object.assign([], newData);
-                }, 0);
+
+                this.dataList = newData;
             }
         },
 
@@ -1372,7 +1278,7 @@ export default {
         },
         getheadHeight(height) {
             this.headHeight = height;
-            this.$set(this.rowHeight, 'header', height);
+            this.onRowHeightChange('header', height)
         },
         observerTableVisible() {
             this.observerVisible = new IntersectionObserver((entries) => {

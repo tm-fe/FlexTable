@@ -51,7 +51,7 @@
 <!--            >-->
                 <table-tr
                     v-for="(row, index) in data"
-                    :key="row[uniqueKey] || row.id || index"
+                    :key="row[uniqueKey] || index"
                     :class="getRowClass(row, index)"
                     :style="{
                         transform: isVirtualScroll
@@ -73,6 +73,8 @@
                     :vertical="vertical"
                     :cols-left-style="colsLeftStyle"
                     :last-fixed-field="lastFixedField"
+                    :selected-rows-obj="selectedRowsObj"
+                    :unique-key="uniqueKey"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                     @on-td-click="handleRowClick"
@@ -120,10 +122,6 @@ export default {
         },
         headSum: {
             type: [Object, Boolean],
-        },
-        uniqueKey: {
-            type: String,
-            default: 'id',
         },
         height: {
             type: Number,
@@ -252,8 +250,8 @@ export default {
     //     this.$el.scrollTop = this.scrollTop;
     // },
     methods: {
-        toggleSelect(index, value) {
-            this.$emit('on-toggle-select', index, value);
+        toggleSelect(index, event) {
+            this.$emit('on-toggle-select', index, event);
         },
         toggleExpand(index) {
             const row = this.data[index];
@@ -261,8 +259,8 @@ export default {
                 this.data[index]._expanded = !this.data[index]._expanded;
             }
         },
-        handleRowClick(index, row, column) {
-            this.$emit('on-row-click', index, row, column);
+        handleRowClick(index, row) {
+            this.$emit('on-row-click', index, row);
         },
         getRowSpan() {
             const list = [];

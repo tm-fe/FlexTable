@@ -4,6 +4,14 @@ export default {
             type: Object,
             required: true,
         },
+        selectedRowsObj: {
+            type: Object,
+            default: () => ({}),
+        },
+        uniqueKey: {
+            type: String,
+            default: 'id',
+        },
     },
     computed: {
         owner() {

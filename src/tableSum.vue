@@ -88,10 +88,7 @@ export default {
     methods: {
         onRowHeightChange() {
             if (!this.onlyFixed) {
-                this.owner.onRowHeightChange({
-                    rowIndex: 'headerSum',
-                    height: this.$el.offsetHeight,
-                });
+                this.owner.onRowHeightChange('headerSum', this.$el.offsetHeight);
             }
         },
         isHidden(item) {

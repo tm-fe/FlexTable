@@ -19,6 +19,7 @@
             :fixed-head="true"
             vertical
             :virtual-scroll="5"
+            enable-row-check
             @on-sort-change="onSortChange"
         >
             <template slot-scope="{ row, index }" slot="img">
@@ -33,15 +34,16 @@
 // import flexTable from '../../index.js';
 import imgSrc from './123.png';
 const aTestList = [];
-for (let i = 0; i < 200; i++) {
+for (let i = 0; i < 500; i++) {
     const oTestData = {
-        name: 'John',
+        id: i,
+        name: i+ 'John',
         age: 18,
         hegith: '178',
         address: 'New York No. 1 Lake Park',
         // address: 'New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake Park',
         date: '2016-10-03',
-        _disabled: false,
+        _disabled: i === 3,
         _isChecked: true,
     };
     aTestList.push(oTestData);
