@@ -7,8 +7,8 @@
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
       p-id="5076"
-      width="19"
-      height="19"
+      width="28"
+      height="28"
     >
       <path
         fill="#0b75ff"
