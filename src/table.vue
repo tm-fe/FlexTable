@@ -917,7 +917,7 @@ export default {
                     selection.push(item);
                 }
             });
-            return selection;
+            return JSON.parse(JSON.stringify(selection));
         },
         selectAll(status) {
             this.isSelectAll = status;
@@ -1385,33 +1385,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-// 用到的层级自己管理样式就好了，不懂为什么要当到外层？
-///deep/ .commonItem {
-//  &:nth-child(even) {
-//    background: #fcfcfc;
-//    .flex-table-hidden {
-//      background: #fcfcfc;
-//    }
-//  }
-//  &:nth-child(odd) {
-//    background: #fff;
-//    .flex-table-hidden {
-//      background: #fff;
-//    }
-//  }
-//  &:hover {
-//    background: #ebf7ff;
-//    .flex-table-hidden {
-//      background: #ebf7ff;
-//    }
-//  }
-//}
-//.flex-table-head-fixed {
-//  overflow-x: hidden;
-//}
-//.flex-table {
-//  width: fit-content;
-//}
 .scrollBar {
   position: fixed;
   bottom: 5px;

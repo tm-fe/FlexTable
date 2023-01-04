@@ -38,17 +38,6 @@
             v-if="data.length"
             :style="isVirtualScroll ? scrollerStyle : null"
         >
-<!--            <div-->
-<!--                v-for="(row, index) in data"-->
-<!--                :key="row[uniqueKey] || row.id || index"-->
-<!--                :class="getRowClass(row, index)"-->
-<!--                :style="{-->
-<!--                    transform: isVirtualScroll-->
-<!--                        ? `translateY(${row.top}px)`-->
-<!--                        : 'none',-->
-<!--                    height: isVirtualScroll ? `${virtualHeight}px` : 'auto',-->
-<!--                }"-->
-<!--            >-->
                 <table-tr
                     v-for="(row, index) in data"
                     :key="row[uniqueKey] || row.id || index"
@@ -78,18 +67,6 @@
                     @on-td-click="handleRowClick"
                     @doLayout="$emit('doLayout')"
                 ></table-tr>
-<!--                <div-->
-<!--                    class="flex-table-expanded"-->
-<!--                    v-if="row._expanded"-->
-<!--                    :key="'expand_' + index"-->
-<!--                >-->
-<!--                    <Expand-->
-<!--                        :row="row"-->
-<!--                        :index="index"-->
-<!--                        :render="expandRender"-->
-<!--                    ></Expand>-->
-<!--                </div>-->
-<!--            </div>-->
         </div>
 
         <div v-else class="noData">
@@ -230,27 +207,13 @@ export default {
         data(val) {
             this.updateRowList();
         },
-        // customClass(val) {
-        //     let elem = document.getElementsByClassName(val)[0];
-        //     const customClass = window.getComputedStyle(elem, null)['background-color']
-        //     const fixedEl = document.getElementsByClassName('flex-table-hidden')
-        //     for (const item of fixedEl) {
-        //         if(item.parentNode.parentNode.getAttribute('class') === val){
-        //             item.style.background = customClass
-        //         }
-        //     }
-        // },
     },
     data() {
         return {
             rowSpanList: [],
             rowSpanColumns: [],
-            // customClass: '',
         };
     },
-    // updated() {
-    //     this.$el.scrollTop = this.scrollTop;
-    // },
     methods: {
         toggleSelect(index, event) {
             this.$emit('on-toggle-select', index, event);
@@ -340,51 +303,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-//.custom {
-//    border-bottom: 1px solid #eee;
-//    &:nth-child(even) {
-//        background: #fcfcfc;
-//        .flex-table-hidden {
-//            background-color: #fcfcfc;
-//        }
-//    }
-//    &:nth-child(odd) {
-//        background: #fff;
-//        .flex-table-hidden {
-//            background: #fff;
-//        }
-//    }
-//    &:hover {
-//        .flex-table-col {
-//            background: #ebf7ff !important;
-//        }
-//    }
-//}
-//.commonItem {
-//    &:nth-child(even) {
-//        background: #fcfcfc;
-//        .flex-table-hidden {
-//            background: #fcfcfc;
-//        }
-//    }
-//    &:nth-child(odd) {
-//        background: #fff;
-//        .flex-table-hidden {
-//            background: #fff;
-//        }
-//    }
-//    &:hover {
-//        background: #ebf7ff;
-//        .flex-table-hidden {
-//            background: #ebf7ff;
-//        }
-//    }
-//}
-//.commonItem:not(:last-child) {
-//    .flex-table-row {
-//        border-bottom: 1px solid #eee;
-//    }
-//}
 .virtualItem {
     overflow: hidden;
     position: absolute;
@@ -394,12 +312,6 @@ export default {
         border-bottom: 1px solid #eee;
     }
 }
-//.flex-table-body .flex-table-tr > .flex-table-row {
-//    border-bottom: 0 !important;
-//}
-//.flex-table-body {
-//    position: relative;
-//}
 .noData {
     position: sticky;
     width: 200px;
