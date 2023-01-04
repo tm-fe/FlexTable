@@ -122,6 +122,11 @@ export default {
             type: Boolean,
             default: false,
         },
+        // 最后固定在左侧的列
+        lastFixedField: {
+            type: String,
+            default: '',
+        },
     },
     data() {
         return {
@@ -146,9 +151,6 @@ export default {
                 !this.data.length ||
                 this.data.every((item) => item._disabled)
             );
-        },
-        lastFixedIdx() {
-            return this.columns.filter((item) => item.fixed === 'left').length;
         },
     },
     watch: {
@@ -225,13 +227,9 @@ export default {
             return this.headRow[index];
         },
         onRowHeightChange() {
-            if (!this.onlyFixed) {
+            if (!this.onlyFixed && this.$el) {
                 let { height } = this.$el.getBoundingClientRect();
                 this.$emit('getheadHeight', height);
-                this.owner.onRowHeightChange({
-                    rowIndex: 'header',
-                    height,
-                });
             }
         },
         isHidden(item) {
@@ -246,7 +244,7 @@ export default {
             this.isChecked = status;
         },
         flexTableBorder(item) {
-            if (this.lastFixedIdx && this.columns[this.lastFixedIdx - 1].key === item.key) {
+            if (this.lastFixedField === item.key) {
                 return 'fixedBorder';
             }
             return '';

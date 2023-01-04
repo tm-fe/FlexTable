@@ -60,6 +60,11 @@ export default {
             type: Number,
             default: 0,
         },
+        // 最后固定在左侧的列
+        lastFixedField: {
+            type: String,
+            default: '',
+        },
     },
     computed: {
         height() {
@@ -68,9 +73,6 @@ export default {
             } else {
                 return 'auto';
             }
-        },
-        lastFixedIdx() {
-            return this.columns.filter((item) => item.fixed === 'left').length;
         },
     },
     mounted() {
@@ -86,10 +88,7 @@ export default {
     methods: {
         onRowHeightChange() {
             if (!this.onlyFixed) {
-                this.owner.onRowHeightChange({
-                    rowIndex: 'footer',
-                    height: this.$el.offsetHeight,
-                });
+                this.owner.onRowHeightChange('headerSum', this.$el.offsetHeight);
             }
         },
         isHidden(item) {
@@ -144,7 +143,7 @@ export default {
             }
         },
         flexTableBorder(item) {
-            if (this.lastFixedIdx && this.columns[this.lastFixedIdx - 1].key === item.key) {
+            if (item.key === this.lastFixedField) {
                 return 'fixedBorder';
             }
             return '';

@@ -11,12 +11,14 @@
         <div @click="click">show</div>
         <flex-table
             v-show="show"
+            resizable
             :loading="loading"            
             :columns="columns"
             :data="list"
-            :sum="sum"
+            :headSum="sum"
             :fixed-head="true"
             vertical
+            enable-row-check
             @on-sort-change="onSortChange"
         >
             <template slot-scope="{ row, index }" slot="img">
@@ -31,7 +33,7 @@
 // import flexTable from '../../index.js';
 import imgSrc from './123.png';
 const aTestList = [];
-for (let i = 0; i < 5; i++) {
+for (let i = 0; i < 20; i++) {
     const oTestData = {
         name: 'John',
         age: 18,
@@ -39,7 +41,7 @@ for (let i = 0; i < 5; i++) {
         address: 'New York No. 1 Lake Park',
         // address: 'New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake New York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake ParkNew York No. 1 Lake Park',
         date: '2016-10-03',
-        _disabled: false,
+        _disabled: i === 3,
         _isChecked: true,
     };
     aTestList.push(oTestData);

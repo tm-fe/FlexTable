@@ -3,7 +3,6 @@
         class="flex-table-body"
         :class="{ 'flex-table-fixed-header': maxHeight }"
         :style="style"
-        @mouseleave="mouseleave"
     >
         <template v-for="(item, index) in rowSpanList">
             <div
@@ -25,7 +24,6 @@
                     :cal-width="calWidth"
                     :onlyFixed="onlyFixed"
                     :rowHeight="item.height"
-                    :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
                     :spanMethod="spanMethod"
                     @on-toggle-select="toggleSelect"
@@ -40,49 +38,35 @@
             v-if="data.length"
             :style="isVirtualScroll ? scrollerStyle : null"
         >
-            <div
-                v-for="(row, index) in data"
-                :key="row[uniqueKey] || row.id || index"
-                :class="getRowClass(row, index)"
-                :style="{
-                    transform: isVirtualScroll
-                        ? `translateY(${row.top}px)`
-                        : 'none',
-                    height: isVirtualScroll ? `${virtualHeight}px` : 'auto',
-                }"
-            >
                 <table-tr
-                    v-bind="$props"
-                    :key="index"
+                    v-for="(row, index) in data"
+                    :key="row[uniqueKey] || row.id || index"
+                    :class="getRowClass(row, index)"
+                    :style="{
+                        transform: isVirtualScroll
+                            ? `translateY(${row.top}px)`
+                            : 'none',
+                        height: isVirtualScroll ? `${virtualHeight}px` : 'auto',
+                    }"
                     :row="row"
                     :rowIndex="index"
                     :columns="columns"
                     :cal-width="calWidth"
                     :onlyFixed="onlyFixed"
-                    :rowHeight="
-                        isVirtualScroll ? virtualHeight : rowHeight[index]
-                    "
-                    :hoverIndex="hoverIndex"
                     :selectedClass="selectedClass"
                     :spanMethod="spanMethod"
                     :rowSpanColumns="rowSpanColumns"
+                    :multiple="multiple"
+                    :virtualScroll="virtualScroll"
+                    :virtualHeight="virtualScroll"
+                    :vertical="vertical"
+                    :cols-left-style="colsLeftStyle"
+                    :last-fixed-field="lastFixedField"
                     @on-toggle-select="toggleSelect"
                     @on-toggle-expand="toggleExpand"
                     @on-td-click="handleRowClick"
                     @doLayout="$emit('doLayout')"
                 ></table-tr>
-                <div
-                    class="flex-table-expanded"
-                    v-if="row._expanded"
-                    :key="'expand_' + index"
-                >
-                    <Expand
-                        :row="row"
-                        :index="index"
-                        :render="expandRender"
-                    ></Expand>
-                </div>
-            </div>
         </div>
 
         <div v-else class="noData">
@@ -140,10 +124,6 @@ export default {
             type: Number,
             default: 0,
         },
-        hoverIndex: {
-            type: Number | undefined,
-            required: true,
-        },
         selectedClass: {
             type: String,
             default: '',
@@ -173,29 +153,32 @@ export default {
             type: Boolean,
             default: false,
         },
+        colsLeftStyle: {
+            type: Object,
+            required: true,
+        },
+        // 最后固定在左侧的列
+        lastFixedField: {
+            type: String,
+            default: '',
+        },
     },
     computed: {
         style() {
-            const tableSumHeight = this.$parent.$refs.tableSum
-                ? this.$parent.$refs.tableSum.$el.offsetHeight
-                : 0;
             if (this.virtualScroll) {
                 return {
                     height: this.maxHeight
-                        ? `${this.maxHeight + tableSumHeight}px`
+                        ? `${this.maxHeight}px`
                         : `auto`,
                 };
             }
 
             return {
                 'max-height': this.maxHeight
-                    ? `${this.maxHeight - tableSumHeight}px`
+                    ? `${this.maxHeight}px`
                     : `auto`,
                 'z-index': !this.data.length ? '7' : '0',
             };
-        },
-        defaultHeight() {
-            return { height: `${this.virtualHeight}px` };
         },
         expandRender() {
             let render = noop;
@@ -224,30 +207,16 @@ export default {
         data(val) {
             this.updateRowList();
         },
-        customClass(val) {
-            let elem = document.getElementsByClassName(val)[0];
-            const customClass = window.getComputedStyle(elem, null)['background-color']
-            const fixedEl = document.getElementsByClassName('flex-table-hidden')
-            for (const item of fixedEl) {
-                if(item.parentNode.parentNode.getAttribute('class') === val){
-                    item.style.background = customClass
-                }
-            }
-        },
     },
     data() {
         return {
             rowSpanList: [],
             rowSpanColumns: [],
-            customClass: '',
         };
     },
-    updated() {
-        this.$el.scrollTop = this.scrollTop;
-    },
     methods: {
-        toggleSelect(index, value) {
-            this.$emit('on-toggle-select', index, value);
+        toggleSelect(index, event) {
+            this.$emit('on-toggle-select', index, event);
         },
         toggleExpand(index) {
             const row = this.data[index];
@@ -255,11 +224,8 @@ export default {
                 this.data[index]._expanded = !this.data[index]._expanded;
             }
         },
-        handleRowClick(index, row, column) {
-            this.$emit('on-row-click', index, row, column);
-        },
-        mouseleave() {
-            this.owner.updateHoverIndex();
+        handleRowClick(index, row) {
+            this.$emit('on-row-click', index, row);
         },
         getRowSpan() {
             const list = [];
@@ -324,16 +290,11 @@ export default {
             });
         },
         getRowClass(row, index) {
+            let commonClass = this.isVirtualScroll ? 'virtualItem' : '';
             if (this.$parent.rowClassName && this.$parent.rowClassName(row, index)) {
-                this.customClass = this.$parent.rowClassName(
-                    row,
-                    index
-                );
-                return [this.$parent.rowClassName(row, index), 'custom'];
+                commonClass = `${commonClass} ${this.$parent.rowClassName(row, index)}`
             }
-            return this.isVirtualScroll
-                ? 'virtualItem bgColor'
-                : 'commonItem bgColor';
+            return commonClass;
         },
     },
     mounted() {
@@ -342,31 +303,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.custom {
-    border-bottom: 1px solid #eee;
-    &:nth-child(even) {
-        background: #fcfcfc;
-        .flex-table-hidden {
-            background-color: #fcfcfc;
-        }
-    }
-    &:nth-child(odd) {
-        background: #fff;
-        .flex-table-hidden {
-            background: #fff;
-        }
-    }
-    &:hover {
-        .flex-table-col {
-            background: #ebf7ff !important;
-        }
-    }
-}
-.commonItem:not(:last-child) {
-    .flex-table-row {
-        border-bottom: 1px solid #eee;
-    }
-}
 .virtualItem {
     overflow: hidden;
     position: absolute;
@@ -375,12 +311,6 @@ export default {
     .flex-table-row {
         border-bottom: 1px solid #eee;
     }
-}
-.flex-table-body .flex-table-tr > .flex-table-row {
-    border-bottom: 0 !important;
-}
-.flex-table-body {
-    position: relative;
 }
 .noData {
     position: sticky;

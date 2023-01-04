@@ -1,7 +1,7 @@
 <template>
     <div
         :class="[cellClsName(column, row), 'tableCol']"
-        :style="[setCellStyle(column), handleWidth(column, columns)]"
+        :style="[setCellStyle(column), widthStyle]"
         @click="onToggleExpand"
         ref="cell"
     >
@@ -11,13 +11,13 @@
                     <Checkbox
                         v-if="multiple"
                         :checked="row._isChecked"
-                        @input="toggleSelect"
+                        @click.native.prevent="toggleSelect"
                         :disabled="row._isDisabled"
                     ></Checkbox>
                     <Radio
                         v-else
                         :checked="row._isChecked"
-                        @input="toggleSelect"
+                        @click.native.prevent="toggleSelect"
                         :disabled="row._isDisabled"
                     ></Radio>
                 </template>
@@ -70,14 +70,6 @@ export default {
             type: Object,
             required: true,
         },
-        columns: {
-            type: Array,
-            required: true,
-        },
-        index: {
-            type: Number,
-            required: true,
-        },
         row: {
             type: Object,
             required: true,
@@ -106,6 +98,15 @@ export default {
         vertical: {
             type: Boolean,
             default: false,
+        },
+        widthStyle: {
+            type: Object,
+            required: true,
+        },
+        // 最后固定在左侧的列
+        lastFixedField: {
+            type: String,
+            default: '',
         },
     },
     data() {
@@ -137,9 +138,6 @@ export default {
         isInvisible() {
             // 非固定层的固定列应不可见
             return this.column.fixed && !this.onlyFixed;
-        },
-        lastFixedIdx() {
-            return this.columns.filter((item) => item.fixed === 'left').length;
         },
     },
     created() {
@@ -177,8 +175,11 @@ export default {
             });
             return flag;
         },
-        toggleSelect(val) {
-            this.$emit('on-toggle-select', this.rowIndex, val);
+        toggleSelect(e) {
+            // 阻止影响行点击事件
+            e.preventDefault();
+            e.stopPropagation();
+            this.$emit('on-toggle-select', this.rowIndex, e);
         },
         onToggleExpand() {
             if (this.renderType !== 'expand') {
@@ -202,7 +203,7 @@ export default {
             return this.isInvisible ? 'flex-table-hidden' : '';
         },
         flexTableBorder() {
-            if (this.lastFixedIdx && this.columns[this.lastFixedIdx - 1].key === this.column.key) {
+            if (this.lastFixedField === this.column.key) {
                 return 'fixedBorder';
             }
             return '';
@@ -221,10 +222,6 @@ export default {
 };
 </script>
 <style scoped lang="less">
-// .flex-table-col{
-//     display: flex;
-//     align-items: center;
-// }
 /deep/ .input-box {
     position: relative;
     border: 1px solid #ccc !important;
