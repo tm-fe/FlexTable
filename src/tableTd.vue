@@ -101,7 +101,7 @@ export default {
         },
         widthStyle: {
             type: Object,
-            required: true,
+            default: () => ({}),
         },
         // 最后固定在左侧的列
         lastFixedField: {

@@ -19,7 +19,7 @@
             :multiple="multiple"
             :vertical="vertical"
             :class="tdClassName(column, row)"
-            :width-style="colsLeftStyle[column.type !== 'selection' ? column.key : '_selection_left'] || {}"
+            :width-style="colsLeftStyleObj[column.type !== 'selection' ? column.key : '_selection_left']"
             :last-fixed-field="lastFixedField"
             @on-toggle-select="toggleSelect"
             @on-toggle-expand="toggleExpand"
@@ -98,7 +98,7 @@ export default {
             default: '',
         },
         colsLeftStyle: {
-            type: Object,
+            type: String,
             required: true,
         },
     },
@@ -106,6 +106,10 @@ export default {
         return {};
     },
     computed: {
+        colsLeftStyleObj(){
+            return JSON.parse(this.colsLeftStyle);
+        },
+
         height() {
             if (this.virtualScroll) {
                 return `${this.virtualHeight}px`;

@@ -154,7 +154,7 @@ export default {
             default: false,
         },
         colsLeftStyle: {
-            type: Object,
+            type: String,
             required: true,
         },
         // 最后固定在左侧的列
