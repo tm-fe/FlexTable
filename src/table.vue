@@ -55,7 +55,7 @@
           :selectedClass="selectedClass"
           :spanMethod="spanMethod"
           :scrollerStyle="scrollerStyle"
-          :cols-left-style="colsLeftStyle"
+          :cols-left-style="colsLeftStyleStr"
           :last-fixed-field="lastFixedField"
           @scroll.native.passive="syncScroll"
           @on-toggle-select="toggleSelect"
@@ -398,7 +398,7 @@ export default {
             headHeight: 0,
             contentWidth: 0,
             fixedSumStyle: {},
-            colsLeftStyle: {},
+            colsLeftStyleStr: '{}',
         };
     },
     computed: {
@@ -746,7 +746,7 @@ export default {
         },
         calcColsLeftStyle() {
             let total = 0;
-            this.colsLeftStyle = this.columns.reduce((res, currentCol) => {
+            this.colsLeftStyleStr = JSON.stringify(this.columns.reduce((res, currentCol) => {
                 if (currentCol.fixed === 'left' || currentCol.type === 'selection') {
                     const width = this.calWidth[currentCol.key];
                     let left = total;
@@ -770,7 +770,7 @@ export default {
                 }
 
                 return res;
-            }, {});
+            }, {}));
         },
         initData() {
             this._queueId = new Date().getTime();
