@@ -252,7 +252,7 @@ export default {
                         const left = this.calRowWidth(0, columnIndex - 1);
                         const top = this.calColHeight(0, rowIndex - 1);
                         const height = this.calColHeight(spanStart, spanEnd);
-                        const width = this.calWidth[column.key];
+                        const width = this.calWidthObj[column.key];
                         list.push({
                             columnIndex,
                             rowIndex,
@@ -271,7 +271,7 @@ export default {
             let width = 0;
             for (let i = start; i <= end; i++) {
                 let key = this.columns[i].key;
-                width += this.calWidth[key];
+                width += this.calWidthObj[key];
             }
             return width >= 0 ? width : 0;
         },
