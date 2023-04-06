@@ -14,7 +14,7 @@
         <table-head
           v-bind="$props"
           ref="tableHeader"
-          :cal-width="calWidth"
+          :cal-width="calWidthStr"
           :columns="tableColumns"
           :data="dataList"
           :allData="prefixData"
@@ -35,7 +35,7 @@
         <table-sum
           v-if="headSum && data.length"
           ref="tableSum"
-          :cal-width="calWidth"
+          :cal-width="calWidthStr"
           :columns="tableColumns"
           :headSum="headSum"
           :last-fixed-field="lastFixedField"
@@ -45,7 +45,7 @@
         <table-body
           v-bind="$props"
           ref="tableBody"
-          :cal-width="calWidth"
+          :cal-width="calWidthStr"
           :columns="tableColumns"
           :data="dataList"
           :maxHeight="maxHeight"
@@ -67,7 +67,7 @@
         <table-foot
           v-if="sum && data.length"
           ref="tableFoot"
-          :cal-width="calWidth"
+          :cal-width="calWidthStr"
           :columns="tableColumns"
           :sum="sum"
         ></table-foot>
@@ -102,7 +102,7 @@
           <table-head
             v-bind="$props"
             ref="tableHeader"
-            :cal-width="calWidth"
+            :cal-width="calWidthStr"
             :columns="tableColumns"
             :data="dataList"
             :resizable="resizable"
@@ -126,7 +126,7 @@
           <table-head
             v-bind="$props"
             ref="tableHeader"
-            :cal-width="calWidth"
+            :cal-width="calWidthStr"
             :columns="tableColumns"
             onlyFixed="left"
             :data="dataList"
@@ -154,7 +154,7 @@
         <div class="flex-table" :style="style">
             <table-sum
                 ref="tableSum"
-                :cal-width="calWidth"
+                :cal-width="calWidthStr"
                 :columns="tableColumns"
                 :headSum="headSum"
                 :last-fixed-field="lastFixedField"
@@ -358,6 +358,7 @@ export default {
             style: {},
             wrapStyle: {},
             calWidth: {},
+            calWidthStr: '{}',
             tableColumns: [],
             headerH: 38,
             maxHeight: 0,
@@ -1214,6 +1215,7 @@ export default {
                 }
 
                 this.calWidth = oWidth;
+                this.calWidthStr = JSON.stringify(this.calWidth);
             });
         },
         onRowHeightChange(key, height) {

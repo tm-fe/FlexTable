@@ -125,7 +125,7 @@ export default {
                     .map((item) => item.key);
                 let num = 0;
                 for (const item of beforeKey) {
-                    num += this.calWidth[item];
+                    num += this.calWidthObj[item];
                 }
                 return {
                     position: 'sticky',

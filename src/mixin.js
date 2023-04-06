@@ -1,7 +1,7 @@
 export default {
     props: {
         calWidth: {
-            type: Object,
+            type: String,
             required: true,
         },
     },
@@ -13,10 +13,13 @@ export default {
             }
             return parent;
         },
+        calWidthObj() {
+            return JSON.parse(this.calWidth);
+        },
     },
     methods: {
         setCellStyle(column, type) {
-            const sWidth = this.calWidth[column.key];
+            const sWidth = this.calWidthObj[column.key];
             const oStyle = {};
             if (sWidth) {
                 oStyle.width = `${sWidth}px`;
@@ -55,7 +58,7 @@ export default {
                 .map(item => item.key);
             let num = 0;
             beforeKey.forEach((item) => {
-                num += this.calWidth[item];
+                num += this.calWidthObj[item];
             });
             if (num) {
                 return {
